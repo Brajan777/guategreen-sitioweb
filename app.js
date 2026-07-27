@@ -267,9 +267,13 @@ function initHeaderShrink() {
 function initMobileNav() {
   const burger = document.getElementById('burgerBtn');
   const navLinks = document.getElementById('navLinks');
+  const navClose = document.getElementById('navClose');
   if (!burger || !navLinks) return;
 
   burger.addEventListener('click', () => navLinks.classList.toggle('open'));
+  if (navClose) {
+    navClose.addEventListener('click', () => navLinks.classList.remove('open'));
+  }
   navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
 }
 

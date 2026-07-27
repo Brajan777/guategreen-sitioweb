@@ -134,6 +134,10 @@ header.shrink .nav{
   position:relative;
 }
 
+.nav-close{
+  display:none;
+}
+
 .nav-links a{
   font-size:.92rem;
   font-weight:500;
@@ -1166,6 +1170,26 @@ footer{
   }
   .nav-links.open{
     transform:translateX(0);
+  }
+  .nav-close{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:absolute;
+    top:1.3rem;
+    right:1.3rem;
+    width:2.2rem;
+    height:2.2rem;
+    border-radius:50%;
+    border:var(--line);
+    background:var(--paper);
+    font-size:1rem;
+    color:var(--ink);
+    cursor:pointer;
+    transition:transform .2s var(--ease);
+  }
+  .nav-close:hover{
+    transform:rotate(90deg);
   }
   .nav-links a{
     font-size:1.1rem;
