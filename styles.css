@@ -1090,20 +1090,21 @@ footer{
 }
 
 .wa-fab{
-  position:fixed;
-  bottom:1.4rem;
-  right:1.4rem;
-  z-index:70;
+  position:fixed !important;
+  bottom:calc(1.2rem + env(safe-area-inset-bottom, 0px)) !important;
+  right:calc(1.2rem + env(safe-area-inset-right, 0px)) !important;
+  z-index:9999 !important;
   width:3.6rem;
   height:3.6rem;
   border-radius:50%;
   background:var(--sage-500);
   border:var(--line);
-  display:flex;
+  display:flex !important;
   align-items:center;
   justify-content:center;
   box-shadow:var(--shadow-hard-sm);
   transition:transform .25s var(--ease);
+  -webkit-tap-highlight-color:transparent;
 }
 
 .wa-fab:hover{
