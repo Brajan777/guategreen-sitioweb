@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guategreen — Colección Exótica de Araceae</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,450;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,450;1,9..144,600&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="nav wrap">
+    <a href="#" class="logo serif">Guate<em>green</em></a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#catalogo">Catálogo</a>
+      <a href="#coleccion">Colección</a>
+      <a href="#comunidad">Comunidad</a>
+      <a href="#contacto">Contacto</a>
+      <span class="nav-indicator" id="navIndicator"></span>
+    </nav>
+    <div class="nav-actions">
+      <button class="cart-btn" id="cartBtn" aria-label="Ver carrito">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 4h2l2.2 11.4A2 2 0 0 0 9.16 17H18a2 2 0 0 0 1.96-1.6L21.5 8H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="21" r="1.4" fill="currentColor"/><circle cx="18" cy="21" r="1.4" fill="currentColor"/></svg>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <a href="https://wa.me/50252554758" target="_blank" class="btn btn-outline btn-sm">Escribir por WhatsApp</a>
+      <button class="burger" id="burgerBtn" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= CARRITO ================= -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-panel" id="cartPanel" aria-label="Carrito de compras">
+  <div class="cart-head">
+    <span class="eyebrow" style="margin:0">Tu selección</span>
+    <button class="cart-close" id="cartClose" aria-label="Cerrar carrito">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-foot">
+    <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotal">Q0.00</span></div>
+    <a href="https://wa.me/50252554758" id="cartCheckout" target="_blank" class="btn btn-block">Apartar por WhatsApp →</a>
+  </div>
+</aside>
+
+<!-- ================= HERO ================= -->
+<section class="hero wrap">
+  <div class="hero-copy">
+    <p class="eyebrow">Colección exótica de Araceae — Guatemala</p>
+    <h1>Calidad<br><i>antes que</i> cantidad.</h1>
+    <p>Piezas de colección seleccionadas a mano: Monsteras, Philodendrons, Alocasias y Caladiums de origen certificado, aclimatados en Guatemala antes de llegar a tu casa.</p>
+    <div class="hero-cta">
+      <a href="#catalogo" class="btn">Ver catálogo completo</a>
+      <a href="https://wa.me/50252554758" target="_blank" class="btn btn-outline">Hablar con un coleccionista</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-panel">
+      <svg viewBox="0 0 200 200" fill="none">
+        <path d="M100 190C100 190 40 160 40 100C40 55 70 20 100 15C130 20 160 55 160 100C160 160 100 190 100 190Z" fill="#90A955" stroke="#241D16" stroke-width="3"/>
+        <path d="M100 15V190" stroke="#241D16" stroke-width="2" stroke-dasharray="4 5"/>
+        <path d="M100 40C90 60 70 70 55 75M100 70C88 85 68 92 52 95M100 100C86 112 66 118 50 120M100 130C88 140 70 146 56 148" stroke="#3A5A40" stroke-width="2" stroke-linecap="round"/>
+        <path d="M100 40C110 60 130 70 145 75M100 70C112 85 132 92 148 95M100 100C114 112 134 118 150 120M100 130C112 140 130 146 144 148" stroke="#3A5A40" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="specimen-tag">
+      <span class="mono"><span class="dot-live"></span>DISPONIBLE HOY</span>
+      <p class="name">Monstera Thai Constellation</p>
+      <span class="mono">Q1,450.00</span>
+    </div>
+  </div>
+</section>
+
+<div class="marquee-strip">
+  <div class="marquee-track" id="marqueeTrack"></div>
+</div>
+
+<!-- ================= CATALOGO ================= -->
+<section class="wrap" id="catalogo">
+  <div class="sec-head reveal">
+    <div>
+      <p class="eyebrow">Espécimen 001 — 016</p>
+      <h2 class="serif">Más buscadas esta semana</h2>
+    </div>
+    <p>Envíos a toda Guatemala. Toca los puntos para ver más ángulos de la pieza.</p>
+  </div>
+
+  <div class="chips reveal" id="chips"></div>
+  <div class="grid" id="productGrid"></div>
+
+  <div class="load-more reveal">
+    <button class="btn btn-outline" id="loadMoreBtn">Cargar más especímenes</button>
+  </div>
+</section>
+
+<!-- ================= VALUE PROPS ================= -->
+<section class="wrap" id="coleccion">
+  <div class="sec-head reveal">
+    <div>
+      <p class="eyebrow">Por qué Guategreen</p>
+      <h2 class="serif">Coleccionar sin adivinar</h2>
+    </div>
+  </div>
+  <div class="props">
+    <div class="prop reveal">
+      <span class="num mono">Curaduría</span>
+      <h3 class="serif">Selección de un coleccionista</h3>
+      <p>Cada planta pasa por nuestros propios criterios de forma, variegación y salud antes de publicarse. Nada se vende sin fotos reales del ejemplar.</p>
+    </div>
+    <div class="prop reveal">
+      <span class="num mono">Empaque</span>
+      <h3 class="serif">Empaque bioseguro de viaje</h3>
+      <p>Sustrato fijado, cámara de humedad y caja reforzada para que la planta llegue a tu casa igual que salió del vivero.</p>
+    </div>
+    <div class="prop reveal">
+      <span class="num mono">Comunidad</span>
+      <h3 class="serif">Acompañamiento post-venta</h3>
+      <p>Ficha de cuidado, canal de WhatsApp y eventos como Noche de Coleccionistas para resolver dudas y ampliar tu colección.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TESTIMONIALS ================= -->
+<section class="testi-section" id="comunidad">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <p class="eyebrow">Comunidad</p>
+        <h2 class="serif">Lo que dicen los coleccionistas</h2>
+      </div>
+    </div>
+    <div class="testi-grid">
+      <div class="testi reveal">
+        <div class="stars">★★★★★</div>
+        <p class="quote">Mi Thai Constellation llegó perfecta, con brote nuevo incluido. El empaque se siente de otro nivel.</p>
+        <p class="who">— Andrea R., Ciudad de Guatemala</p>
+      </div>
+      <div class="testi reveal">
+        <div class="stars">★★★★★</div>
+        <p class="quote">Compré mi primer Philodendron gloriosum aquí y la ficha de cuidado me quitó todo el miedo.</p>
+        <p class="who">— Diego M., Antigua Guatemala</p>
+      </div>
+      <div class="testi reveal">
+        <div class="stars">★★★★★</div>
+        <p class="quote">Fui al Bingo Botánico y desde ahí no he dejado de seguir el catálogo cada semana.</p>
+        <p class="who">— Fernanda L., Villa Nueva</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PREGUNTAS FRECUENTES ================= -->
+<section class="wrap" id="faq">
+  <div class="sec-head reveal">
+    <div>
+      <p class="eyebrow">Resuelve tus dudas</p>
+      <h2 class="serif">Preguntas Frecuentes</h2>
+    </div>
+    <p>Respuestas a las consultas más comunes sobre empaque, envíos y aclimatación de tus especímenes.</p>
+  </div>
+
+  <div class="faq-grid">
+    <details class="faq-item reveal" open>
+      <summary>¿Cómo vienen empacadas las plantas y cómo garantizan su llegada segura?</summary>
+      <div class="faq-answer">
+        Cada espécimen viaja con sustrato fijado, cámara de humedad y una caja de empaque bioseguro especialmente diseñada para proteger hojas y raíces durante el trayecto a cualquier municipio de Guatemala.
+      </div>
+    </details>
+
+    <details class="faq-item reveal">
+      <summary>¿Hacen envíos a toda Guatemala y cuáles son los tiempos de entrega?</summary>
+      <div class="faq-answer">
+        Sí, realizamos envíos a todos los departamentos de Guatemala. En la Ciudad de Guatemala entregamos en 24 a 48 horas, y para el resto del país los envíos tardan de 2 a 3 días hábiles.
+      </div>
+    </details>
+
+    <details class="faq-item reveal">
+      <summary>¿Qué métodos de pago aceptan?</summary>
+      <div class="faq-answer">
+        Aceptamos transferencia bancaria, pago con tarjeta de crédito/débito y opción de pago contra entrega en zonas seleccionadas de la ciudad.
+      </div>
+    </details>
+
+    <details class="faq-item reveal">
+      <summary>¿Las plantas vienen aclimatadas al clima de Guatemala?</summary>
+      <div class="faq-answer">
+        ¡Totalmente! Todos nuestros especímenes pasan por un riguroso proceso de aclimatación de varias semanas en nuestros viveros locales antes de estar disponibles en el catálogo.
+      </div>
+    </details>
+
+    <details class="faq-item reveal">
+      <summary>¿Recibiré asesoría o ficha de cuidado con mi compra?</summary>
+      <div class="faq-answer">
+        Sí. Cada planta incluye su ficha de cuidado personalizada con recomendaciones de luz, riego y sustrato. Además, contamos con soporte post-venta permanente a través de nuestro WhatsApp.
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ================= CTA BANNER ================= -->
+<section class="cta-banner" id="contacto">
+  <div class="wrap cta-inner">
+    <h2 class="serif">¿Buscas una pieza <i>específica</i> para tu colección?</h2>
+    <a href="https://wa.me/50252554758" target="_blank" class="btn">Escribir por WhatsApp →</a>
+  </div>
+</section>
+
+<footer class="wrap">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a href="#" class="logo serif">Guate<em>green</em></a>
+      <p>Colección exótica de Araceae en Guatemala. Calidad antes que cantidad, desde 2022.</p>
+    </div>
+    <div class="foot-col">
+      <span class="mono">TIENDA</span>
+      <a href="#catalogo">Catálogo</a>
+      <a href="#coleccion">Colección</a>
+      <a href="#comunidad">Comunidad</a>
+    </div>
+    <div class="foot-col">
+      <span class="mono">AYUDA</span>
+      <a href="#contacto">Contacto</a>
+      <a href="#faq">Preguntas Frecuentes</a>
+      <a href="#">Cuidado de plantas</a>
+    </div>
+    <div class="foot-col">
+      <span class="mono">SEGUINOS</span>
+      <a href="#">Facebook</a>
+      <a href="#">Instagram</a>
+      <a href="https://wa.me/50252554758" target="_blank">WhatsApp</a>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© 2026 GUATEGREEN — GUATEMALA</span>
+    <span>HECHO PARA COLECCIONISTAS</span>
+  </div>
+</footer>
+
+<a href="https://wa.me/50252554758" target="_blank" class="wa-fab" aria-label="WhatsApp">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.9.5 3.7 1.5 5.3L2 22l4.9-1.3c1.5.8 3.2 1.3 5.1 1.3 5.5 0 10-4.5 10-10S17.5 2 12 2z" fill="#241D16"/><path d="M12 3.3C7.2 3.3 3.3 7.2 3.3 12c0 1.7.5 3.3 1.4 4.7l.2.3-1 3.4 3.5-1 .3.2c1.3.8 2.8 1.2 4.3 1.2 4.8 0 8.7-3.9 8.7-8.7S16.8 3.3 12 3.3z" fill="#4F772D"/></svg>
+</a>
+
+<script src="app.js"></script>
+</body>
+</html>
