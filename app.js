@@ -241,16 +241,14 @@ function renderGrid() {
 /* =============== MARQUEE =============== */
 function initMarquee() {
   const marqueeItems = [
-    'Envíos a toda Guatemala',
-    'Empaque bioseguro',
-    '+500 coleccionistas',
-    'Plantas aclimatadas',
-    'Garantía de llegada',
-    'Pago contra entrega en zona 1-16'
+    'Envíos a todo el país',
+    'Métodos de pago',
+    'Variedad mensual',
+    'Plantas de calidad'
   ];
   const track = document.getElementById('marqueeTrack');
   if (track) {
-    track.innerHTML = marqueeItems.concat(marqueeItems).map(t => `<span>${t}</span>`).join('');
+    track.innerHTML = marqueeItems.concat(marqueeItems, marqueeItems).map(t => `<span>${t}</span>`).join('');
   }
 }
 
