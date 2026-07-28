@@ -801,6 +801,7 @@ section{
   display:flex;
   align-items:center;
   justify-content:space-between;
+  gap:.3rem;
   margin-top:auto;
   padding-top:.7rem;
 }
@@ -809,15 +810,11 @@ section{
   font-family:'Space Mono',monospace;
   font-weight:700;
   font-size:1.02rem;
+  white-space:nowrap;
 }
 
 .price .old{
-  font-family:'Space Mono',monospace;
-  font-weight:400;
-  font-size:.78rem;
-  text-decoration:line-through;
-  color:var(--ink-45);
-  margin-right:.4rem;
+  display:none !important;
 }
 
 .add-btn{
@@ -833,6 +830,7 @@ section{
   font-size:1.2rem;
   box-shadow:var(--shadow-hard-sm);
   transition:transform .2s var(--ease),background .2s var(--ease);
+  flex-shrink:0;
 }
 
 .add-btn:hover{
@@ -1227,9 +1225,21 @@ footer{
 @media(max-width:480px){
   .grid{
     grid-template-columns:1fr 1fr;
+    gap:.6rem;
+  }
+  .card-body{
+    padding:.8rem .65rem .95rem;
   }
   .card-body .name{
-    font-size:1.02rem;
+    font-size:.98rem;
+  }
+  .price{
+    font-size:.86rem;
+  }
+  .add-btn{
+    width:2.2rem;
+    height:2.2rem;
+    font-size:1.05rem;
   }
 }
 
