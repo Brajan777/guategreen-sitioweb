@@ -14,6 +14,7 @@ const PRODUCTS = [
     rarity: 'Ultra rara', 
     panel: 'sage', 
     stock: 'Última unidad',
+    description: 'Ejemplar exclusivo de colección con variegación crema bien definida y excelente patrón de constelación. Planta fuerte, perfectamente enraizada y aclimatada en nuestro vivero local.',
     images: [
       { bg: 'var(--sage-100)', accent: '#3A5A40' },
       { bg: 'var(--blush-100)', accent: '#35521F' },
@@ -30,9 +31,11 @@ const PRODUCTS = [
     rarity: 'Rara', 
     panel: 'blush', 
     stock: '3 disponibles',
+    description: 'Hermosa especie rastrera de hojas acorazonadas y aterciopeladas con marcados tonos variegados. Incluye sustrato especial para aráceas y maceta con excelente drenaje.',
     images: [
       { bg: 'var(--blush-100)', accent: '#35521F' },
-      { bg: 'var(--sage-100)', accent: '#3A5A40' }
+      { bg: 'var(--sage-100)', accent: '#3A5A40' },
+      { bg: 'var(--lilac-100)', accent: '#4F772D' }
     ]
   },
   { 
@@ -45,6 +48,7 @@ const PRODUCTS = [
     rarity: 'Rara', 
     panel: 'lilac', 
     stock: '5 disponibles',
+    description: 'Reconocida por la textura profunda de sus hojas arrugadas y tonos verdes vivos. Espécimen aclimatado de rápido desarrollo bajo luz indirecta brillante.',
     images: [
       { bg: 'var(--lilac-100)', accent: '#4F772D' },
       { bg: 'var(--sage-100)', accent: '#3A5A40' },
@@ -61,9 +65,11 @@ const PRODUCTS = [
     rarity: 'Común', 
     panel: 'sage', 
     stock: '12 disponibles',
+    description: 'Follaje delgado vibrante con patrones rosados y crema únicos. Ideal para decorar interiores iluminados o terrazas protegidas.',
     images: [
       { bg: 'var(--sage-100)', accent: '#3A5A40' },
-      { bg: 'var(--lilac-100)', accent: '#4F772D' }
+      { bg: 'var(--lilac-100)', accent: '#4F772D' },
+      { bg: 'var(--blush-100)', accent: '#35521F' }
     ]
   },
   { 
@@ -76,9 +82,11 @@ const PRODUCTS = [
     rarity: 'Común', 
     panel: 'blush', 
     stock: '8 disponibles',
+    description: 'Hojas coriáceas de color verde mate profundo y textura firme. Muy resistente y fácil de cuidar en clima guatemalteco.',
     images: [
       { bg: 'var(--blush-100)', accent: '#35521F' },
-      { bg: 'var(--sage-100)', accent: '#3A5A40' }
+      { bg: 'var(--sage-100)', accent: '#3A5A40' },
+      { bg: 'var(--lilac-100)', accent: '#4F772D' }
     ]
   },
   { 
@@ -91,6 +99,7 @@ const PRODUCTS = [
     rarity: 'Rara', 
     panel: 'lilac', 
     stock: '4 disponibles',
+    description: 'Orquídea joya terrestre famosa por las venas doradas brillantes en sus hojas aterciopeladas. Cultivada en terrario controlado.',
     images: [
       { bg: 'var(--lilac-100)', accent: '#4F772D' },
       { bg: 'var(--blush-100)', accent: '#35521F' },
@@ -107,9 +116,11 @@ const PRODUCTS = [
     rarity: 'Ultra rara', 
     panel: 'sage', 
     stock: '2 disponibles',
+    description: 'Espécimen de alto contraste blanco y verde con fenestraciones definidas. Enraizado y listo para prosperar.',
     images: [
       { bg: 'var(--sage-100)', accent: '#3A5A40' },
-      { bg: 'var(--blush-100)', accent: '#35521F' }
+      { bg: 'var(--blush-100)', accent: '#35521F' },
+      { bg: 'var(--lilac-100)', accent: '#4F772D' }
     ]
   },
   { 
@@ -122,6 +133,7 @@ const PRODUCTS = [
     rarity: 'Común', 
     panel: 'blush', 
     stock: '9 disponibles',
+    description: 'Estructura rígida de aspecto escamoso y envés rojizo deslumbrante. Una joya botánica para coleccionistas.',
     images: [
       { bg: 'var(--blush-100)', accent: '#35521F' },
       { bg: 'var(--lilac-100)', accent: '#4F772D' },
@@ -225,8 +237,21 @@ function renderGrid() {
       });
     });
 
+    const mediaEl = card.querySelector('.card-media');
+    const nameEl = card.querySelector('.name');
+
+    [mediaEl, nameEl].forEach(el => {
+      if (!el) return;
+      el.style.cursor = 'pointer';
+      el.addEventListener('click', (e) => {
+        if (e.target.classList.contains('thumb-dot')) return;
+        openProductModal(id);
+      });
+    });
+
     const addBtn = card.querySelector('.add-btn');
-    addBtn.addEventListener('click', () => {
+    addBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
       addToCart(id);
       openCart();
     });
@@ -236,6 +261,91 @@ function renderGrid() {
   if (loadMoreBtn) {
     loadMoreBtn.style.display = shown.length < filtered.length ? 'inline-flex' : 'none';
   }
+}
+
+/* =============== MODAL DE DETALLE DE PRODUCTO =============== */
+function openProductModal(id) {
+  const p = PRODUCTS.find(pp => pp.id === id);
+  if (!p) return;
+
+  const overlay = document.getElementById('modalOverlay');
+  const modal = document.getElementById('productModal');
+  const modalBody = document.getElementById('modalBody');
+
+  if (!overlay || !modal || !modalBody) return;
+
+  const rc = rarityColor(p.rarity);
+  
+  const thumbsHTML = p.images.map((im, i) => 
+    `<div class="modal-thumb ${i === 0 ? 'active' : ''}" data-idx="${i}" style="background:${im.bg}">${leafSVG(im.accent)}</div>`
+  ).join('');
+
+  const framesHTML = p.images.map((im, i) => 
+    `<div class="modal-frame" data-idx="${i}" style="background:${im.bg};opacity:${i === 0 ? 1 : 0};position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">${leafSVG(im.accent)}</div>`
+  ).join('');
+
+  modalBody.innerHTML = `
+    <div class="modal-grid">
+      <div class="modal-gallery">
+        <div class="modal-main-frame">
+          ${framesHTML}
+        </div>
+        <div class="modal-thumbs">
+          ${thumbsHTML}
+        </div>
+      </div>
+      <div class="modal-info">
+        <div style="display:flex;gap:.5rem;align-items:center;">
+          <span class="tag-num mono" style="position:static">ESP. ${String(p.id).padStart(3, '0')}</span>
+          <span class="tag-rarity" style="position:static;background:${rc.bg};color:${rc.c}">${p.rarity}</span>
+        </div>
+        <span class="latin">${p.latin}</span>
+        <h2 class="name">${p.name}</h2>
+        <div class="price" style="font-size:1.4rem;margin:.4rem 0">${money(p.price)}</div>
+        <div class="stock-row"><span class="dot-live" style="background:var(--sage-500)"></span>${p.stock}</div>
+        <p class="desc">${p.description}</p>
+        <div style="margin-top:auto;display:flex;gap:.8rem;flex-wrap:wrap;">
+          <button class="btn btn-block" id="modalAddToCartBtn">Agregar al carrito y apartar</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const thumbs = modalBody.querySelectorAll('.modal-thumb');
+  const frames = modalBody.querySelectorAll('.modal-frame');
+  thumbs.forEach(t => {
+    t.addEventListener('click', () => {
+      const idx = t.dataset.idx;
+      thumbs.forEach(td => td.classList.remove('active'));
+      t.classList.add('active');
+      frames.forEach(f => { f.style.opacity = f.dataset.idx === idx ? '1' : '0'; });
+    });
+  });
+
+  document.getElementById('modalAddToCartBtn')?.addEventListener('click', () => {
+    addToCart(p.id);
+    closeProductModal();
+    openCart();
+  });
+
+  overlay.classList.add('show');
+  modal.classList.add('open');
+  document.body.classList.add('modal-open');
+}
+
+function closeProductModal() {
+  document.getElementById('modalOverlay')?.classList.remove('show');
+  document.getElementById('productModal')?.classList.remove('open');
+  document.body.classList.remove('modal-open');
+}
+
+function initModalEvents() {
+  document.getElementById('modalClose')?.addEventListener('click', closeProductModal);
+  document.getElementById('modalOverlay')?.addEventListener('click', closeProductModal);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeProductModal();
+  });
 }
 
 /* =============== MARQUEE =============== */
@@ -385,11 +495,13 @@ function renderCart(bump) {
 function openCart() {
   document.getElementById('cartPanel')?.classList.add('open');
   document.getElementById('cartOverlay')?.classList.add('show');
+  document.body.classList.add('cart-open');
 }
 
 function closeCart() {
   document.getElementById('cartPanel')?.classList.remove('open');
   document.getElementById('cartOverlay')?.classList.remove('show');
+  document.body.classList.remove('cart-open');
 }
 
 function initCartEvents() {
@@ -464,6 +576,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeaderShrink();
   initMobileNav();
   initCartEvents();
+  initModalEvents();
   renderCart(false);
   initScrollSpy();
   initScrollReveal();
