@@ -118,6 +118,27 @@ header.shrink .nav{
   padding-bottom:.6rem;
 }
 
+.logo-brand{
+  display:inline-flex;
+  align-items:center;
+  gap:.65rem;
+  text-decoration:none;
+}
+
+.brand-icon{
+  width:2.4rem;
+  height:2.4rem;
+  border-radius:50%;
+  object-fit:cover;
+  border:1.5px solid var(--sage-700);
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .25s var(--ease);
+}
+
+.logo-brand:hover .brand-icon{
+  transform:scale(1.08) rotate(6deg);
+}
+
 .logo{
   font-size:1.5rem;
   font-weight:700;
