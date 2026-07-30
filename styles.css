@@ -121,18 +121,24 @@ header.shrink .nav{
 .logo-brand{
   display:inline-flex;
   align-items:center;
-  gap:.65rem;
+  gap:.7rem;
   text-decoration:none;
 }
 
 .brand-icon{
-  width:2.4rem;
-  height:2.4rem;
+  width:3.3rem;
+  height:3.3rem;
   border-radius:50%;
   object-fit:cover;
   border:1.5px solid var(--sage-700);
   box-shadow:var(--shadow-hard-sm);
-  transition:transform .25s var(--ease);
+  transition:transform .25s var(--ease), width .25s var(--ease), height .25s var(--ease);
+  flex-shrink:0;
+}
+
+header.shrink .brand-icon{
+  width:2.7rem;
+  height:2.7rem;
 }
 
 .logo-brand:hover .brand-icon{
@@ -1344,6 +1350,10 @@ body.modal-open .wa-fab{
 }
 
 @media(max-width:720px){
+  .brand-icon{
+    width:2.7rem;
+    height:2.7rem;
+  }
   .nav-indicator{
     display:none;
   }
