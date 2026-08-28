@@ -944,11 +944,40 @@ function initAdminEvents() {
   }
 
   triggerBtn?.addEventListener('click', openLogin);
+  document.getElementById('adminNavBtn')?.addEventListener('click', () => {
+    document.getElementById('navLinks')?.classList.remove('open');
+    openLogin();
+  });
   loginClose?.addEventListener('click', closeLogin);
   loginOverlay?.addEventListener('click', closeLogin);
 
   panelClose?.addEventListener('click', closeAdminPanel);
   panelOverlay?.addEventListener('click', closeAdminPanel);
+
+  // Acceso directo por URL guategreen.com/#admin
+  function checkAdminHash() {
+    if (window.location.hash === '#admin') {
+      openLogin();
+    }
+  }
+  window.addEventListener('hashchange', checkAdminHash);
+  setTimeout(checkAdminHash, 300);
+
+  // Acceso secreto por Triple-Tap en el logo de Guategreen
+  let logoTapCount = 0;
+  let logoTapTimer = null;
+  document.querySelectorAll('.logo-brand').forEach(logoEl => {
+    logoEl.addEventListener('click', (e) => {
+      logoTapCount++;
+      clearTimeout(logoTapTimer);
+      logoTapTimer = setTimeout(() => { logoTapCount = 0; }, 800);
+      if (logoTapCount >= 3) {
+        e.preventDefault();
+        logoTapCount = 0;
+        openLogin();
+      }
+    });
+  });
 
   // Atajo de teclado Ctrl+Shift+A o Cmd+Shift+A
   document.addEventListener('keydown', (e) => {

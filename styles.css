@@ -1460,18 +1460,42 @@ a:focus-visible,button:focus-visible{
   outline-offset:2px;
 }
 
-/* ---------- ADMIN PANEL STYLES ---------- */
-.admin-lock-btn{
-  background:none;
-  border:none;
-  font-size:.82rem;
-  opacity:.4;
+.nav-admin-link{
+  background:#EFF5E1;
+  border:1.5px solid var(--sage-500);
+  color:var(--sage-700);
+  font-family:'Space Mono',monospace;
+  font-size:.78rem;
+  font-weight:700;
+  padding:.45rem .9rem;
+  border-radius:999px;
   cursor:pointer;
-  padding:0 .2rem;
-  transition:opacity .2s var(--ease),transform .2s var(--ease);
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  transition:all .2s var(--ease);
+}
+.nav-admin-link:hover{
+  background:var(--sage-100);
+  color:var(--sage-700);
+  transform:scale(1.04);
+}
+
+.admin-lock-btn{
+  background:#EFF5E1;
+  border:1px solid #CBD5E1;
+  border-radius:50%;
+  font-size:.9rem;
+  cursor:pointer;
+  width:1.8rem;
+  height:1.8rem;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .2s var(--ease);
 }
 .admin-lock-btn:hover{
-  opacity:1;
+  background:var(--sage-100);
   transform:scale(1.15);
 }
 
