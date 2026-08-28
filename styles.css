@@ -1547,11 +1547,7 @@ a:focus-visible,button:focus-visible{
   transition:opacity .2s var(--ease),transform .2s var(--ease);
 }
 .admin-lock-btn:hover{
-  opacity:1;
-  transform:scale(1.15);
-}
-
-.admin-login-overlay,.admin-panel-overlay,.admin-submodal-overlay{
+.admin-login-overlay,.admin-panel-overlay{
   position:fixed;
   inset:0;
   background:rgba(30,41,59,.65);
@@ -1561,7 +1557,22 @@ a:focus-visible,button:focus-visible{
   transition:opacity .35s var(--ease);
   z-index:105;
 }
-.admin-login-overlay.show,.admin-panel-overlay.show,.admin-submodal-overlay.show{
+.admin-login-overlay.show,.admin-panel-overlay.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.admin-submodal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.75);
+  backdrop-filter:blur(6px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .35s var(--ease);
+  z-index:130;
+}
+.admin-submodal-overlay.show{
   opacity:1;
   pointer-events:auto;
 }
@@ -1997,14 +2008,15 @@ a:focus-visible,button:focus-visible{
   top:50%;
   left:50%;
   transform:translate(-50%,-46%) scale(.95);
-  width:min(42rem,94vw);
-  max-height:86vh;
+  width:min(44rem,96vw);
+  max-height:92vh;
   overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
   background:#FFFFFF;
   border:1.5px solid #E2E8F0;
   border-radius:20px;
-  box-shadow:0 25px 50px rgba(0,0,0,.25);
-  z-index:120;
+  box-shadow:0 25px 50px rgba(0,0,0,.35);
+  z-index:140;
   opacity:0;
   pointer-events:none;
   transition:transform .35s var(--ease),opacity .35s var(--ease);
@@ -2013,21 +2025,6 @@ a:focus-visible,button:focus-visible{
   opacity:1;
   pointer-events:auto;
   transform:translate(-50%,-50%) scale(1);
-}
-
-@media(max-width:980px){
-  .admin-kpi-grid{
-    grid-template-columns:repeat(2,1fr);
-  }
-}
-@media(max-width:640px){
-  .admin-kpi-grid{
-    grid-template-columns:1fr;
-  }
-  .admin-btn-add-product{
-    width:100%;
-    justify-content:center;
-  }
 }
 
 /* Photo Cards Section */
@@ -2096,8 +2093,129 @@ a:focus-visible,button:focus-visible{
   width:100%;
 }
 
-@media(max-width:680px){
+/* ================= RESPONSIVE MÓVIL DEL PANEL DE ADMINISTRACIÓN ================= */
+@media(max-width:980px){
+  .admin-kpi-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:768px){
+  .admin-panel-card{
+    width:98vw;
+    height:96vh;
+    max-height:96vh;
+    border-radius:18px;
+  }
+  .admin-header-bar{
+    padding:.9rem 1rem;
+    gap:.6rem;
+  }
+  .admin-header-title{
+    gap:.6rem;
+  }
+  .admin-badge-icon{
+    width:2.2rem;
+    height:2.2rem;
+    font-size:1.1rem;
+  }
+  .admin-main-title{
+    font-size:1.1rem;
+  }
+  .admin-main-sub{
+    display:none;
+  }
+  .admin-header-actions{
+    width:100%;
+    justify-content:space-between;
+    gap:.5rem;
+  }
+  .admin-tab-pills{
+    flex:1;
+  }
+  .admin-pill-btn{
+    flex:1;
+    text-align:center;
+    padding:.45rem .6rem;
+    font-size:.8rem;
+  }
+  .admin-panel-content-wrap{
+    padding:1rem .8rem;
+  }
+  .admin-kpi-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:.6rem;
+    margin-bottom:1rem;
+  }
+  .admin-kpi-card{
+    padding:.8rem .9rem;
+    border-radius:14px;
+  }
+  .kpi-label{
+    font-size:.72rem;
+  }
+  .kpi-val{
+    font-size:1.25rem;
+  }
+  .kpi-icon-box{
+    width:2.2rem;
+    height:2.2rem;
+    font-size:1rem;
+    border-radius:10px;
+  }
+  
+  .admin-filter-bar{
+    flex-direction:column;
+    gap:.6rem;
+    margin-bottom:1rem;
+  }
+  .admin-search-box{
+    width:100%;
+    flex:1 1 100%;
+  }
+  .admin-select-filter{
+    width:100%;
+  }
+  .admin-btn-add-product{
+    width:100%;
+    justify-content:center;
+    padding:.8rem 1rem;
+    font-size:.95rem;
+    margin-left:0;
+  }
+
+  .admin-table-responsive{
+    border-radius:14px;
+  }
+  .admin-table{
+    min-width:640px;
+  }
+  .admin-table th, .admin-table td{
+    padding:.8rem .9rem;
+  }
+
+  .admin-form-grid{
+    grid-template-columns:1fr !important;
+    gap:.8rem;
+  }
+  .admin-submodal-card{
+    width:98vw;
+    max-height:95vh;
+    border-radius:16px;
+  }
+  .admin-submodal-card form{
+    padding:1rem !important;
+  }
   .admin-photo-uploads-grid{
+    grid-template-columns:1fr;
+  }
+  .admin-input{
+    font-size:16px !important;
+  }
+}
+
+@media(max-width:480px){
+  .admin-kpi-grid{
     grid-template-columns:1fr;
   }
 }
