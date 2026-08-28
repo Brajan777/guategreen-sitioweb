@@ -719,6 +719,12 @@ header.shrink .brand-icon{
   height:72%;
 }
 
+.hero-panel img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
 .specimen-tag{
   position:absolute;
   bottom:-1.1rem;
@@ -1867,6 +1873,40 @@ a:focus-visible,button:focus-visible{
   color:#94A3B8;
   text-decoration:line-through;
   display:block;
+}
+
+/* Order Controls */
+.tbl-order-box{
+  display:inline-flex;
+  align-items:center;
+  gap:.3rem;
+  justify-content:center;
+}
+.btn-order-move{
+  background:none;
+  border:none;
+  font-size:.85rem;
+  color:#64748B;
+  cursor:pointer;
+  padding:.2rem;
+  line-height:1;
+  transition:color .2s var(--ease),transform .2s var(--ease);
+}
+.btn-order-move:hover{
+  color:var(--sage-700);
+  transform:scale(1.25);
+}
+.order-num-pill{
+  background:#EFF5E1;
+  color:#15803D;
+  font-family:'Space Mono',monospace;
+  font-size:.76rem;
+  font-weight:700;
+  padding:.2rem .45rem;
+  border-radius:6px;
+  min-width:1.5rem;
+  display:inline-block;
+  text-align:center;
 }
 
 /* Stepper */

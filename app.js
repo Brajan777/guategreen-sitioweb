@@ -30,21 +30,95 @@ function saveAdminData(data) {
   }
 }
 
+/* =============== GESTIÓN DE PORTADA / HERO =============== */
+const HERO_STORAGE_KEY = 'guategreen_hero_data_v1';
+const DEFAULT_HERO_DATA = {
+  eyebrow: "Especies raras, variedad de plantas exóticas.",
+  title: "Plantas Exóticas y de Colección en Guatemala",
+  desc: "Priorizamos la calidad sobre la cantidad. Descubre nuestra selección exclusiva de Araceae (Monsteras, Philodendrons, Alocasias) con origen certificado para verdaderos coleccionistas.",
+  plantName: "Monstera Thai Constellation",
+  plantPrice: "Q1,450.00",
+  plantStatus: "DISPONIBLE HOY",
+  photoSrc: null
+};
+
+function getHeroData() {
+  try {
+    const saved = localStorage.getItem(HERO_STORAGE_KEY);
+    if (saved) {
+      return { ...DEFAULT_HERO_DATA, ...JSON.parse(saved) };
+    }
+  } catch(e) {
+    console.error('Error al leer hero data', e);
+  }
+  return DEFAULT_HERO_DATA;
+}
+
+function saveHeroData(data) {
+  try {
+    localStorage.setItem(HERO_STORAGE_KEY, JSON.stringify(data));
+  } catch(e) {
+    console.error('Error al guardar hero data', e);
+  }
+}
+
+function renderHero() {
+  const data = getHeroData();
+  
+  const eyebrowEl = document.getElementById('heroEyebrow');
+  const titleEl = document.getElementById('heroTitle');
+  const descEl = document.getElementById('heroDesc');
+  const visualPanel = document.getElementById('heroVisualPanel');
+  const plantNameEl = document.getElementById('heroPlantName');
+  const plantPriceEl = document.getElementById('heroPlantPrice');
+  const plantStatusEl = document.getElementById('heroTagStatus');
+
+  if (eyebrowEl) eyebrowEl.textContent = data.eyebrow;
+  if (titleEl) titleEl.textContent = data.title;
+  if (descEl) descEl.textContent = data.desc;
+  if (plantNameEl) plantNameEl.textContent = data.plantName;
+  if (plantPriceEl) plantPriceEl.textContent = data.plantPrice;
+  if (plantStatusEl) plantStatusEl.textContent = data.plantStatus;
+
+  if (visualPanel) {
+    if (data.photoSrc) {
+      visualPanel.innerHTML = `<img src="${data.photoSrc}" alt="${data.plantName}">`;
+    } else {
+      visualPanel.innerHTML = `
+        <svg viewBox="0 0 200 200" fill="none">
+          <path d="M100 190C100 190 40 160 40 100C40 55 70 20 100 15C130 20 160 55 160 100C160 160 100 190 100 190Z" fill="#90A955" stroke="#241D16" stroke-width="3"/>
+          <path d="M100 15V190" stroke="#241D16" stroke-width="2" stroke-dasharray="4 5"/>
+          <path d="M100 40C90 60 70 70 55 75M100 70C88 85 68 92 52 95M100 100C86 112 66 118 50 120M100 130C88 140 70 146 56 148" stroke="#3A5A40" stroke-width="2" stroke-linecap="round"/>
+          <path d="M100 40C110 60 130 70 145 75M100 70C112 85 132 92 148 95M100 100C114 112 134 118 150 120M100 130C112 140 130 146 144 148" stroke="#3A5A40" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      `;
+    }
+  }
+}
+
 function getProducts() {
   const adminData = getAdminData();
   const overrides = adminData.productOverrides || {};
 
-  const mergedDefaults = PRODUCTS.map(p => {
+  const mergedDefaults = PRODUCTS.map((p, idx) => {
     const ov = overrides[p.id];
-    return ov ? { ...p, ...ov } : p;
+    const base = { ...p, order: p.order || (idx + 1) };
+    return ov ? { ...base, ...ov } : base;
   });
 
-  const customProds = (adminData.customProducts || []).map(p => {
+  const customProds = (adminData.customProducts || []).map((p, idx) => {
     const ov = overrides[p.id];
-    return ov ? { ...p, ...ov } : p;
+    const base = { ...p, order: p.order || (mergedDefaults.length + idx + 1) };
+    return ov ? { ...base, ...ov } : base;
   });
 
-  return [...mergedDefaults, ...customProds].filter(p => !p.deleted);
+  const all = [...mergedDefaults, ...customProds].filter(p => !p.deleted);
+
+  return all.sort((a, b) => {
+    const ordA = (a.order !== undefined && a.order !== null && a.order !== '') ? Number(a.order) : 999;
+    const ordB = (b.order !== undefined && b.order !== null && b.order !== '') ? Number(b.order) : 999;
+    return ordA - ordB;
+  });
 }
 
 function getWhatsAppNumber() {
@@ -690,11 +764,11 @@ function renderAdminTable() {
   updateAdminKPIs();
 
   if (prods.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#64748B">No se encontraron productos en el inventario.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:#64748B">No se encontraron productos en el inventario.</td></tr>`;
     return;
   }
 
-  tbody.innerHTML = prods.map(p => {
+  tbody.innerHTML = prods.map((p, i) => {
     const qty = parseStockQty(p);
     const im = p.images ? p.images[0] : null;
     const imgSrc = typeof im === 'string' ? im : (im && im.src ? im.src : null);
@@ -702,8 +776,17 @@ function renderAdminTable() {
       ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">` 
       : leafSVG(im ? im.accent : '#3A5A40');
     
+    const pos = p.order || (i + 1);
+
     return `
       <tr data-id="${p.id}">
+        <td style="text-align:center">
+          <div class="tbl-order-box">
+            <button type="button" class="btn-order-move" data-act="move-up" title="Mover arriba en catálogo">▲</button>
+            <span class="order-num-pill">${pos}</span>
+            <button type="button" class="btn-order-move" data-act="move-down" title="Mover abajo en catálogo">▼</button>
+          </div>
+        </td>
         <td>
           <div class="tbl-prod-info">
             <div class="tbl-prod-thumb" style="background:${(im && im.bg) || '#EFF5E1'}">${thumbContent}</div>
@@ -746,6 +829,10 @@ function renderAdminTable() {
     row.querySelector('[data-act="minus"]')?.addEventListener('click', () => changeProductStock(id, -1));
     row.querySelector('[data-act="plus"]')?.addEventListener('click', () => changeProductStock(id, 1));
 
+    // Order buttons
+    row.querySelector('[data-act="move-up"]')?.addEventListener('click', () => moveProductOrder(id, -1));
+    row.querySelector('[data-act="move-down"]')?.addEventListener('click', () => moveProductOrder(id, 1));
+
     // Edit button
     row.querySelector('.btn-edit-item')?.addEventListener('click', () => openProdEditModal(id));
 
@@ -759,6 +846,30 @@ function renderAdminTable() {
       }
     });
   });
+}
+
+function moveProductOrder(id, direction) {
+  const prods = getProducts();
+  const index = prods.findIndex(pp => pp.id === id);
+  if (index === -1) return;
+
+  const targetIndex = index + direction;
+  if (targetIndex < 0 || targetIndex >= prods.length) return;
+
+  const currentProd = prods[index];
+  const targetProd = prods[targetIndex];
+
+  const currentOrder = currentProd.order || (index + 1);
+  const targetOrder = targetProd.order || (targetIndex + 1);
+
+  const newCurrentOrder = targetOrder;
+  const newTargetOrder = currentOrder === targetOrder ? (direction > 0 ? currentOrder - 1 : currentOrder + 1) : currentOrder;
+
+  updateProductOverride(currentProd.id, { order: newCurrentOrder });
+  updateProductOverride(targetProd.id, { order: newTargetOrder });
+
+  renderAdminTable();
+  renderGrid();
 }
 
 function changeProductStock(id, delta) {
@@ -795,10 +906,75 @@ function renderAdminSettings() {
   if (waInput) waInput.value = getWhatsAppNumber();
 }
 
+let currentHeroPhoto = null;
+
+function renderAdminHero() {
+  const data = getHeroData();
+  const eyebrowEl = document.getElementById('adminHeroEyebrow');
+  const titleEl = document.getElementById('adminHeroTitle');
+  const descEl = document.getElementById('adminHeroDesc');
+  const plantNameEl = document.getElementById('adminHeroPlantName');
+  const plantPriceEl = document.getElementById('adminHeroPlantPrice');
+  const plantStatusEl = document.getElementById('adminHeroPlantStatus');
+  const urlEl = document.getElementById('heroPhotoUrlInput');
+  const prevEl = document.getElementById('heroPhotoPreviewBox');
+
+  if (eyebrowEl) eyebrowEl.value = data.eyebrow;
+  if (titleEl) titleEl.value = data.title;
+  if (descEl) descEl.value = data.desc;
+  if (plantNameEl) plantNameEl.value = data.plantName;
+  if (plantPriceEl) plantPriceEl.value = data.plantPrice;
+  if (plantStatusEl) plantStatusEl.value = data.plantStatus;
+
+  currentHeroPhoto = data.photoSrc || null;
+  if (urlEl) urlEl.value = (data.photoSrc && !data.photoSrc.startsWith('data:')) ? data.photoSrc : '';
+  if (prevEl) {
+    if (data.photoSrc) {
+      prevEl.innerHTML = `<img src="${data.photoSrc}" style="width:100%;height:100%;object-fit:cover;">`;
+    } else {
+      prevEl.innerHTML = `<span class="photo-placeholder-icon">📷</span>`;
+    }
+  }
+}
+
 // Submodal Formulario y Carga de Fotos
 let currentPhotoSources = [null, null, null];
 
 function setupPhotoInputListeners() {
+  // Hero photo inputs
+  const heroFileEl = document.getElementById('heroPhotoFileInput');
+  const heroUrlEl = document.getElementById('heroPhotoUrlInput');
+  const heroPrevEl = document.getElementById('heroPhotoPreviewBox');
+
+  if (heroFileEl) {
+    heroFileEl.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          currentHeroPhoto = evt.target.result;
+          if (heroUrlEl) heroUrlEl.value = '';
+          if (heroPrevEl) heroPrevEl.innerHTML = `<img src="${evt.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  if (heroUrlEl) {
+    heroUrlEl.addEventListener('input', () => {
+      const val = heroUrlEl.value.trim();
+      if (val) {
+        currentHeroPhoto = val;
+        if (heroPrevEl) heroPrevEl.innerHTML = `<img src="${val}" style="width:100%;height:100%;object-fit:cover;">`;
+      } else {
+        currentHeroPhoto = null;
+        if (heroPrevEl) heroPrevEl.innerHTML = `<span class="photo-placeholder-icon">📷</span>`;
+      }
+    });
+  }
+
+  // Product photo inputs
   [1, 2, 3].forEach(num => {
     const fileEl = document.getElementById(`fileInput${num}`);
     const urlEl = document.getElementById(`urlInput${num}`);
@@ -858,6 +1034,7 @@ function openProdEditModal(id = null) {
     const qty = parseStockQty(p);
     document.getElementById('editProdStockQty').value = qty;
     document.getElementById('editProdStockText').value = p.stock;
+    document.getElementById('editProdOrder').value = p.order || 1;
     document.getElementById('editProdDesc').value = p.description || '';
 
     // Cargar fotos existentes
@@ -880,6 +1057,7 @@ function openProdEditModal(id = null) {
     title.textContent = 'Añadir Nuevo Producto';
     form.reset();
     document.getElementById('editProdId').value = '';
+    document.getElementById('editProdOrder').value = getProducts().length + 1;
     [1, 2, 3].forEach((num) => {
       const urlEl = document.getElementById(`urlInput${num}`);
       const prevEl = document.getElementById(`prevBox${num}`);
@@ -930,6 +1108,7 @@ function initAdminEvents() {
   function openAdminPanel() {
     closeLogin();
     renderAdminTable();
+    renderAdminHero();
     renderAdminSettings();
     panelOverlay?.classList.add('show');
     panelModal?.classList.add('open');
@@ -1027,6 +1206,8 @@ function initAdminEvents() {
     const oldPrice = oldVal ? Number(oldVal) : null;
     const stockQty = Number(document.getElementById('editProdStockQty').value);
     const stockText = document.getElementById('editProdStockText').value.trim();
+    const orderVal = document.getElementById('editProdOrder').value;
+    const order = orderVal ? Number(orderVal) : 999;
     const description = document.getElementById('editProdDesc').value.trim();
 
     const finalImages = [1, 2, 3].map((num, i) => {
@@ -1038,9 +1219,9 @@ function initAdminEvents() {
 
     if (editId) {
       updateProductOverride(Number(editId), {
-        name, latin, cat, rarity, price, old: oldPrice, stockQty, stock: stockText, description, images: finalImages
+        name, latin, cat, rarity, price, old: oldPrice, stockQty, stock: stockText, order, description, images: finalImages
       });
-      alert('¡Producto actualizado exitosamente con sus fotografías!');
+      alert('¡Producto actualizado exitosamente con su orden y fotografías!');
     } else {
       const adminData = getAdminData();
       const newProduct = {
@@ -1054,19 +1235,45 @@ function initAdminEvents() {
         panel: 'sage',
         stockQty,
         stock: stockText,
+        order,
         description,
         images: finalImages
       };
       adminData.customProducts = adminData.customProducts || [];
       adminData.customProducts.push(newProduct);
       saveAdminData(adminData);
-      alert('¡Planta añadida exitosamente al catálogo con sus fotografías!');
+      alert('¡Planta añadida exitosamente al catálogo con su orden y fotografías!');
     }
 
     closeProdEditModal();
     renderAdminTable();
     renderGrid();
     renderChips();
+  });
+
+  // Guardado de la Portada (Hero)
+  document.getElementById('adminHeroForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const eyebrow = document.getElementById('adminHeroEyebrow').value.trim();
+    const title = document.getElementById('adminHeroTitle').value.trim();
+    const desc = document.getElementById('adminHeroDesc').value.trim();
+    const plantName = document.getElementById('adminHeroPlantName').value.trim();
+    const plantPrice = document.getElementById('adminHeroPlantPrice').value.trim();
+    const plantStatus = document.getElementById('adminHeroPlantStatus').value.trim();
+    const photoSrc = currentHeroPhoto || document.getElementById('heroPhotoUrlInput')?.value.trim() || null;
+
+    saveHeroData({
+      eyebrow,
+      title,
+      desc,
+      plantName,
+      plantPrice,
+      plantStatus,
+      photoSrc
+    });
+
+    renderHero();
+    alert('¡Portada principal (Hero) actualizada correctamente!');
   });
 
   // Ajustes: WhatsApp
@@ -1102,6 +1309,7 @@ function initAdminEvents() {
 
 /* =============== INICIALIZACIÓN GENERAL =============== */
 document.addEventListener('DOMContentLoaded', () => {
+  renderHero();
   renderChips();
   renderGrid();
   initMarquee();

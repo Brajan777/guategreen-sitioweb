@@ -37,7 +37,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,450;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,450;1,9..144,600&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=15.0">
+<link rel="stylesheet" href="styles.css?v=16.0">
 
 <!-- Datos Estructurados Google Schema.org (SEO Local & E-commerce) -->
 <script type="application/ld+json">
@@ -150,6 +150,7 @@
     <div class="admin-header-actions">
       <div class="admin-tab-pills">
         <button class="admin-pill-btn active" data-tab="tabInventario">📦 Inventario & Precios</button>
+        <button class="admin-pill-btn" data-tab="tabHero">🖼️ Portada (Hero)</button>
         <button class="admin-pill-btn" data-tab="tabConfiguracion">⚙️ Configuración</button>
       </div>
       <button class="admin-close-circle" id="adminPanelClose" aria-label="Cerrar panel">✕</button>
@@ -216,6 +217,7 @@
         <table class="admin-table">
           <thead>
             <tr>
+              <th style="width:3.5rem;text-align:center">ORDEN</th>
               <th>PRODUCTO</th>
               <th>CATEGORÍA</th>
               <th>PRECIO</th>
@@ -231,7 +233,65 @@
       </div>
     </div>
 
-    <!-- PESTAÑA 2: CONFIGURACIÓN -->
+    <!-- PESTAÑA 2: PORTADA / HERO -->
+    <div class="admin-tab-page" id="tabHero">
+      <div class="admin-settings-card">
+        <h3 class="serif" style="margin-top:0">Personalizar Portada Principal (Hero)</h3>
+        <p style="font-size:.88rem;color:var(--ink-70);margin-bottom:1.4rem">
+          Cambia la fotografía destacada, nombre de la especie, precios y textos principales que ven los clientes al entrar a tu sitio web.
+        </p>
+
+        <form id="adminHeroForm">
+          <div class="admin-form-grid">
+            <div>
+              <label class="mono">Cintillo / Eyebrow (Texto superior)</label>
+              <input type="text" id="adminHeroEyebrow" class="admin-input" placeholder="Ej. Especies raras, variedad de plantas exóticas.">
+            </div>
+            <div>
+              <label class="mono">Título Principal de la Portada</label>
+              <input type="text" id="adminHeroTitle" class="admin-input" placeholder="Ej. Plantas Exóticas y de Colección en Guatemala" required>
+            </div>
+            <div style="grid-column:1 / -1">
+              <label class="mono">Descripción / Mensaje de Bienvenida</label>
+              <textarea id="adminHeroDesc" class="admin-input" rows="2" placeholder="Descripción principal..." required></textarea>
+            </div>
+            <div>
+              <label class="mono">Nombre de la Especie Destacada</label>
+              <input type="text" id="adminHeroPlantName" class="admin-input" placeholder="Ej. Monstera Thai Constellation" required>
+            </div>
+            <div>
+              <label class="mono">Precio de la Especie Destacada</label>
+              <input type="text" id="adminHeroPlantPrice" class="admin-input" placeholder="Ej. Q1,450.00" required>
+            </div>
+            <div>
+              <label class="mono">Etiqueta de Disponibilidad</label>
+              <input type="text" id="adminHeroPlantStatus" class="admin-input" placeholder="Ej. DISPONIBLE HOY o EDICIÓN LIMITADA" required>
+            </div>
+          </div>
+
+          <!-- Carga de Foto del Hero -->
+          <div style="margin-top:1.4rem;padding-top:1.2rem;border-top:1.5px solid #E2E8F0;">
+            <label class="mono" style="font-weight:700;color:var(--sage-700);display:block;margin-bottom:.4rem">
+              📸 Fotografía Principal de la Portada (Hero)
+            </label>
+            <div style="display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap">
+              <div class="photo-preview-box" id="heroPhotoPreviewBox" style="width:8.5rem;height:8.5rem;flex-shrink:0;">
+                <span class="photo-placeholder-icon">📷</span>
+              </div>
+              <div style="flex:1;min-width:14rem">
+                <input type="file" id="heroPhotoFileInput" accept="image/*" class="photo-file-input">
+                <input type="text" id="heroPhotoUrlInput" class="admin-input" placeholder="O pega ruta / URL de imagen para la portada..." style="margin-top:.6rem">
+                <p style="font-size:.75rem;color:#64748B;margin:.4rem 0 0;">Se mostrará como la foto gigante en la portada de tu web.</p>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-sm" style="margin-top:1.4rem">Guardar Cambios de Portada →</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- PESTAÑA 3: CONFIGURACIÓN -->
     <div class="admin-tab-page" id="tabConfiguracion">
       <div class="admin-settings-card">
         <h3 class="serif" style="margin-top:0">Configuración de WhatsApp de la Tienda</h3>
@@ -307,6 +367,10 @@
         <label class="mono">Texto de Stock / Leyenda</label>
         <input type="text" id="editProdStockText" class="admin-input" placeholder="Ej. 15 disponibles o Última unidad" required>
       </div>
+      <div>
+        <label class="mono">Posición en Catálogo (1 = Primera)</label>
+        <input type="number" id="editProdOrder" class="admin-input" min="1" placeholder="Ej. 1, 2, 3...">
+      </div>
     </div>
     <div style="margin-top:1rem">
       <label class="mono">Descripción botánica</label>
@@ -371,16 +435,16 @@
 <!-- ================= HERO ================= -->
 <section class="hero wrap">
   <div class="hero-copy">
-    <p class="eyebrow">Especies raras, variedad de plantas exóticas.</p>
-    <h1>Plantas Exóticas y de Colección en Guatemala</h1>
-    <p>Priorizamos la calidad sobre la cantidad. Descubre nuestra selección exclusiva de Araceae (Monsteras, Philodendrons, Alocasias) con origen certificado para verdaderos coleccionistas.</p>
+    <p class="eyebrow" id="heroEyebrow">Especies raras, variedad de plantas exóticas.</p>
+    <h1 id="heroTitle">Plantas Exóticas y de Colección en Guatemala</h1>
+    <p id="heroDesc">Priorizamos la calidad sobre la cantidad. Descubre nuestra selección exclusiva de Araceae (Monsteras, Philodendrons, Alocasias) con origen certificado para verdaderos coleccionistas.</p>
     <div class="hero-cta">
       <a href="#catalogo" class="btn">Ver catálogo completo</a>
-      <a href="https://wa.me/50252554758" target="_blank" class="btn btn-outline">Hablar con un coleccionista</a>
+      <a href="https://wa.me/50252554758" target="_blank" class="btn btn-outline" id="heroWaBtn">Hablar con un coleccionista</a>
     </div>
   </div>
   <div class="hero-visual">
-    <div class="hero-panel" role="img" aria-label="Monstera Thai Constellation - Planta exótica disponible en Guatemala">
+    <div class="hero-panel" id="heroVisualPanel" role="img" aria-label="Planta exótica destacada en la portada">
       <svg viewBox="0 0 200 200" fill="none">
         <path d="M100 190C100 190 40 160 40 100C40 55 70 20 100 15C130 20 160 55 160 100C160 160 100 190 100 190Z" fill="#90A955" stroke="#241D16" stroke-width="3"/>
         <path d="M100 15V190" stroke="#241D16" stroke-width="2" stroke-dasharray="4 5"/>
@@ -388,10 +452,10 @@
         <path d="M100 40C110 60 130 70 145 75M100 70C112 85 132 92 148 95M100 100C114 112 134 118 150 120M100 130C112 140 130 146 144 148" stroke="#3A5A40" stroke-width="2" stroke-linecap="round"/>
       </svg>
     </div>
-    <div class="specimen-tag">
-      <span class="mono"><span class="dot-live"></span>DISPONIBLE HOY</span>
-      <p class="name">Monstera Thai Constellation</p>
-      <span class="mono">Q1,450.00</span>
+    <div class="specimen-tag" id="heroSpecimenTag">
+      <span class="mono"><span class="dot-live"></span><span id="heroTagStatus">DISPONIBLE HOY</span></span>
+      <p class="name" id="heroPlantName">Monstera Thai Constellation</p>
+      <span class="mono" id="heroPlantPrice">Q1,450.00</span>
     </div>
   </div>
 </section>
@@ -562,6 +626,6 @@
   </svg>
 </a>
 
-<script src="app.js?v=15.0"></script>
+<script src="app.js?v=16.0"></script>
 </body>
 </html>
