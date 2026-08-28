@@ -37,7 +37,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,450;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,450;1,9..144,600&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=10.0">
+<link rel="stylesheet" href="styles.css?v=11.0">
 
 <!-- Datos Estructurados Google Schema.org (SEO Local & E-commerce) -->
 <script type="application/ld+json">
@@ -312,7 +312,59 @@
       <label class="mono">Descripción botánica</label>
       <textarea id="editProdDesc" class="admin-input" rows="3" placeholder="Descripción detallada de la planta..." required></textarea>
     </div>
-    <button type="submit" class="btn btn-block" style="margin-top:1.2rem">Guardar Planta →</button>
+
+    <!-- SECCIÓN DE CARGA DE FOTOS Y UBICACIÓN -->
+    <div style="margin-top:1.4rem;padding-top:1.2rem;border-top:1.5px solid #E2E8F0;">
+      <label class="mono" style="font-size:.85rem;font-weight:700;color:var(--sage-700);display:block;margin-bottom:.3rem">
+        📸 Fotografías del Espécimen (Cargar o pegar URL)
+      </label>
+      <p style="font-size:.78rem;color:#64748B;margin:0 0 1rem;">
+        Selecciona archivos de tu computadora/teléfono o escribe la ruta de la imagen. La primera foto será la portada principal que se verá en el catálogo.
+      </p>
+
+      <div class="admin-photo-uploads-grid">
+        <!-- Foto 1 -->
+        <div class="admin-photo-card">
+          <div class="photo-card-header">
+            <span class="badge-photo-pos pos-primary">Foto 1 — Principal</span>
+            <span class="photo-pos-desc">Portada en Tarjeta de Catálogo</span>
+          </div>
+          <div class="photo-preview-box" id="prevBox1">
+            <span class="photo-placeholder-icon">📷</span>
+          </div>
+          <input type="file" id="fileInput1" accept="image/*" class="photo-file-input">
+          <input type="text" id="urlInput1" class="admin-input" placeholder="O pega ruta/URL de Foto 1..." style="font-size:.76rem;margin-top:.4rem">
+        </div>
+
+        <!-- Foto 2 -->
+        <div class="admin-photo-card">
+          <div class="photo-card-header">
+            <span class="badge-photo-pos">Foto 2 — Detalle</span>
+            <span class="photo-pos-desc">Ángulo 2 en Galería al hacer clic</span>
+          </div>
+          <div class="photo-preview-box" id="prevBox2">
+            <span class="photo-placeholder-icon">📷</span>
+          </div>
+          <input type="file" id="fileInput2" accept="image/*" class="photo-file-input">
+          <input type="text" id="urlInput2" class="admin-input" placeholder="O pega ruta/URL de Foto 2..." style="font-size:.76rem;margin-top:.4rem">
+        </div>
+
+        <!-- Foto 3 -->
+        <div class="admin-photo-card">
+          <div class="photo-card-header">
+            <span class="badge-photo-pos">Foto 3 — Detalle</span>
+            <span class="photo-pos-desc">Ángulo 3 en Galería al hacer clic</span>
+          </div>
+          <div class="photo-preview-box" id="prevBox3">
+            <span class="photo-placeholder-icon">📷</span>
+          </div>
+          <input type="file" id="fileInput3" accept="image/*" class="photo-file-input">
+          <input type="text" id="urlInput3" class="admin-input" placeholder="O pega ruta/URL de Foto 3..." style="font-size:.76rem;margin-top:.4rem">
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-block" style="margin-top:1.4rem">Guardar Planta →</button>
   </form>
 </div>
 
@@ -510,6 +562,6 @@
   </svg>
 </a>
 
-<script src="app.js?v=10.0"></script>
+<script src="app.js?v=11.0"></script>
 </body>
 </html>

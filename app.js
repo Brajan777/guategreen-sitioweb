@@ -242,7 +242,13 @@ function renderGrid() {
   grid.innerHTML = shown.map((p) => {
     const rc = rarityColor(p.rarity);
     const thumbs = p.images.map((im, i) => `<button class="thumb-dot ${i === 0 ? 'active' : ''}" data-idx="${i}" aria-label="Ver foto ${i + 1}"></button>`).join('');
-    const frames = p.images.map((im, i) => `<div class="frame" data-idx="${i}" style="background:${im.bg};opacity:${i === 0 ? 1 : 0};position:absolute;inset:0;">${leafSVG(im.accent)}</div>`).join('');
+    const frames = p.images.map((im, i) => {
+      const imgSrc = typeof im === 'string' ? im : (im && im.src ? im.src : null);
+      const content = imgSrc 
+        ? `<img src="${imgSrc}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">`
+        : leafSVG(im.accent || '#3A5A40');
+      return `<div class="frame" data-idx="${i}" style="background:${im.bg || 'var(--sage-100)'};opacity:${i === 0 ? 1 : 0};position:absolute;inset:0;overflow:hidden;">${content}</div>`;
+    }).join('');
     
     return `
     <div class="card" data-id="${p.id}">
@@ -325,13 +331,17 @@ function openProductModal(id) {
 
   const rc = rarityColor(p.rarity);
   
-  const thumbsHTML = p.images.map((im, i) => 
-    `<div class="modal-thumb ${i === 0 ? 'active' : ''}" data-idx="${i}" style="background:${im.bg}">${leafSVG(im.accent)}</div>`
-  ).join('');
+  const thumbsHTML = p.images.map((im, i) => {
+    const imgSrc = typeof im === 'string' ? im : (im && im.src ? im.src : null);
+    const content = imgSrc ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">` : leafSVG(im.accent || '#3A5A40');
+    return `<div class="modal-thumb ${i === 0 ? 'active' : ''}" data-idx="${i}" style="background:${im.bg || '#EFF5E1'};overflow:hidden;">${content}</div>`;
+  }).join('');
 
-  const framesHTML = p.images.map((im, i) => 
-    `<div class="modal-frame" data-idx="${i}" style="background:${im.bg};opacity:${i === 0 ? 1 : 0};position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">${leafSVG(im.accent)}</div>`
-  ).join('');
+  const framesHTML = p.images.map((im, i) => {
+    const imgSrc = typeof im === 'string' ? im : (im && im.src ? im.src : null);
+    const content = imgSrc ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">` : leafSVG(im.accent || '#3A5A40');
+    return `<div class="modal-frame" data-idx="${i}" style="background:${im.bg || '#EFF5E1'};opacity:${i === 0 ? 1 : 0};position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;">${content}</div>`;
+  }).join('');
 
   modalBody.innerHTML = `
     <div class="modal-grid">
@@ -686,13 +696,17 @@ function renderAdminTable() {
 
   tbody.innerHTML = prods.map(p => {
     const qty = parseStockQty(p);
-    const im = p.images ? p.images[0] : { bg: 'var(--sage-100)', accent: '#3A5A40' };
+    const im = p.images ? p.images[0] : null;
+    const imgSrc = typeof im === 'string' ? im : (im && im.src ? im.src : null);
+    const thumbContent = imgSrc 
+      ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">` 
+      : leafSVG(im ? im.accent : '#3A5A40');
     
     return `
       <tr data-id="${p.id}">
         <td>
           <div class="tbl-prod-info">
-            <div class="tbl-prod-thumb" style="background:${im.bg}">${leafSVG(im.accent)}</div>
+            <div class="tbl-prod-thumb" style="background:${(im && im.bg) || '#EFF5E1'}">${thumbContent}</div>
             <div>
               <div class="tbl-prod-title">${p.name}</div>
               <div class="tbl-prod-sub">${p.latin}</div>
@@ -781,7 +795,45 @@ function renderAdminSettings() {
   if (waInput) waInput.value = getWhatsAppNumber();
 }
 
-// Submodal Formulario
+// Submodal Formulario y Carga de Fotos
+let currentPhotoSources = [null, null, null];
+
+function setupPhotoInputListeners() {
+  [1, 2, 3].forEach(num => {
+    const fileEl = document.getElementById(`fileInput${num}`);
+    const urlEl = document.getElementById(`urlInput${num}`);
+    const prevEl = document.getElementById(`prevBox${num}`);
+
+    if (fileEl) {
+      fileEl.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (evt) => {
+            currentPhotoSources[num - 1] = evt.target.result;
+            if (urlEl) urlEl.value = '';
+            if (prevEl) prevEl.innerHTML = `<img src="${evt.target.result}">`;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    if (urlEl) {
+      urlEl.addEventListener('input', () => {
+        const val = urlEl.value.trim();
+        if (val) {
+          currentPhotoSources[num - 1] = val;
+          if (prevEl) prevEl.innerHTML = `<img src="${val}">`;
+        } else {
+          currentPhotoSources[num - 1] = null;
+          if (prevEl) prevEl.innerHTML = `<span class="photo-placeholder-icon">📷</span>`;
+        }
+      });
+    }
+  });
+}
+
 function openProdEditModal(id = null) {
   const modalOverlay = document.getElementById('adminProdModalOverlay');
   const modal = document.getElementById('adminProdModal');
@@ -789,6 +841,8 @@ function openProdEditModal(id = null) {
   const form = document.getElementById('adminProdForm');
 
   if (!modalOverlay || !modal) return;
+
+  currentPhotoSources = [null, null, null];
 
   if (id) {
     const p = getProducts().find(pp => pp.id === id);
@@ -805,10 +859,33 @@ function openProdEditModal(id = null) {
     document.getElementById('editProdStockQty').value = qty;
     document.getElementById('editProdStockText').value = p.stock;
     document.getElementById('editProdDesc').value = p.description || '';
+
+    // Cargar fotos existentes
+    [1, 2, 3].forEach((num, i) => {
+      const im = p.images ? p.images[i] : null;
+      const imgSrc = typeof im === 'string' ? im : (im && im.src ? im.src : null);
+      const urlEl = document.getElementById(`urlInput${num}`);
+      const prevEl = document.getElementById(`prevBox${num}`);
+
+      if (imgSrc) {
+        currentPhotoSources[i] = imgSrc;
+        if (urlEl) urlEl.value = imgSrc.startsWith('data:') ? '' : imgSrc;
+        if (prevEl) prevEl.innerHTML = `<img src="${imgSrc}">`;
+      } else {
+        if (urlEl) urlEl.value = '';
+        if (prevEl) prevEl.innerHTML = `<span class="photo-placeholder-icon">📷</span>`;
+      }
+    });
   } else {
     title.textContent = 'Añadir Nuevo Producto';
     form.reset();
     document.getElementById('editProdId').value = '';
+    [1, 2, 3].forEach((num) => {
+      const urlEl = document.getElementById(`urlInput${num}`);
+      const prevEl = document.getElementById(`prevBox${num}`);
+      if (urlEl) urlEl.value = '';
+      if (prevEl) prevEl.innerHTML = `<span class="photo-placeholder-icon">📷</span>`;
+    });
   }
 
   modalOverlay.classList.add('show');
@@ -821,6 +898,8 @@ function closeProdEditModal() {
 }
 
 function initAdminEvents() {
+  setupPhotoInputListeners();
+
   const loginOverlay = document.getElementById('adminLoginOverlay');
   const loginModal = document.getElementById('adminLoginModal');
   const loginClose = document.getElementById('adminLoginClose');
@@ -929,11 +1008,18 @@ function initAdminEvents() {
     const stockText = document.getElementById('editProdStockText').value.trim();
     const description = document.getElementById('editProdDesc').value.trim();
 
+    const finalImages = [1, 2, 3].map((num, i) => {
+      const src = currentPhotoSources[i] || document.getElementById(`urlInput${num}`)?.value.trim();
+      return src 
+        ? { src, bg: 'var(--sage-100)', accent: '#3A5A40' } 
+        : { bg: i === 0 ? 'var(--sage-100)' : (i === 1 ? 'var(--blush-100)' : 'var(--lilac-100)'), accent: '#3A5A40' };
+    });
+
     if (editId) {
       updateProductOverride(Number(editId), {
-        name, latin, cat, rarity, price, old: oldPrice, stockQty, stock: stockText, description
+        name, latin, cat, rarity, price, old: oldPrice, stockQty, stock: stockText, description, images: finalImages
       });
-      alert('¡Producto actualizado exitosamente!');
+      alert('¡Producto actualizado exitosamente con sus fotografías!');
     } else {
       const adminData = getAdminData();
       const newProduct = {
@@ -948,16 +1034,12 @@ function initAdminEvents() {
         stockQty,
         stock: stockText,
         description,
-        images: [
-          { bg: 'var(--sage-100)', accent: '#3A5A40' },
-          { bg: 'var(--blush-100)', accent: '#35521F' },
-          { bg: 'var(--lilac-100)', accent: '#4F772D' }
-        ]
+        images: finalImages
       };
       adminData.customProducts = adminData.customProducts || [];
       adminData.customProducts.push(newProduct);
       saveAdminData(adminData);
-      alert('¡Planta añadida exitosamente al catálogo!');
+      alert('¡Planta añadida exitosamente al catálogo con sus fotografías!');
     }
 
     closeProdEditModal();
