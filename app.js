@@ -1,8 +1,57 @@
-/* =============== CONFIGURACIÓN Y DATOS DE PRODUCTOS =============== */
-const WHATSAPP_NUMBER = '50252554758';
+/* =============== CONFIGURACIÓN Y SISTEMA DE ADMINISTRACIÓN =============== */
+const DEFAULT_WHATSAPP = '50252554758';
+const ADMIN_STORAGE_KEY = 'guategreen_admin_data_v1';
 
-/* Cada producto tiene un arreglo "images": son placeholders ilustrados (SVG + color de fondo).
-   Reemplaza "bg" por tu foto real usando <img> en renderMedia(), o agrega src:'https://tu-imagen.jpg' */
+const DEFAULT_ADMIN_DATA = {
+  password: 'plantitas123',
+  whatsappNumber: DEFAULT_WHATSAPP,
+  customProducts: [],
+  productOverrides: {}
+};
+
+function getAdminData() {
+  try {
+    const saved = localStorage.getItem(ADMIN_STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return { ...DEFAULT_ADMIN_DATA, ...parsed };
+    }
+  } catch (e) {
+    console.error('Error al leer admin data', e);
+  }
+  return DEFAULT_ADMIN_DATA;
+}
+
+function saveAdminData(data) {
+  try {
+    localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {
+    console.error('Error al guardar admin data', e);
+  }
+}
+
+function getProducts() {
+  const adminData = getAdminData();
+  const overrides = adminData.productOverrides || {};
+
+  const mergedDefaults = PRODUCTS.map(p => {
+    const ov = overrides[p.id];
+    return ov ? { ...p, ...ov } : p;
+  });
+
+  const customProds = (adminData.customProducts || []).map(p => {
+    const ov = overrides[p.id];
+    return ov ? { ...p, ...ov } : p;
+  });
+
+  return [...mergedDefaults, ...customProds].filter(p => !p.deleted);
+}
+
+function getWhatsAppNumber() {
+  const adminData = getAdminData();
+  return adminData.whatsappNumber || DEFAULT_WHATSAPP;
+}
+
 const PRODUCTS = [
   { 
     id: 1, 
@@ -187,7 +236,7 @@ function renderGrid() {
   const grid = document.getElementById('productGrid');
   if (!grid) return;
 
-  const filtered = PRODUCTS.filter(p => activeCat === 'Todas' || p.cat === activeCat);
+  const filtered = getProducts().filter(p => activeCat === 'Todas' || p.cat === activeCat);
   const shown = filtered.slice(0, visibleCount);
 
   grid.innerHTML = shown.map((p) => {
@@ -265,7 +314,7 @@ function renderGrid() {
 
 /* =============== MODAL DE DETALLE DE PRODUCTO =============== */
 function openProductModal(id) {
-  const p = PRODUCTS.find(pp => pp.id === id);
+  const p = getProducts().find(pp => pp.id === id);
   if (!p) return;
 
   const overlay = document.getElementById('modalOverlay');
@@ -394,7 +443,7 @@ function cartCount() {
 
 function cartTotal() { 
   return cart.reduce((s, i) => { 
-    const p = PRODUCTS.find(pp => pp.id === i.id); 
+    const p = getProducts().find(pp => pp.id === i.id); 
     return s + (p ? p.price : 0) * i.qty; 
   }, 0); 
 }
@@ -444,13 +493,13 @@ function renderCart(bump) {
       itemsEl.innerHTML = '<p class="cart-empty">Tu carrito está vacío.<br>Elegí un espécimen del catálogo.</p>';
     } else {
       itemsEl.innerHTML = cart.map(i => {
-        const p = PRODUCTS.find(pp => pp.id === i.id);
-        const im = p.images[0];
-        return `<div class="cart-item" data-id="${p.id}">
+        const p = getProducts().find(pp => pp.id === i.id);
+        const im = p ? p.images[0] : { bg: 'var(--sage-100)' };
+        return `<div class="cart-item" data-id="${p ? p.id : i.id}">
           <div class="swatch" style="background:${im.bg}"></div>
           <div class="cart-item-info">
-            <span class="name">${p.name}</span>
-            <span class="mono" style="font-size:.72rem;color:var(--ink-45)">${money(p.price)} c/u</span>
+            <span class="name">${p ? p.name : 'Espécimen'}</span>
+            <span class="mono" style="font-size:.72rem;color:var(--ink-45)">${money(p ? p.price : 0)} c/u</span>
             <div class="cart-item-row">
               <div class="qty-stepper">
                 <button data-act="minus" aria-label="Quitar uno">−</button>
@@ -478,16 +527,17 @@ function renderCart(bump) {
   }
 
   const waBtn = document.getElementById('cartCheckout');
+  const waNum = getWhatsAppNumber();
   if (waBtn) {
     if (cart.length) {
       const lines = cart.map(i => {
-        const p = PRODUCTS.find(pp => pp.id === i.id);
-        return `${i.qty}x ${p.name} (${money(p.price)})`;
+        const p = getProducts().find(pp => pp.id === i.id);
+        return `${i.qty}x ${p ? p.name : 'Espécimen'} (${money(p ? p.price : 0)})`;
       }).join('\n');
       const msg = `Hola, quiero apartar estos especímenes:\n${lines}\n\nTotal: ${money(cartTotal())}`;
-      waBtn.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+      waBtn.href = `https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`;
     } else {
-      waBtn.href = `https://wa.me/${WHATSAPP_NUMBER}`;
+      waBtn.href = `https://wa.me/${waNum}`;
     }
   }
 }
@@ -568,6 +618,258 @@ function initScrollReveal() {
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 }
 
+/* =============== ADMINISTRACIÓN DEL PANEL =============== */
+function renderAdminInventory() {
+  const list = document.getElementById('adminInventoryList');
+  if (!list) return;
+
+  const prods = getProducts();
+  if (prods.length === 0) {
+    list.innerHTML = '<p class="cart-empty">No hay productos disponibles en el catálogo.</p>';
+    return;
+  }
+
+  list.innerHTML = prods.map(p => `
+    <div class="admin-item-card" data-id="${p.id}">
+      <div class="admin-item-info">
+        <p class="title">${p.name} <span class="mono" style="font-size:.72rem;color:var(--sage-700)">(ID: ${p.id})</span></p>
+        <p class="mono" style="font-size:.72rem;color:var(--ink-70);margin:0">${p.latin} — Cat: ${p.cat}</p>
+      </div>
+      <div class="admin-item-controls">
+        <div class="admin-field-group">
+          <label>Precio (Q)</label>
+          <input type="number" class="admin-input admin-price-input" style="width:5.5rem" value="${p.price}" min="1">
+        </div>
+        <div class="admin-field-group">
+          <label>Oferta (Q)</label>
+          <input type="number" class="admin-input admin-old-input" style="width:5.5rem" value="${p.old || ''}" placeholder="Sin oferta">
+        </div>
+        <div class="admin-field-group">
+          <label>Stock / Estado</label>
+          <input type="text" class="admin-input admin-stock-input" style="width:8.5rem" value="${p.stock}">
+        </div>
+        <div class="admin-field-group" style="align-self:flex-end">
+          <button type="button" class="btn btn-xs admin-save-item-btn">Guardar</button>
+        </div>
+        <div class="admin-field-group" style="align-self:flex-end">
+          <button type="button" class="btn btn-xs btn-danger admin-delete-item-btn">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('.admin-item-card').forEach(card => {
+    const id = Number(card.dataset.id);
+
+    card.querySelector('.admin-save-item-btn')?.addEventListener('click', () => {
+      const newPrice = Number(card.querySelector('.admin-price-input').value);
+      const oldVal = card.querySelector('.admin-old-input').value;
+      const newOld = oldVal ? Number(oldVal) : null;
+      const newStock = card.querySelector('.admin-stock-input').value.trim();
+
+      updateProductOverride(id, { price: newPrice, old: newOld, stock: newStock });
+      alert('¡Espécimen actualizado correctamente!');
+      renderGrid();
+    });
+
+    card.querySelector('.admin-delete-item-btn')?.addEventListener('click', () => {
+      if (confirm('¿Estás seguro de eliminar esta planta del catálogo?')) {
+        deleteProduct(id);
+        renderAdminInventory();
+        renderGrid();
+        renderChips();
+      }
+    });
+  });
+}
+
+function updateProductOverride(id, fields) {
+  const adminData = getAdminData();
+  adminData.productOverrides = adminData.productOverrides || {};
+  adminData.productOverrides[id] = { ...(adminData.productOverrides[id] || {}), ...fields };
+  saveAdminData(adminData);
+}
+
+function deleteProduct(id) {
+  const adminData = getAdminData();
+  if (adminData.customProducts) {
+    adminData.customProducts = adminData.customProducts.filter(p => p.id !== id);
+  }
+  adminData.productOverrides = adminData.productOverrides || {};
+  adminData.productOverrides[id] = { deleted: true };
+  saveAdminData(adminData);
+}
+
+function renderAdminSettings() {
+  const waInput = document.getElementById('adminWAInput');
+  if (waInput) waInput.value = getWhatsAppNumber();
+}
+
+function initAdminEvents() {
+  const loginOverlay = document.getElementById('adminLoginOverlay');
+  const loginModal = document.getElementById('adminLoginModal');
+  const loginClose = document.getElementById('adminLoginClose');
+  const loginForm = document.getElementById('adminLoginForm');
+  const passwordInput = document.getElementById('adminPasswordInput');
+  const errorMsg = document.getElementById('adminLoginError');
+
+  const panelOverlay = document.getElementById('adminPanelOverlay');
+  const panelModal = document.getElementById('adminPanelModal');
+  const panelClose = document.getElementById('adminPanelClose');
+  const triggerBtn = document.getElementById('adminTriggerBtn');
+
+  function openLogin() {
+    if (sessionStorage.getItem('guategreen_admin_authed') === 'true') {
+      openAdminPanel();
+      return;
+    }
+    if (passwordInput) passwordInput.value = '';
+    if (errorMsg) errorMsg.style.display = 'none';
+    loginOverlay?.classList.add('show');
+    loginModal?.classList.add('open');
+    document.body.classList.add('modal-open');
+    setTimeout(() => passwordInput?.focus(), 200);
+  }
+
+  function closeLogin() {
+    loginOverlay?.classList.remove('show');
+    loginModal?.classList.remove('open');
+    document.body.classList.remove('modal-open');
+  }
+
+  function openAdminPanel() {
+    closeLogin();
+    renderAdminInventory();
+    renderAdminSettings();
+    panelOverlay?.classList.add('show');
+    panelModal?.classList.add('open');
+    document.body.classList.add('modal-open');
+  }
+
+  function closeAdminPanel() {
+    panelOverlay?.classList.remove('show');
+    panelModal?.classList.remove('open');
+    document.body.classList.remove('modal-open');
+  }
+
+  triggerBtn?.addEventListener('click', openLogin);
+  loginClose?.addEventListener('click', closeLogin);
+  loginOverlay?.addEventListener('click', closeLogin);
+
+  panelClose?.addEventListener('click', closeAdminPanel);
+  panelOverlay?.addEventListener('click', closeAdminPanel);
+
+  // Atajo de teclado Ctrl+Shift+A o Cmd+Shift+A
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+      e.preventDefault();
+      openLogin();
+    }
+  });
+
+  // Envío del formulario de Login
+  loginForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = getAdminData();
+    if (passwordInput?.value === data.password) {
+      sessionStorage.setItem('guategreen_admin_authed', 'true');
+      openAdminPanel();
+    } else {
+      if (errorMsg) errorMsg.style.display = 'block';
+    }
+  });
+
+  // Pestañas
+  const tabBtns = document.querySelectorAll('.admin-tab-btn');
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.admin-tab-content').forEach(tc => tc.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab)?.classList.add('active');
+    });
+  });
+
+  // Formulario Añadir Producto
+  const addForm = document.getElementById('adminAddProductForm');
+  addForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('newProdName').value.trim();
+    const latin = document.getElementById('newProdLatin').value.trim();
+    const cat = document.getElementById('newProdCat').value;
+    const rarity = document.getElementById('newProdRarity').value;
+    const price = Number(document.getElementById('newProdPrice').value);
+    const stock = document.getElementById('newProdStock').value.trim();
+    const description = document.getElementById('newProdDesc').value.trim();
+
+    if (!name || !price) return;
+
+    const adminData = getAdminData();
+    const newId = Date.now();
+
+    const newProduct = {
+      id: newId,
+      cat,
+      name,
+      latin,
+      price,
+      old: null,
+      rarity,
+      panel: 'sage',
+      stock,
+      description,
+      images: [
+        { bg: 'var(--sage-100)', accent: '#3A5A40' },
+        { bg: 'var(--blush-100)', accent: '#35521F' },
+        { bg: 'var(--lilac-100)', accent: '#4F772D' }
+      ]
+    };
+
+    adminData.customProducts = adminData.customProducts || [];
+    adminData.customProducts.push(newProduct);
+    saveAdminData(adminData);
+
+    addForm.reset();
+    alert('¡Planta agregada exitosamente al catálogo!');
+    
+    renderGrid();
+    renderChips();
+    renderAdminInventory();
+
+    document.querySelector('[data-tab="tabInventario"]')?.click();
+  });
+
+  // Ajustes: WhatsApp
+  document.getElementById('adminWASaveBtn')?.addEventListener('click', () => {
+    const val = document.getElementById('adminWAInput').value.trim();
+    if (!val) return;
+    const adminData = getAdminData();
+    adminData.whatsappNumber = val;
+    saveAdminData(adminData);
+    alert('Número de WhatsApp actualizado correctamente.');
+    renderCart(false);
+  });
+
+  document.getElementById('adminWATestBtn')?.addEventListener('click', () => {
+    const val = document.getElementById('adminWAInput').value.trim() || getWhatsAppNumber();
+    window.open(`https://wa.me/${val}?text=${encodeURIComponent('Prueba de conexión con Guategreen')}`, '_blank');
+  });
+
+  // Ajustes: Cambiar clave
+  document.getElementById('adminPassSaveBtn')?.addEventListener('click', () => {
+    const val = document.getElementById('adminNewPassInput').value.trim();
+    if (!val || val.length < 4) {
+      alert('La nueva clave debe tener al menos 4 caracteres.');
+      return;
+    }
+    const adminData = getAdminData();
+    adminData.password = val;
+    saveAdminData(adminData);
+    document.getElementById('adminNewPassInput').value = '';
+    alert('¡Contraseña del panel actualizada correctamente!');
+  });
+}
+
 /* =============== INICIALIZACIÓN GENERAL =============== */
 document.addEventListener('DOMContentLoaded', () => {
   renderChips();
@@ -577,6 +879,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMobileNav();
   initCartEvents();
   initModalEvents();
+  initAdminEvents();
   renderCart(false);
   initScrollSpy();
   initScrollReveal();

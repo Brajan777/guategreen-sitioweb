@@ -211,9 +211,7 @@ header.shrink .brand-icon{
   gap:1rem;
 }
 
-.nav-close{
-  display:none !important;
-}
+
 
 .burger{
   display:none;
@@ -1460,4 +1458,217 @@ body.modal-open .wa-fab{
 a:focus-visible,button:focus-visible{
   outline:2px solid var(--sage-700);
   outline-offset:2px;
+}
+
+/* ---------- ADMIN PANEL STYLES ---------- */
+.admin-lock-btn{
+  background:none;
+  border:none;
+  font-size:.82rem;
+  opacity:.4;
+  cursor:pointer;
+  padding:0 .2rem;
+  transition:opacity .2s var(--ease),transform .2s var(--ease);
+}
+.admin-lock-btn:hover{
+  opacity:1;
+  transform:scale(1.15);
+}
+
+.admin-login-overlay,.admin-panel-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(36,29,22,.7);
+  backdrop-filter:blur(4px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .35s var(--ease);
+  z-index:105;
+}
+.admin-login-overlay.show,.admin-panel-overlay.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.admin-login-card{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-46%) scale(.95);
+  width:min(26rem,92vw);
+  background:var(--paper);
+  border:var(--line);
+  border-radius:var(--radius-card);
+  box-shadow:var(--shadow-hard-lg);
+  z-index:110;
+  opacity:0;
+  pointer-events:none;
+  transition:transform .35s var(--ease),opacity .35s var(--ease);
+  padding:1.8rem;
+}
+.admin-login-card.open{
+  opacity:1;
+  pointer-events:auto;
+  transform:translate(-50%,-50%) scale(1);
+}
+
+.admin-panel-card{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-46%) scale(.95);
+  width:min(58rem,94vw);
+  height:88vh;
+  max-height:88vh;
+  background:var(--paper);
+  border:var(--line);
+  border-radius:var(--radius-card);
+  box-shadow:var(--shadow-hard-lg);
+  z-index:110;
+  opacity:0;
+  pointer-events:none;
+  transition:transform .35s var(--ease),opacity .35s var(--ease);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.admin-panel-card.open{
+  opacity:1;
+  pointer-events:auto;
+  transform:translate(-50%,-50%) scale(1);
+}
+
+.admin-panel-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:1.2rem 1.6rem;
+  border-bottom:var(--line);
+  background:var(--cream);
+}
+
+.admin-tabs{
+  display:flex;
+  border-bottom:var(--line);
+  background:var(--paper);
+  overflow-x:auto;
+}
+.admin-tab-btn{
+  padding:.85rem 1.4rem;
+  font-family:'Space Mono',monospace;
+  font-size:.8rem;
+  font-weight:700;
+  border:none;
+  background:none;
+  border-right:var(--line-soft);
+  cursor:pointer;
+  transition:background .2s var(--ease),color .2s var(--ease);
+  white-space:nowrap;
+}
+.admin-tab-btn.active{
+  background:var(--sage-100);
+  color:var(--sage-700);
+  border-bottom:3px solid var(--sage-500);
+}
+
+.admin-panel-body{
+  padding:1.4rem 1.6rem;
+  overflow-y:auto;
+  flex:1;
+}
+
+.admin-tab-content{
+  display:none;
+}
+.admin-tab-content.active{
+  display:block;
+}
+
+.admin-input{
+  width:100%;
+  padding:.65rem .85rem;
+  font-family:'Archivo',sans-serif;
+  font-size:.9rem;
+  border:var(--line);
+  border-radius:var(--radius-card);
+  background:var(--cream);
+  color:var(--ink);
+  outline:none;
+  transition:border-color .2s var(--ease);
+}
+.admin-input:focus{
+  border-color:var(--sage-500);
+}
+
+.admin-error{
+  font-family:'Space Mono',monospace;
+  font-size:.76rem;
+  color:#d90429;
+}
+
+.admin-form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:1rem;
+}
+.admin-form-grid label{
+  font-size:.75rem;
+  display:block;
+  margin-bottom:.35rem;
+  color:var(--sage-700);
+}
+
+.admin-item-card{
+  border:var(--line);
+  border-radius:var(--radius-card);
+  padding:1.1rem 1.3rem;
+  margin-bottom:1rem;
+  background:var(--paper);
+  box-shadow:var(--shadow-hard-sm);
+  display:flex;
+  flex-wrap:wrap;
+  gap:1rem;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.admin-item-info{
+  flex:1 1 14rem;
+}
+.admin-item-info .title{
+  font-family:'Fraunces',serif;
+  font-weight:600;
+  font-size:1.1rem;
+  margin:0 0 .2rem;
+}
+
+.admin-item-controls{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.8rem;
+  align-items:center;
+}
+
+.admin-field-group{
+  display:flex;
+  flex-direction:column;
+  gap:.25rem;
+}
+.admin-field-group label{
+  font-family:'Space Mono',monospace;
+  font-size:.68rem;
+  color:var(--ink-70);
+}
+
+.btn-xs{
+  padding:.35rem .7rem;
+  font-size:.75rem;
+}
+.btn-danger{
+  background:#d90429;
+  color:#fff;
+  border-color:#9b001c;
+}
+.btn-danger:hover{
+  background:#b8001f;
 }
