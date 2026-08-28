@@ -618,69 +618,145 @@ function initScrollReveal() {
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 }
 
-/* =============== ADMINISTRACIÓN DEL PANEL =============== */
-function renderAdminInventory() {
-  const list = document.getElementById('adminInventoryList');
-  if (!list) return;
+/* =============== ADMINISTRACIÓN DEL PANEL (REDISEÑADO) =============== */
 
+function parseStockQty(p) {
+  if (p.stockQty !== undefined && p.stockQty !== null) return Number(p.stockQty);
+  const match = String(p.stock).match(/\d+/);
+  if (match) return parseInt(match[0], 10);
+  if (String(p.stock).toLowerCase().includes('última') || String(p.stock).toLowerCase().includes('ultima')) return 1;
+  if (String(p.stock).toLowerCase().includes('agotado')) return 0;
+  return 5;
+}
+
+function updateAdminKPIs() {
   const prods = getProducts();
+  const totalProds = prods.length;
+  
+  let totalStock = 0;
+  let alertCount = 0;
+  let totalValue = 0;
+
+  prods.forEach(p => {
+    const qty = parseStockQty(p);
+    totalStock += qty;
+    if (qty <= 2) alertCount++;
+    totalValue += (p.price * qty);
+  });
+
+  const kpiTotalEl = document.getElementById('kpiTotalProds');
+  const kpiStockEl = document.getElementById('kpiTotalStock');
+  const kpiAlertsEl = document.getElementById('kpiStockAlerts');
+  const kpiAlertsSub = document.getElementById('kpiStockAlertsSub');
+  const kpiValueEl = document.getElementById('kpiTotalValue');
+
+  if (kpiTotalEl) kpiTotalEl.textContent = totalProds;
+  if (kpiStockEl) kpiStockEl.textContent = totalStock;
+  if (kpiAlertsEl) kpiAlertsEl.textContent = totalStock;
+  if (kpiAlertsSub) kpiAlertsSub.textContent = `${prods.filter(p => parseStockQty(p) === 0).length} agotados / ${prods.filter(p => parseStockQty(p) > 0 && parseStockQty(p) <= 2).length} bajos`;
+  if (kpiValueEl) kpiValueEl.textContent = money(totalValue);
+}
+
+function renderAdminTable() {
+  const tbody = document.getElementById('adminTableBody');
+  if (!tbody) return;
+
+  const searchTerm = (document.getElementById('adminSearchInput')?.value || '').toLowerCase().trim();
+  const selectedCat = document.getElementById('adminCatSelect')?.value || 'Todas';
+
+  let prods = getProducts();
+
+  if (selectedCat !== 'Todas') {
+    prods = prods.filter(p => p.cat === selectedCat);
+  }
+
+  if (searchTerm) {
+    prods = prods.filter(p => 
+      p.name.toLowerCase().includes(searchTerm) || 
+      p.latin.toLowerCase().includes(searchTerm)
+    );
+  }
+
+  updateAdminKPIs();
+
   if (prods.length === 0) {
-    list.innerHTML = '<p class="cart-empty">No hay productos disponibles en el catálogo.</p>';
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#64748B">No se encontraron productos en el inventario.</td></tr>`;
     return;
   }
 
-  list.innerHTML = prods.map(p => `
-    <div class="admin-item-card" data-id="${p.id}">
-      <div class="admin-item-info">
-        <p class="title">${p.name} <span class="mono" style="font-size:.72rem;color:var(--sage-700)">(ID: ${p.id})</span></p>
-        <p class="mono" style="font-size:.72rem;color:var(--ink-70);margin:0">${p.latin} — Cat: ${p.cat}</p>
-      </div>
-      <div class="admin-item-controls">
-        <div class="admin-field-group">
-          <label>Precio (Q)</label>
-          <input type="number" class="admin-input admin-price-input" style="width:5.5rem" value="${p.price}" min="1">
-        </div>
-        <div class="admin-field-group">
-          <label>Oferta (Q)</label>
-          <input type="number" class="admin-input admin-old-input" style="width:5.5rem" value="${p.old || ''}" placeholder="Sin oferta">
-        </div>
-        <div class="admin-field-group">
-          <label>Stock / Estado</label>
-          <input type="text" class="admin-input admin-stock-input" style="width:8.5rem" value="${p.stock}">
-        </div>
-        <div class="admin-field-group" style="align-self:flex-end">
-          <button type="button" class="btn btn-xs admin-save-item-btn">Guardar</button>
-        </div>
-        <div class="admin-field-group" style="align-self:flex-end">
-          <button type="button" class="btn btn-xs btn-danger admin-delete-item-btn">Eliminar</button>
-        </div>
-      </div>
-    </div>
-  `).join('');
+  tbody.innerHTML = prods.map(p => {
+    const qty = parseStockQty(p);
+    const im = p.images ? p.images[0] : { bg: 'var(--sage-100)', accent: '#3A5A40' };
+    
+    return `
+      <tr data-id="${p.id}">
+        <td>
+          <div class="tbl-prod-info">
+            <div class="tbl-prod-thumb" style="background:${im.bg}">${leafSVG(im.accent)}</div>
+            <div>
+              <div class="tbl-prod-title">${p.name}</div>
+              <div class="tbl-prod-sub">${p.latin}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="admin-cat-pill">${p.cat}</span></td>
+        <td>
+          <span class="tbl-price-main">${money(p.price)}</span>
+          ${p.old ? `<span class="tbl-price-old">${money(p.old)}</span>` : ''}
+        </td>
+        <td style="text-align:center">
+          <div class="tbl-qty-stepper">
+            <button type="button" class="btn-qty-step" data-act="minus" aria-label="Disminuir stock">−</button>
+            <span style="font-weight:700;width:1.5rem;display:inline-block">${qty}</span>
+            <button type="button" class="btn-qty-step" data-act="plus" aria-label="Aumentar stock">+</button>
+          </div>
+        </td>
+        <td>
+          <span class="admin-status-pill ${qty > 0 ? 'status-in-stock' : 'status-out-stock'}">
+            ${qty > 0 ? `En Stock (${qty})` : 'Agotado (0)'}
+          </span>
+        </td>
+        <td style="text-align:right">
+          <button type="button" class="tbl-action-btn btn-edit-item" title="Editar producto">✏️</button>
+          <button type="button" class="tbl-action-btn btn-delete-item" title="Eliminar producto">🗑️</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
 
-  list.querySelectorAll('.admin-item-card').forEach(card => {
-    const id = Number(card.dataset.id);
+  // Row Action Listeners
+  tbody.querySelectorAll('tr').forEach(row => {
+    const id = Number(row.dataset.id);
 
-    card.querySelector('.admin-save-item-btn')?.addEventListener('click', () => {
-      const newPrice = Number(card.querySelector('.admin-price-input').value);
-      const oldVal = card.querySelector('.admin-old-input').value;
-      const newOld = oldVal ? Number(oldVal) : null;
-      const newStock = card.querySelector('.admin-stock-input').value.trim();
+    // Stepper buttons
+    row.querySelector('[data-act="minus"]')?.addEventListener('click', () => changeProductStock(id, -1));
+    row.querySelector('[data-act="plus"]')?.addEventListener('click', () => changeProductStock(id, 1));
 
-      updateProductOverride(id, { price: newPrice, old: newOld, stock: newStock });
-      alert('¡Espécimen actualizado correctamente!');
-      renderGrid();
-    });
+    // Edit button
+    row.querySelector('.btn-edit-item')?.addEventListener('click', () => openProdEditModal(id));
 
-    card.querySelector('.admin-delete-item-btn')?.addEventListener('click', () => {
+    // Delete button
+    row.querySelector('.btn-delete-item')?.addEventListener('click', () => {
       if (confirm('¿Estás seguro de eliminar esta planta del catálogo?')) {
         deleteProduct(id);
-        renderAdminInventory();
+        renderAdminTable();
         renderGrid();
         renderChips();
       }
     });
   });
+}
+
+function changeProductStock(id, delta) {
+  const p = getProducts().find(pp => pp.id === id);
+  if (!p) return;
+  const currentQty = parseStockQty(p);
+  const newQty = Math.max(0, currentQty + delta);
+  const newStockText = newQty === 0 ? 'Agotado' : (newQty === 1 ? 'Última unidad' : `${newQty} disponibles`);
+
+  updateProductOverride(id, { stockQty: newQty, stock: newStockText });
+  renderAdminTable();
+  renderGrid();
 }
 
 function updateProductOverride(id, fields) {
@@ -703,6 +779,45 @@ function deleteProduct(id) {
 function renderAdminSettings() {
   const waInput = document.getElementById('adminWAInput');
   if (waInput) waInput.value = getWhatsAppNumber();
+}
+
+// Submodal Formulario
+function openProdEditModal(id = null) {
+  const modalOverlay = document.getElementById('adminProdModalOverlay');
+  const modal = document.getElementById('adminProdModal');
+  const title = document.getElementById('adminProdModalTitle');
+  const form = document.getElementById('adminProdForm');
+
+  if (!modalOverlay || !modal) return;
+
+  if (id) {
+    const p = getProducts().find(pp => pp.id === id);
+    if (!p) return;
+    title.textContent = 'Editar Producto';
+    document.getElementById('editProdId').value = p.id;
+    document.getElementById('editProdName').value = p.name;
+    document.getElementById('editProdLatin').value = p.latin;
+    document.getElementById('editProdCat').value = p.cat;
+    document.getElementById('editProdRarity').value = p.rarity;
+    document.getElementById('editProdPrice').value = p.price;
+    document.getElementById('editProdOld').value = p.old || '';
+    const qty = parseStockQty(p);
+    document.getElementById('editProdStockQty').value = qty;
+    document.getElementById('editProdStockText').value = p.stock;
+    document.getElementById('editProdDesc').value = p.description || '';
+  } else {
+    title.textContent = 'Añadir Nuevo Producto';
+    form.reset();
+    document.getElementById('editProdId').value = '';
+  }
+
+  modalOverlay.classList.add('show');
+  modal.classList.add('open');
+}
+
+function closeProdEditModal() {
+  document.getElementById('adminProdModalOverlay')?.classList.remove('show');
+  document.getElementById('adminProdModal')?.classList.remove('open');
 }
 
 function initAdminEvents() {
@@ -739,7 +854,7 @@ function initAdminEvents() {
 
   function openAdminPanel() {
     closeLogin();
-    renderAdminInventory();
+    renderAdminTable();
     renderAdminSettings();
     panelOverlay?.classList.add('show');
     panelModal?.classList.add('open');
@@ -779,64 +894,76 @@ function initAdminEvents() {
     }
   });
 
-  // Pestañas
-  const tabBtns = document.querySelectorAll('.admin-tab-btn');
-  tabBtns.forEach(btn => {
+  // Switcher de Pestañas
+  const pillBtns = document.querySelectorAll('.admin-pill-btn');
+  pillBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      tabBtns.forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.admin-tab-content').forEach(tc => tc.classList.remove('active'));
+      pillBtns.forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.admin-tab-page').forEach(tp => tp.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById(btn.dataset.tab)?.classList.add('active');
     });
   });
 
-  // Formulario Añadir Producto
-  const addForm = document.getElementById('adminAddProductForm');
-  addForm?.addEventListener('submit', (e) => {
+  // Eventos de Filtro y Búsqueda
+  document.getElementById('adminSearchInput')?.addEventListener('input', renderAdminTable);
+  document.getElementById('adminCatSelect')?.addEventListener('change', renderAdminTable);
+
+  // Apertura y Cierre de Sub-modal
+  document.getElementById('adminOpenAddModalBtn')?.addEventListener('click', () => openProdEditModal());
+  document.getElementById('adminProdModalClose')?.addEventListener('click', closeProdEditModal);
+  document.getElementById('adminProdModalOverlay')?.addEventListener('click', closeProdEditModal);
+
+  // Guardado de Producto (Crear / Editar)
+  document.getElementById('adminProdForm')?.addEventListener('submit', (e) => {
     e.preventDefault();
-    const name = document.getElementById('newProdName').value.trim();
-    const latin = document.getElementById('newProdLatin').value.trim();
-    const cat = document.getElementById('newProdCat').value;
-    const rarity = document.getElementById('newProdRarity').value;
-    const price = Number(document.getElementById('newProdPrice').value);
-    const stock = document.getElementById('newProdStock').value.trim();
-    const description = document.getElementById('newProdDesc').value.trim();
+    const editId = document.getElementById('editProdId').value;
+    const name = document.getElementById('editProdName').value.trim();
+    const latin = document.getElementById('editProdLatin').value.trim();
+    const cat = document.getElementById('editProdCat').value;
+    const rarity = document.getElementById('editProdRarity').value;
+    const price = Number(document.getElementById('editProdPrice').value);
+    const oldVal = document.getElementById('editProdOld').value;
+    const oldPrice = oldVal ? Number(oldVal) : null;
+    const stockQty = Number(document.getElementById('editProdStockQty').value);
+    const stockText = document.getElementById('editProdStockText').value.trim();
+    const description = document.getElementById('editProdDesc').value.trim();
 
-    if (!name || !price) return;
+    if (editId) {
+      updateProductOverride(Number(editId), {
+        name, latin, cat, rarity, price, old: oldPrice, stockQty, stock: stockText, description
+      });
+      alert('¡Producto actualizado exitosamente!');
+    } else {
+      const adminData = getAdminData();
+      const newProduct = {
+        id: Date.now(),
+        cat,
+        name,
+        latin,
+        price,
+        old: oldPrice,
+        rarity,
+        panel: 'sage',
+        stockQty,
+        stock: stockText,
+        description,
+        images: [
+          { bg: 'var(--sage-100)', accent: '#3A5A40' },
+          { bg: 'var(--blush-100)', accent: '#35521F' },
+          { bg: 'var(--lilac-100)', accent: '#4F772D' }
+        ]
+      };
+      adminData.customProducts = adminData.customProducts || [];
+      adminData.customProducts.push(newProduct);
+      saveAdminData(adminData);
+      alert('¡Planta añadida exitosamente al catálogo!');
+    }
 
-    const adminData = getAdminData();
-    const newId = Date.now();
-
-    const newProduct = {
-      id: newId,
-      cat,
-      name,
-      latin,
-      price,
-      old: null,
-      rarity,
-      panel: 'sage',
-      stock,
-      description,
-      images: [
-        { bg: 'var(--sage-100)', accent: '#3A5A40' },
-        { bg: 'var(--blush-100)', accent: '#35521F' },
-        { bg: 'var(--lilac-100)', accent: '#4F772D' }
-      ]
-    };
-
-    adminData.customProducts = adminData.customProducts || [];
-    adminData.customProducts.push(newProduct);
-    saveAdminData(adminData);
-
-    addForm.reset();
-    alert('¡Planta agregada exitosamente al catálogo!');
-    
+    closeProdEditModal();
+    renderAdminTable();
     renderGrid();
     renderChips();
-    renderAdminInventory();
-
-    document.querySelector('[data-tab="tabInventario"]')?.click();
   });
 
   // Ajustes: WhatsApp

@@ -37,7 +37,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,450;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,450;1,9..144,600&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=9.0">
+<link rel="stylesheet" href="styles.css?v=10.0">
 
 <!-- Datos Estructurados Google Schema.org (SEO Local & E-commerce) -->
 <script type="application/ld+json">
@@ -132,97 +132,188 @@
   </div>
 </div>
 
-<!-- ================= MODAL PANEL ADMIN ================= -->
+<!-- ================= MODAL PANEL ADMIN (REDISEÑADO) ================= -->
 <div class="admin-panel-overlay" id="adminPanelOverlay"></div>
 <div class="admin-panel-card" id="adminPanelModal" role="dialog" aria-modal="true" aria-label="Panel de Administración Guategreen">
-  <div class="admin-panel-head">
-    <div>
-      <span class="mono" style="font-size:.72rem;color:var(--sage-700)">GESTIÓN INTERNA</span>
-      <h2 class="serif" style="margin:0;font-size:1.4rem">Administración de Catálogo</h2>
-    </div>
-    <button class="modal-close" id="adminPanelClose" aria-label="Cerrar panel">✕</button>
-  </div>
-  
-  <div class="admin-tabs">
-    <button class="admin-tab-btn active" data-tab="tabInventario">📦 Inventario y Precios</button>
-    <button class="admin-tab-btn" data-tab="tabNuevo">➕ Añadir Planta</button>
-    <button class="admin-tab-btn" data-tab="tabAjustes">⚙️ WhatsApp y Clave</button>
-  </div>
-
-  <div class="admin-panel-body">
-    <!-- Pestaña 1: Inventario -->
-    <div class="admin-tab-content active" id="tabInventario">
-      <div class="admin-inventory-list" id="adminInventoryList"></div>
-    </div>
-
-    <!-- Pestaña 2: Añadir Planta -->
-    <div class="admin-tab-content" id="tabNuevo">
-      <form id="adminAddProductForm" class="admin-form">
-        <div class="admin-form-grid">
-          <div>
-            <label class="mono">Nombre común</label>
-            <input type="text" id="newProdName" class="admin-input" placeholder="Ej. Philodendron Pink Princess" required>
-          </div>
-          <div>
-            <label class="mono">Nombre científico</label>
-            <input type="text" id="newProdLatin" class="admin-input" placeholder="Ej. Philodendron erubescens" required>
-          </div>
-          <div>
-            <label class="mono">Categoría</label>
-            <select id="newProdCat" class="admin-input" required>
-              <option value="Monstera">Monstera</option>
-              <option value="Philodendron">Philodendron</option>
-              <option value="Alocasia">Alocasia</option>
-              <option value="Caladium">Caladium</option>
-              <option value="Otros">Otros</option>
-            </select>
-          </div>
-          <div>
-            <label class="mono">Rareza</label>
-            <select id="newProdRarity" class="admin-input" required>
-              <option value="Ultra rara">Ultra rara</option>
-              <option value="Rara">Rara</option>
-              <option value="Común">Común</option>
-            </select>
-          </div>
-          <div>
-            <label class="mono">Precio (Q)</label>
-            <input type="number" id="newProdPrice" class="admin-input" min="1" placeholder="950" required>
-          </div>
-          <div>
-            <label class="mono">Stock Inicial</label>
-            <input type="text" id="newProdStock" class="admin-input" placeholder="Ej. 3 disponibles" required>
-          </div>
+  <!-- Cabecera estilo Dashboard -->
+  <div class="admin-header-bar">
+    <div class="admin-header-title">
+      <div class="admin-badge-icon">🌿</div>
+      <div>
+        <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap">
+          <h2 class="admin-main-title">Panel de Administración</h2>
+          <span class="admin-brand-tag">Guategreen GT</span>
         </div>
-        <div style="margin-top:1rem">
-          <label class="mono">Descripción botánica y de cuidado</label>
-          <textarea id="newProdDesc" class="admin-input" rows="3" placeholder="Ejemplar aclimatado con variegación intensa..." required></textarea>
+        <p class="admin-main-sub">Gestión intuitiva de inventario, precios y cierre de ventas por WhatsApp</p>
+      </div>
+    </div>
+    <div class="admin-header-actions">
+      <div class="admin-tab-pills">
+        <button class="admin-pill-btn active" data-tab="tabInventario">📦 Inventario & Precios</button>
+        <button class="admin-pill-btn" data-tab="tabConfiguracion">⚙️ Configuración</button>
+      </div>
+      <button class="admin-close-circle" id="adminPanelClose" aria-label="Cerrar panel">✕</button>
+    </div>
+  </div>
+
+  <div class="admin-panel-content-wrap">
+    <!-- PESTAÑA 1: INVENTARIO & PRECIOS -->
+    <div class="admin-tab-page active" id="tabInventario">
+      <!-- Tarjetas de Métricas KPI -->
+      <div class="admin-kpi-grid">
+        <div class="admin-kpi-card">
+          <div class="kpi-info">
+            <span class="kpi-label">Total Productos</span>
+            <span class="kpi-val" id="kpiTotalProds">0</span>
+          </div>
+          <div class="kpi-icon-box kpi-box-blue">📦</div>
         </div>
-        <button type="submit" class="btn btn-block" style="margin-top:1.2rem">Guardar y Publicar Planta →</button>
-      </form>
+        <div class="admin-kpi-card">
+          <div class="kpi-info">
+            <span class="kpi-label">Unidades en Stock</span>
+            <span class="kpi-val text-green" id="kpiTotalStock">0</span>
+          </div>
+          <div class="kpi-icon-box kpi-box-green">📈</div>
+        </div>
+        <div class="admin-kpi-card">
+          <div class="kpi-info">
+            <span class="kpi-label">Alertas de Stock</span>
+            <span class="kpi-val" id="kpiStockAlerts">0</span>
+            <span class="kpi-sub" id="kpiStockAlertsSub">0 agotados / 0 bajos</span>
+          </div>
+          <div class="kpi-icon-box kpi-box-yellow">⚠️</div>
+        </div>
+        <div class="admin-kpi-card">
+          <div class="kpi-info">
+            <span class="kpi-label">Valor del Inventario</span>
+            <span class="kpi-val text-purple" id="kpiTotalValue">Q 0.00</span>
+          </div>
+          <div class="kpi-icon-box kpi-box-pink">💲</div>
+        </div>
+      </div>
+
+      <!-- Barra de Filtros y Acción -->
+      <div class="admin-filter-bar">
+        <div class="admin-search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="adminSearchInput" placeholder="Buscar por nombre...">
+        </div>
+        <select id="adminCatSelect" class="admin-select-filter">
+          <option value="Todas">Todas las Categorías</option>
+          <option value="Monstera">Monstera</option>
+          <option value="Philodendron">Philodendron</option>
+          <option value="Alocasia">Alocasia</option>
+          <option value="Caladium">Caladium</option>
+          <option value="Otros">Otros</option>
+        </select>
+        <button type="button" class="admin-btn-add-product" id="adminOpenAddModalBtn">
+          <span>+</span> Añadir Nuevo Producto
+        </button>
+      </div>
+
+      <!-- Tabla de Datos de Productos -->
+      <div class="admin-table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>PRODUCTO</th>
+              <th>CATEGORÍA</th>
+              <th>PRECIO</th>
+              <th style="text-align:center">INVENTARIO (STOCK)</th>
+              <th>ESTADO</th>
+              <th style="text-align:right">ACCIONES</th>
+            </tr>
+          </thead>
+          <tbody id="adminTableBody">
+            <!-- Filas dinámicas generadas por JS -->
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- Pestaña 3: Ajustes -->
-    <div class="admin-tab-content" id="tabAjustes">
-      <div class="admin-settings-section">
-        <h3 class="serif" style="margin-top:0">Configuración de WhatsApp</h3>
-        <p style="font-size:.88rem;color:var(--ink-70)">Número al que los clientes enviarán sus pedidos por WhatsApp:</p>
-        <div style="display:flex;gap:.6rem;align-items:center;margin-bottom:1rem">
-          <input type="text" id="adminWAInput" class="admin-input" style="flex:1" placeholder="50252554758">
-          <button type="button" id="adminWATestBtn" class="btn btn-outline btn-sm">Probar enlace →</button>
+    <!-- PESTAÑA 2: CONFIGURACIÓN -->
+    <div class="admin-tab-page" id="tabConfiguracion">
+      <div class="admin-settings-card">
+        <h3 class="serif" style="margin-top:0">Configuración de WhatsApp de la Tienda</h3>
+        <p style="font-size:.88rem;color:var(--ink-70)">Número telefónico para recibir pedidos y solicitudes de clientes:</p>
+        <div style="display:flex;gap:.6rem;align-items:center;margin-bottom:1rem;max-width:28rem">
+          <input type="text" id="adminWAInput" class="admin-input" placeholder="50252554758">
+          <button type="button" id="adminWATestBtn" class="btn btn-outline btn-sm">Probar en vivo →</button>
         </div>
         <button type="button" id="adminWASaveBtn" class="btn btn-sm">Guardar número WhatsApp</button>
       </div>
       
-      <div class="admin-settings-section" style="margin-top:1.8rem;border-top:var(--line-soft);padding-top:1.4rem">
-        <h3 class="serif" style="margin-top:0">Cambiar Contraseña del Panel</h3>
-        <div style="display:flex;gap:.6rem;align-items:center;margin-bottom:1rem">
-          <input type="password" id="adminNewPassInput" class="admin-input" style="flex:1" placeholder="Nueva clave de acceso">
+      <div class="admin-settings-card" style="margin-top:1.5rem">
+        <h3 class="serif" style="margin-top:0">Seguridad y Clave de Acceso</h3>
+        <p style="font-size:.88rem;color:var(--ink-70)">Actualiza la contraseña del panel de administración:</p>
+        <div style="display:flex;gap:.6rem;align-items:center;margin-bottom:1rem;max-width:28rem">
+          <input type="password" id="adminNewPassInput" class="admin-input" placeholder="Nueva clave de acceso">
           <button type="button" id="adminPassSaveBtn" class="btn btn-sm">Actualizar Clave</button>
         </div>
       </div>
     </div>
   </div>
+</div>
+
+<!-- ================= SUB-MODAL CREAR / EDITAR PRODUCTO ================= -->
+<div class="admin-submodal-overlay" id="adminProdModalOverlay"></div>
+<div class="admin-submodal-card" id="adminProdModal" role="dialog" aria-modal="true" aria-label="Editar producto">
+  <div class="admin-panel-head">
+    <h3 class="serif" style="margin:0;font-size:1.25rem" id="adminProdModalTitle">Añadir Nuevo Producto</h3>
+    <button class="modal-close" id="adminProdModalClose" aria-label="Cerrar modal">✕</button>
+  </div>
+  <form id="adminProdForm" style="padding:1.4rem">
+    <input type="hidden" id="editProdId">
+    <div class="admin-form-grid">
+      <div>
+        <label class="mono">Nombre común</label>
+        <input type="text" id="editProdName" class="admin-input" placeholder="Ej. Monstera Deliciosa" required>
+      </div>
+      <div>
+        <label class="mono">Nombre científico</label>
+        <input type="text" id="editProdLatin" class="admin-input" placeholder="Ej. Monstera deliciosa Liebm." required>
+      </div>
+      <div>
+        <label class="mono">Categoría</label>
+        <select id="editProdCat" class="admin-input" required>
+          <option value="Monstera">Monstera</option>
+          <option value="Philodendron">Philodendron</option>
+          <option value="Alocasia">Alocasia</option>
+          <option value="Caladium">Caladium</option>
+          <option value="Otros">Otros</option>
+        </select>
+      </div>
+      <div>
+        <label class="mono">Rareza</label>
+        <select id="editProdRarity" class="admin-input" required>
+          <option value="Ultra rara">Ultra rara</option>
+          <option value="Rara">Rara</option>
+          <option value="Común">Común</option>
+        </select>
+      </div>
+      <div>
+        <label class="mono">Precio Normal (Q)</label>
+        <input type="number" id="editProdPrice" class="admin-input" min="1" placeholder="250" required>
+      </div>
+      <div>
+        <label class="mono">Precio Oferta (Tachado Q)</label>
+        <input type="number" id="editProdOld" class="admin-input" min="0" placeholder="Dejar en blanco si no hay oferta">
+      </div>
+      <div>
+        <label class="mono">Cantidad en Stock</label>
+        <input type="number" id="editProdStockQty" class="admin-input" min="0" placeholder="15" required>
+      </div>
+      <div>
+        <label class="mono">Texto de Stock / Leyenda</label>
+        <input type="text" id="editProdStockText" class="admin-input" placeholder="Ej. 15 disponibles o Última unidad" required>
+      </div>
+    </div>
+    <div style="margin-top:1rem">
+      <label class="mono">Descripción botánica</label>
+      <textarea id="editProdDesc" class="admin-input" rows="3" placeholder="Descripción detallada de la planta..." required></textarea>
+    </div>
+    <button type="submit" class="btn btn-block" style="margin-top:1.2rem">Guardar Planta →</button>
+  </form>
 </div>
 
 <!-- ================= HERO ================= -->
@@ -419,6 +510,6 @@
   </svg>
 </a>
 
-<script src="app.js?v=9.0"></script>
+<script src="app.js?v=10.0"></script>
 </body>
 </html>
