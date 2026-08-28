@@ -1,3 +1,27 @@
+/* =============== CONFIGURACIÓN Y SISTEMA DE ADMINISTRACIÓN =============== */
+const DEFAULT_WHATSAPP = '50252554758';
+const ADMIN_STORAGE_KEY = 'guategreen_admin_data_v1';
+
+const DEFAULT_ADMIN_DATA = {
+  password: 'plantitas123',
+  whatsappNumber: DEFAULT_WHATSAPP,
+  customProducts: [],
+  productOverrides: {}
+};
+
+function getAdminData() {
+  try {
+    const saved = localStorage.getItem(ADMIN_STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return { ...DEFAULT_ADMIN_DATA, ...parsed };
+    }
+  } catch (e) {
+    console.error('Error al leer admin data', e);
+  }
+  return DEFAULT_ADMIN_DATA;
+}
+
 /* =============== CONEXIÓN EN LA NUBE SUPABASE (CLOUD DATABASE) =============== */
 const SUPABASE_STORAGE_KEY = 'guategreen_supabase_config_v1';
 let supabaseClient = null;
