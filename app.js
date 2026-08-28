@@ -1,32 +1,274 @@
-/* =============== CONFIGURACIÓN Y SISTEMA DE ADMINISTRACIÓN =============== */
-const DEFAULT_WHATSAPP = '50252554758';
-const ADMIN_STORAGE_KEY = 'guategreen_admin_data_v1';
+/* =============== CONEXIÓN EN LA NUBE SUPABASE (CLOUD DATABASE) =============== */
+const SUPABASE_STORAGE_KEY = 'guategreen_supabase_config_v1';
+let supabaseClient = null;
+let isCloudConnected = false;
 
-const DEFAULT_ADMIN_DATA = {
-  password: 'plantitas123',
-  whatsappNumber: DEFAULT_WHATSAPP,
-  customProducts: [],
-  productOverrides: {}
-};
-
-function getAdminData() {
+function getSupabaseConfig() {
   try {
-    const saved = localStorage.getItem(ADMIN_STORAGE_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      return { ...DEFAULT_ADMIN_DATA, ...parsed };
-    }
+    const saved = localStorage.getItem(SUPABASE_STORAGE_KEY);
+    if (saved) return JSON.parse(saved);
   } catch (e) {
-    console.error('Error al leer admin data', e);
+    console.error('Error al leer configuración supabase', e);
   }
-  return DEFAULT_ADMIN_DATA;
+  return { url: '', key: '' };
+}
+
+function saveSupabaseConfig(url, key) {
+  try {
+    localStorage.setItem(SUPABASE_STORAGE_KEY, JSON.stringify({ url, key }));
+  } catch (e) {
+    console.error('Error al guardar configuración supabase', e);
+  }
+}
+
+async function initSupabase() {
+  const config = getSupabaseConfig();
+  const badge = document.getElementById('supabaseStatusBadge');
+  const urlInput = document.getElementById('supabaseUrlInput');
+  const keyInput = document.getElementById('supabaseKeyInput');
+
+  if (urlInput) urlInput.value = config.url || '';
+  if (keyInput) keyInput.value = config.key || '';
+
+  if (!config.url || !config.key || !window.supabase) {
+    if (badge) {
+      badge.textContent = '⚪ Sin configurar (Modo local)';
+      badge.style.background = '#E2E8F0';
+      badge.style.color = '#475569';
+    }
+    isCloudConnected = false;
+    return;
+  }
+
+  try {
+    supabaseClient = window.supabase.createClient(config.url, config.key);
+    
+    // Probar consulta rápida
+    const { data, error } = await supabaseClient.from('gg_products').select('id').limit(1);
+    
+    if (error) {
+      console.warn('Supabase test error:', error);
+      if (badge) {
+        badge.textContent = '⚠️ Conectado (Falta ejecutar SQL)';
+        badge.style.background = '#FEF3C7';
+        badge.style.color = '#92400E';
+      }
+      isCloudConnected = false;
+      return;
+    }
+
+    if (badge) {
+      badge.textContent = '🟢 Conectado en la Nube (En vivo)';
+      badge.style.background = '#DCFCE7';
+      badge.style.color = '#15803D';
+    }
+    isCloudConnected = true;
+
+    // Descargar datos de la nube
+    await syncFromCloud();
+
+    // Suscribirse a cambios en tiempo real
+    supabaseClient
+      .channel('guategreen_realtime_channel')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'gg_products' }, () => syncFromCloud())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'gg_hero' }, () => syncFromCloud())
+      .subscribe();
+
+  } catch (err) {
+    console.error('Error al inicializar Supabase:', err);
+    if (badge) {
+      badge.textContent = '🔴 Error de conexión';
+      badge.style.background = '#FEE2E2';
+      badge.style.color = '#991B1B';
+    }
+    isCloudConnected = false;
+  }
+}
+
+async function syncFromCloud() {
+  if (!supabaseClient || !isCloudConnected) return;
+
+  try {
+    // 1. Obtener productos de la nube
+    const { data: prods, error: pErr } = await supabaseClient
+      .from('gg_products')
+      .select('*')
+      .order('order_num', { ascending: true });
+
+    if (!pErr && prods && prods.length > 0) {
+      const adminData = getAdminData();
+      adminData.customProducts = prods.map(p => ({
+        id: Number(p.id),
+        cat: p.cat,
+        name: p.name,
+        latin: p.latin,
+        price: Number(p.price),
+        old: p.old_price ? Number(p.old_price) : null,
+        rarity: p.rarity,
+        panel: p.panel || 'sage',
+        stockQty: p.stock_qty || 0,
+        stock: p.stock,
+        order: p.order_num || 999,
+        description: p.description,
+        images: p.images,
+        deleted: !!p.deleted
+      }));
+      adminData.productOverrides = {};
+      localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(adminData));
+      renderChips();
+      renderGrid();
+      renderAdminTable();
+    }
+
+    // 2. Obtener Portada / Hero de la nube
+    const { data: heroRow, error: hErr } = await supabaseClient
+      .from('gg_hero')
+      .select('data')
+      .eq('id', 'main')
+      .single();
+
+    if (!hErr && heroRow && heroRow.data) {
+      saveHeroData(heroRow.data);
+      renderHero();
+      renderAdminHero();
+    }
+  } catch (err) {
+    console.error('Error sincronizando de Supabase:', err);
+  }
+}
+
+async function syncProductToCloud(product) {
+  if (!supabaseClient || !isCloudConnected) return;
+
+  try {
+    const row = {
+      id: product.id,
+      cat: product.cat,
+      name: product.name,
+      latin: product.latin,
+      price: product.price,
+      old_price: product.old || null,
+      rarity: product.rarity,
+      panel: product.panel || 'sage',
+      stock_qty: parseStockQty(product),
+      stock: product.stock,
+      order_num: product.order || 999,
+      description: product.description,
+      images: product.images,
+      deleted: !!product.deleted,
+      updated_at: new Date().toISOString()
+    };
+
+    await supabaseClient.from('gg_products').upsert(row);
+  } catch (err) {
+    console.error('Error guardando producto en Supabase:', err);
+  }
+}
+
+async function syncHeroToCloud(heroData) {
+  if (!supabaseClient || !isCloudConnected) return;
+
+  try {
+    await supabaseClient.from('gg_hero').upsert({
+      id: 'main',
+      data: heroData,
+      updated_at: new Date().toISOString()
+    });
+  } catch (err) {
+    console.error('Error guardando hero en Supabase:', err);
+  }
+}
+
+async function uploadAllCurrentToCloud() {
+  if (!supabaseClient || !isCloudConnected) {
+    alert('Primero guarda la URL y la Key de tu proyecto de Supabase.');
+    return;
+  }
+
+  const prods = getProducts();
+  const hero = getHeroData();
+
+  try {
+    const rows = prods.map(p => ({
+      id: p.id,
+      cat: p.cat,
+      name: p.name,
+      latin: p.latin,
+      price: p.price,
+      old_price: p.old || null,
+      rarity: p.rarity,
+      panel: p.panel || 'sage',
+      stock_qty: parseStockQty(p),
+      stock: p.stock,
+      order_num: p.order || 999,
+      description: p.description,
+      images: p.images,
+      deleted: !!p.deleted,
+      updated_at: new Date().toISOString()
+    }));
+
+    const { error: pErr } = await supabaseClient.from('gg_products').upsert(rows);
+    const { error: hErr } = await supabaseClient.from('gg_hero').upsert({
+      id: 'main',
+      data: hero,
+      updated_at: new Date().toISOString()
+    });
+
+    if (pErr || hErr) {
+      alert('Error al subir a la nube: ' + (pErr?.message || hErr?.message || 'Verifica que ejecutaste el código SQL en Supabase'));
+    } else {
+      alert('¡Catálogo y Portada subidos con éxito a la Nube! Ahora cualquier cambio se actualizará en vivo en todos los celulares y computadoras del mundo.');
+    }
+  } catch (err) {
+    console.error('Error subiendo datos a Supabase:', err);
+    alert('Error al sincronizar con la nube: ' + err.message);
+  }
+}
+
+/* =============== COMPRESOR Y OPTIMIZADOR DE IMÁGENES =============== */
+function compressImageFile(file, maxWidth = 800, quality = 0.72) {
+  return new Promise((resolve) => {
+    if (!file || !file.type.startsWith('image/')) {
+      resolve(null);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(compressedDataUrl);
+      };
+      img.onerror = () => resolve(e.target.result);
+      img.src = e.target.result;
+    };
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
 }
 
 function saveAdminData(data) {
   try {
     localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(data));
+    return true;
   } catch (e) {
     console.error('Error al guardar admin data', e);
+    alert('Aviso: El almacenamiento del navegador está lleno. Intenta usar imágenes con menor peso o rutas URL directas.');
+    return false;
   }
 }
 
@@ -57,8 +299,11 @@ function getHeroData() {
 function saveHeroData(data) {
   try {
     localStorage.setItem(HERO_STORAGE_KEY, JSON.stringify(data));
-  } catch(e) {
+    return true;
+  } catch (e) {
     console.error('Error al guardar hero data', e);
+    alert('Aviso: El almacenamiento del navegador está lleno. Intenta usar una imagen con menor resolución o una URL directa.');
+    return false;
   }
 }
 
@@ -267,7 +512,7 @@ const PRODUCTS = [
 
 const CATEGORIES = ['Todas', 'Monstera', 'Philodendron', 'Alocasia', 'Caladium', 'Otros'];
 let activeCat = 'Todas';
-let visibleCount = 4;
+let visibleCount = 16;
 
 function leafSVG(accent) {
   return `<svg viewBox="0 0 100 100" fill="none">
@@ -889,6 +1134,11 @@ function updateProductOverride(id, fields) {
   adminData.productOverrides = adminData.productOverrides || {};
   adminData.productOverrides[id] = { ...(adminData.productOverrides[id] || {}), ...fields };
   saveAdminData(adminData);
+
+  const updatedP = getProducts().find(pp => pp.id === id);
+  if (updatedP) {
+    syncProductToCloud(updatedP);
+  }
 }
 
 function deleteProduct(id) {
@@ -899,11 +1149,18 @@ function deleteProduct(id) {
   adminData.productOverrides = adminData.productOverrides || {};
   adminData.productOverrides[id] = { deleted: true };
   saveAdminData(adminData);
+
+  syncProductToCloud({ id, deleted: true });
 }
 
 function renderAdminSettings() {
   const waInput = document.getElementById('adminWAInput');
   if (waInput) waInput.value = getWhatsAppNumber();
+  const config = getSupabaseConfig();
+  const urlEl = document.getElementById('supabaseUrlInput');
+  const keyEl = document.getElementById('supabaseKeyInput');
+  if (urlEl) urlEl.value = config.url || '';
+  if (keyEl) keyEl.value = config.key || '';
 }
 
 let currentHeroPhoto = null;
@@ -947,16 +1204,16 @@ function setupPhotoInputListeners() {
   const heroPrevEl = document.getElementById('heroPhotoPreviewBox');
 
   if (heroFileEl) {
-    heroFileEl.addEventListener('change', (e) => {
+    heroFileEl.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (file) {
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          currentHeroPhoto = evt.target.result;
+        if (heroPrevEl) heroPrevEl.innerHTML = `<span style="font-size:.75rem;color:#64748B;font-weight:600">Optimizando...</span>`;
+        const optimized = await compressImageFile(file, 900, 0.75);
+        if (optimized) {
+          currentHeroPhoto = optimized;
           if (heroUrlEl) heroUrlEl.value = '';
-          if (heroPrevEl) heroPrevEl.innerHTML = `<img src="${evt.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
-        };
-        reader.readAsDataURL(file);
+          if (heroPrevEl) heroPrevEl.innerHTML = `<img src="${optimized}" style="width:100%;height:100%;object-fit:cover;">`;
+        }
       }
     });
   }
@@ -981,16 +1238,16 @@ function setupPhotoInputListeners() {
     const prevEl = document.getElementById(`prevBox${num}`);
 
     if (fileEl) {
-      fileEl.addEventListener('change', (e) => {
+      fileEl.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (file) {
-          const reader = new FileReader();
-          reader.onload = (evt) => {
-            currentPhotoSources[num - 1] = evt.target.result;
+          if (prevEl) prevEl.innerHTML = `<span style="font-size:.75rem;color:#64748B;font-weight:600">Optimizando...</span>`;
+          const optimized = await compressImageFile(file, 800, 0.72);
+          if (optimized) {
+            currentPhotoSources[num - 1] = optimized;
             if (urlEl) urlEl.value = '';
-            if (prevEl) prevEl.innerHTML = `<img src="${evt.target.result}">`;
-          };
-          reader.readAsDataURL(file);
+            if (prevEl) prevEl.innerHTML = `<img src="${optimized}">`;
+          }
         }
       });
     }
@@ -1210,21 +1467,33 @@ function initAdminEvents() {
     const order = orderVal ? Number(orderVal) : 999;
     const description = document.getElementById('editProdDesc').value.trim();
 
+    let existingImages = [];
+    if (editId) {
+      const existingP = getProducts().find(pp => pp.id === Number(editId));
+      if (existingP && existingP.images) existingImages = existingP.images;
+    }
+
     const finalImages = [1, 2, 3].map((num, i) => {
-      const src = currentPhotoSources[i] || document.getElementById(`urlInput${num}`)?.value.trim();
+      const manualUrl = document.getElementById(`urlInput${num}`)?.value.trim();
+      const existingSrc = existingImages[i] ? (existingImages[i].src || (typeof existingImages[i] === 'string' ? existingImages[i] : null)) : null;
+      const src = currentPhotoSources[i] || manualUrl || existingSrc;
       return src 
         ? { src, bg: 'var(--sage-100)', accent: '#3A5A40' } 
         : { bg: i === 0 ? 'var(--sage-100)' : (i === 1 ? 'var(--blush-100)' : 'var(--lilac-100)'), accent: '#3A5A40' };
     });
 
+    let savedProductObj = null;
+
     if (editId) {
-      updateProductOverride(Number(editId), {
+      savedProductObj = {
+        id: Number(editId),
         name, latin, cat, rarity, price, old: oldPrice, stockQty, stock: stockText, order, description, images: finalImages
-      });
+      };
+      updateProductOverride(Number(editId), savedProductObj);
       alert('¡Producto actualizado exitosamente con su orden y fotografías!');
     } else {
       const adminData = getAdminData();
-      const newProduct = {
+      savedProductObj = {
         id: Date.now(),
         cat,
         name,
@@ -1240,8 +1509,9 @@ function initAdminEvents() {
         images: finalImages
       };
       adminData.customProducts = adminData.customProducts || [];
-      adminData.customProducts.push(newProduct);
+      adminData.customProducts.push(savedProductObj);
       saveAdminData(adminData);
+      syncProductToCloud(savedProductObj);
       alert('¡Planta añadida exitosamente al catálogo con su orden y fotografías!');
     }
 
@@ -1249,6 +1519,10 @@ function initAdminEvents() {
     renderAdminTable();
     renderGrid();
     renderChips();
+    closeAdminPanel();
+    setTimeout(() => {
+      document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' });
+    }, 150);
   });
 
   // Guardado de la Portada (Hero)
@@ -1260,9 +1534,11 @@ function initAdminEvents() {
     const plantName = document.getElementById('adminHeroPlantName').value.trim();
     const plantPrice = document.getElementById('adminHeroPlantPrice').value.trim();
     const plantStatus = document.getElementById('adminHeroPlantStatus').value.trim();
-    const photoSrc = currentHeroPhoto || document.getElementById('heroPhotoUrlInput')?.value.trim() || null;
+    const manualHeroUrl = document.getElementById('heroPhotoUrlInput')?.value.trim();
+    const existingHero = getHeroData();
+    const photoSrc = currentHeroPhoto || manualHeroUrl || existingHero.photoSrc || null;
 
-    saveHeroData({
+    const heroPayload = {
       eyebrow,
       title,
       desc,
@@ -1270,10 +1546,17 @@ function initAdminEvents() {
       plantPrice,
       plantStatus,
       photoSrc
-    });
+    };
+
+    saveHeroData(heroPayload);
+    syncHeroToCloud(heroPayload);
 
     renderHero();
     alert('¡Portada principal (Hero) actualizada correctamente!');
+    closeAdminPanel();
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 150);
   });
 
   // Ajustes: WhatsApp
@@ -1305,10 +1588,36 @@ function initAdminEvents() {
     document.getElementById('adminNewPassInput').value = '';
     alert('¡Contraseña del panel actualizada correctamente!');
   });
+
+  // Ajustes: Supabase Cloud Connect & Sync
+  document.getElementById('supabaseSaveBtn')?.addEventListener('click', async () => {
+    const url = document.getElementById('supabaseUrlInput')?.value.trim();
+    const key = document.getElementById('supabaseKeyInput')?.value.trim();
+    if (!url || !key) {
+      alert('Por favor ingresa tanto la URL como la Anon Key de Supabase.');
+      return;
+    }
+    saveSupabaseConfig(url, key);
+    alert('Guardando configuración y probando conexión con Supabase...');
+    await initSupabase();
+  });
+
+  document.getElementById('supabaseSyncUploadBtn')?.addEventListener('click', async () => {
+    await uploadAllCurrentToCloud();
+  });
+
+  document.getElementById('supabaseSyncDownloadBtn')?.addEventListener('click', async () => {
+    if (!isCloudConnected) {
+      alert('Primero guarda una conexión válida de Supabase.');
+      return;
+    }
+    await syncFromCloud();
+    alert('¡Datos descargados y actualizados exitosamente desde la nube!');
+  });
 }
 
 /* =============== INICIALIZACIÓN GENERAL =============== */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   renderHero();
   renderChips();
   renderGrid();
@@ -1321,6 +1630,9 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCart(false);
   initScrollSpy();
   initScrollReveal();
+
+  // Inicializar sincronización en la nube Supabase
+  await initSupabase();
 
   const loadMoreBtn = document.getElementById('loadMoreBtn');
   if (loadMoreBtn) {

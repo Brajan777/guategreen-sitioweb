@@ -37,7 +37,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,450;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,450;1,9..144,600&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=16.0">
+<link rel="stylesheet" href="styles.css?v=19.0">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <!-- Datos Estructurados Google Schema.org (SEO Local & E-commerce) -->
 <script type="application/ld+json">
@@ -293,7 +294,77 @@
 
     <!-- PESTAÑA 3: CONFIGURACIÓN -->
     <div class="admin-tab-page" id="tabConfiguracion">
-      <div class="admin-settings-card">
+      <!-- Conexión Supabase Cloud Database -->
+      <div class="admin-settings-card" style="border:2px solid #3A5A40;background:#F9FDF7;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:.5rem;">
+          <h3 class="serif" style="margin:0;color:var(--sage-900);">☁️ Conexión en la Nube (Supabase Gratuito)</h3>
+          <span class="admin-status-pill" id="supabaseStatusBadge" style="background:#E2E8F0;color:#475569;">⚪ Verificando...</span>
+        </div>
+        <p style="font-size:.85rem;color:var(--ink-70);margin-bottom:1rem;">
+          Sincroniza tus plantas, fotos, precios y portada en vivo desde cualquier teléfono o computadora para que todos los visitantes de <strong>guategreen.com</strong> vean los cambios al instante.
+        </p>
+
+        <div class="admin-form-grid" style="grid-template-columns:1fr 1fr;">
+          <div>
+            <label class="mono">Project URL de Supabase</label>
+            <input type="text" id="supabaseUrlInput" class="admin-input" placeholder="https://xyzcompany.supabase.co">
+          </div>
+          <div>
+            <label class="mono">Anon Public API Key</label>
+            <input type="password" id="supabaseKeyInput" class="admin-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+          </div>
+        </div>
+
+        <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem;">
+          <button type="button" id="supabaseSaveBtn" class="btn btn-sm">💾 Guardar y Conectar Supabase</button>
+          <button type="button" id="supabaseSyncUploadBtn" class="btn btn-outline btn-sm">📤 Subir Catálogo Actual a la Nube</button>
+          <button type="button" id="supabaseSyncDownloadBtn" class="btn btn-outline btn-sm">📥 Descargar Datos de la Nube</button>
+        </div>
+
+        <!-- Instrucciones y Código SQL para 1-Click Setup -->
+        <details style="margin-top:1.2rem;background:#FFFFFF;border:1px solid #E2E8F0;border-radius:10px;padding:.8rem 1rem;">
+          <summary style="font-size:.82rem;font-weight:700;cursor:pointer;color:var(--sage-700);">
+            📋 Ver Código SQL para configurar tu Supabase en 1 clic
+          </summary>
+          <div style="margin-top:.8rem;font-size:.78rem;color:#475569;">
+            <p style="margin:0 0 .5rem;">Copia este código y pégalo en el <strong>SQL Editor</strong> de tu proyecto en Supabase. Creará las tablas automáticamente con permisos de lectura y escritura para tu tienda:</p>
+            <pre style="background:#1E293B;color:#E2E8F0;padding:.8rem;border-radius:8px;overflow-x:auto;font-size:.74rem;font-family:'Space Mono',monospace;white-space:pre-wrap;">-- 1. Tabla de Productos del Catálogo
+create table if not exists gg_products (
+  id bigint primary key,
+  cat text,
+  name text,
+  latin text,
+  price numeric,
+  old_price numeric,
+  rarity text,
+  panel text default 'sage',
+  stock_qty int default 0,
+  stock text,
+  order_num int default 999,
+  description text,
+  images jsonb,
+  deleted boolean default false,
+  updated_at timestamp with time zone default now()
+);
+
+-- 2. Tabla de Portada (Hero) y Configuración
+create table if not exists gg_hero (
+  id text primary key,
+  data jsonb,
+  updated_at timestamp with time zone default now()
+);
+
+-- 3. Habilitar lectura y escritura pública para tu web
+alter table gg_products enable row level security;
+alter table gg_hero enable row level security;
+
+create policy "Acceso total a productos" on gg_products for all using (true) with check (true);
+create policy "Acceso total a hero" on gg_hero for all using (true) with check (true);</pre>
+          </div>
+        </details>
+      </div>
+
+      <div class="admin-settings-card" style="margin-top:1.5rem">
         <h3 class="serif" style="margin-top:0">Configuración de WhatsApp de la Tienda</h3>
         <p style="font-size:.88rem;color:var(--ink-70)">Número telefónico para recibir pedidos y solicitudes de clientes:</p>
         <div style="display:flex;gap:.6rem;align-items:center;margin-bottom:1rem;max-width:28rem">
@@ -626,6 +697,6 @@
   </svg>
 </a>
 
-<script src="app.js?v=16.0"></script>
+<script src="app.js?v=19.0"></script>
 </body>
 </html>
