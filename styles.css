@@ -1460,27 +1460,6 @@ a:focus-visible,button:focus-visible{
   outline-offset:2px;
 }
 
-.nav-admin-link{
-  background:#EFF5E1;
-  border:1.5px solid var(--sage-500);
-  color:var(--sage-700);
-  font-family:'Space Mono',monospace;
-  font-size:.78rem;
-  font-weight:700;
-  padding:.45rem .9rem;
-  border-radius:999px;
-  cursor:pointer;
-  display:inline-flex;
-  align-items:center;
-  gap:.35rem;
-  transition:all .2s var(--ease);
-}
-.nav-admin-link:hover{
-  background:var(--sage-100);
-  color:var(--sage-700);
-  transform:scale(1.04);
-}
-
 .admin-lock-btn{
   background:#EFF5E1;
   border:1px solid #CBD5E1;
@@ -1499,54 +1478,6 @@ a:focus-visible,button:focus-visible{
   transform:scale(1.15);
 }
 
-.admin-login-overlay,.admin-panel-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(36,29,22,.7);
-  backdrop-filter:blur(4px);
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .35s var(--ease);
-  z-index:105;
-}
-.admin-login-overlay.show,.admin-panel-overlay.show{
-  opacity:1;
-  pointer-events:auto;
-}
-
-.admin-login-card{
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-46%) scale(.95);
-  width:min(26rem,92vw);
-  background:var(--paper);
-  border:var(--line);
-  border-radius:var(--radius-card);
-  box-shadow:var(--shadow-hard-lg);
-  z-index:110;
-  opacity:0;
-  pointer-events:none;
-  transition:transform .35s var(--ease),opacity .35s var(--ease);
-  padding:1.8rem;
-}
-.admin-login-card.open{
-  opacity:1;
-  pointer-events:auto;
-  transform:translate(-50%,-50%) scale(1);
-}
-
-/* ---------- ADMIN PANEL STYLES (REDISEÑADO) ---------- */
-.admin-lock-btn{
-  background:none;
-  border:none;
-  font-size:.82rem;
-  opacity:.4;
-  cursor:pointer;
-  padding:0 .2rem;
-  transition:opacity .2s var(--ease),transform .2s var(--ease);
-}
-.admin-lock-btn:hover{
 .admin-login-overlay,.admin-panel-overlay{
   position:fixed;
   inset:0;

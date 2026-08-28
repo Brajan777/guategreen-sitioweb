@@ -944,10 +944,6 @@ function initAdminEvents() {
   }
 
   triggerBtn?.addEventListener('click', openLogin);
-  document.getElementById('adminNavBtn')?.addEventListener('click', () => {
-    document.getElementById('navLinks')?.classList.remove('open');
-    openLogin();
-  });
   loginClose?.addEventListener('click', closeLogin);
   loginOverlay?.addEventListener('click', closeLogin);
 
