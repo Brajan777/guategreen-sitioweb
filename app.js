@@ -913,10 +913,6 @@ function initAdminEvents() {
   const triggerBtn = document.getElementById('adminTriggerBtn');
 
   function openLogin() {
-    if (sessionStorage.getItem('guategreen_admin_authed') === 'true') {
-      openAdminPanel();
-      return;
-    }
     if (passwordInput) passwordInput.value = '';
     if (errorMsg) errorMsg.style.display = 'none';
     loginOverlay?.classList.add('show');
@@ -944,6 +940,7 @@ function initAdminEvents() {
     panelOverlay?.classList.remove('show');
     panelModal?.classList.remove('open');
     document.body.classList.remove('modal-open');
+    if (passwordInput) passwordInput.value = '';
   }
 
   triggerBtn?.addEventListener('click', openLogin);
@@ -966,7 +963,6 @@ function initAdminEvents() {
     e.preventDefault();
     const data = getAdminData();
     if (passwordInput?.value === data.password) {
-      sessionStorage.setItem('guategreen_admin_authed', 'true');
       openAdminPanel();
     } else {
       if (errorMsg) errorMsg.style.display = 'block';
