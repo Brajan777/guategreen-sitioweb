@@ -441,33 +441,51 @@ function getProducts() {
   const overrides = adminData.productOverrides || {};
   const customProds = adminData.customProducts || [];
 
-  const defaultMap = new Map();
+  const itemsMap = new Map();
 
-  // 1. Cargar productos base por defecto con overrides
+  // 1. Cargar productos base oficiales
   PRODUCTS.forEach((p, idx) => {
     const ov = overrides[p.id] || {};
-    defaultMap.set(p.id, { ...p, order: p.order || (idx + 1), ...ov });
+    const item = { ...p, order: p.order || (idx + 1), ...ov };
+    const key = p.name ? p.name.toLowerCase().trim() : `id_${p.id}`;
+    itemsMap.set(key, item);
   });
 
-  // 2. Cargar productos personalizados / sincronizados de Supabase (sin duplicar IDs)
+  // 2. Cargar productos personalizados o de Supabase (si coincide el nombre o el ID, se unifica y actualiza)
   customProds.forEach((p, idx) => {
     const ov = overrides[p.id] || {};
-    const existing = defaultMap.get(p.id) || {};
-    defaultMap.set(p.id, {
+    const key = p.name ? p.name.toLowerCase().trim() : `id_${p.id}`;
+    const existing = itemsMap.get(key) || {};
+    itemsMap.set(key, {
       ...existing,
       ...p,
+      id: existing.id || p.id,
       order: p.order || existing.order || (PRODUCTS.length + idx + 1),
       ...ov
     });
   });
 
-  const all = Array.from(defaultMap.values()).filter(p => !p.deleted);
+  const all = Array.from(itemsMap.values()).filter(p => !p.deleted);
 
   return all.sort((a, b) => {
     const ordA = (a.order !== undefined && a.order !== null && a.order !== '') ? Number(a.order) : 999;
     const ordB = (b.order !== undefined && b.order !== null && b.order !== '') ? Number(b.order) : 999;
     return ordA - ordB;
   });
+}
+
+function cleanDuplicateProducts() {
+  const adminData = getAdminData();
+  const seen = new Set();
+  if (adminData.customProducts && adminData.customProducts.length > 0) {
+    adminData.customProducts = adminData.customProducts.filter(p => {
+      const key = (p.name || '').toLowerCase().trim();
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    saveAdminData(adminData);
+  }
 }
 
 function getWhatsAppNumber() {
@@ -1729,6 +1747,7 @@ function initAdminEvents() {
 
 /* =============== INICIALIZACIÓN GENERAL =============== */
 document.addEventListener('DOMContentLoaded', async () => {
+  cleanDuplicateProducts();
   renderHero();
   renderChips();
   renderGrid();
