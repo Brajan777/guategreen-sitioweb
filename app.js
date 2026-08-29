@@ -45,40 +45,96 @@ function saveSupabaseConfig(url, key) {
   }
 }
 
-async function initSupabase() {
+async function initSupabase(isManualTest = false) {
   const config = getSupabaseConfig();
   const badge = document.getElementById('supabaseStatusBadge');
   const urlInput = document.getElementById('supabaseUrlInput');
   const keyInput = document.getElementById('supabaseKeyInput');
 
-  if (urlInput) urlInput.value = config.url || '';
-  if (keyInput) keyInput.value = config.key || '';
+  let cleanUrl = (config.url || '').trim().replace(/\/+$/, '');
+  const cleanKey = (config.key || '').trim();
 
-  if (!config.url || !config.key || !window.supabase) {
+  // Auto-completar .supabase.co si el usuario solo puso el ID del proyecto o https://[id]
+  if (cleanUrl) {
+    if (cleanUrl.startsWith('https://')) {
+      const withoutHttps = cleanUrl.slice(8);
+      if (!withoutHttps.includes('.')) {
+        cleanUrl = `https://${withoutHttps}.supabase.co`;
+      }
+    } else if (cleanUrl.startsWith('http://')) {
+      const withoutHttp = cleanUrl.slice(7);
+      if (!withoutHttp.includes('.')) {
+        cleanUrl = `https://${withoutHttp}.supabase.co`;
+      }
+    } else if (!cleanUrl.includes('.')) {
+      cleanUrl = `https://${cleanUrl}.supabase.co`;
+    } else {
+      cleanUrl = `https://${cleanUrl}`;
+    }
+  }
+
+  if (urlInput) urlInput.value = cleanUrl;
+  if (keyInput) keyInput.value = cleanKey;
+
+  if (!cleanUrl || !cleanKey || !window.supabase) {
     if (badge) {
       badge.textContent = '⚪ Sin configurar (Modo local)';
       badge.style.background = '#E2E8F0';
       badge.style.color = '#475569';
     }
     isCloudConnected = false;
-    return;
+    if (isManualTest) {
+      alert('Por favor ingresa tu Project URL y tu Anon Key de Supabase.');
+    }
+    return false;
+  }
+
+  if (cleanUrl.startsWith('https://sb_') || cleanUrl.startsWith('https://eyJ')) {
+    if (badge) {
+      badge.textContent = '🔴 URL Incorrecta (Pegaste una clave)';
+      badge.style.background = '#FEE2E2';
+      badge.style.color = '#991B1B';
+    }
+    isCloudConnected = false;
+    if (isManualTest) {
+      alert('⚠️ Atención: En el campo "Project URL" pegaste una Clave API en lugar del enlace del proyecto.\n\nLa Project URL debe ser un enlace web como: https://xyz.supabase.co\n\nLa encuentras en Supabase en: Project Settings ➔ API ➔ Project URL.');
+    }
+    return false;
   }
 
   try {
-    supabaseClient = window.supabase.createClient(config.url, config.key);
+    supabaseClient = window.supabase.createClient(cleanUrl, cleanKey);
     
-    // Probar consulta rápida
+    // Probar consulta rápida a la tabla de productos
     const { data, error } = await supabaseClient.from('gg_products').select('id').limit(1);
     
     if (error) {
       console.warn('Supabase test error:', error);
-      if (badge) {
-        badge.textContent = '⚠️ Conectado (Falta ejecutar SQL)';
-        badge.style.background = '#FEF3C7';
-        badge.style.color = '#92400E';
+      const isMissingTable = (error.message || '').toLowerCase().includes('relation') || 
+                             (error.message || '').toLowerCase().includes('does not exist') || 
+                             error.code === '42P01' || error.code === 'PGRST204' || error.code === 'PGRST205';
+      
+      if (isMissingTable) {
+        if (badge) {
+          badge.textContent = '⚠️ Falta crear tablas (Ejecuta el SQL)';
+          badge.style.background = '#FEF3C7';
+          badge.style.color = '#92400E';
+        }
+        if (isManualTest) {
+          alert('Conexión con Supabase establecida, pero aún no se han creado las tablas gg_products y gg_hero.\n\nPor favor ve al SQL Editor de Supabase, pega el código SQL y presiona el botón RUN.');
+        }
+      } else {
+        if (badge) {
+          badge.textContent = '🔴 ' + (error.message || 'Error de conexión');
+          badge.style.background = '#FEE2E2';
+          badge.style.color = '#991B1B';
+        }
+        if (isManualTest) {
+          alert('Aviso de Supabase: ' + (error.message || JSON.stringify(error)) + '\n\nVerifica que la URL (' + cleanUrl + ') y la clave sean las de tu proyecto activo.');
+        }
       }
       isCloudConnected = false;
-      return;
+      return false;
     }
 
     if (badge) {
@@ -88,7 +144,7 @@ async function initSupabase() {
     }
     isCloudConnected = true;
 
-    // Descargar datos de la nube
+    // Descargar datos de la nube si existen
     await syncFromCloud();
 
     // Suscribirse a cambios en tiempo real
@@ -98,14 +154,23 @@ async function initSupabase() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'gg_hero' }, () => syncFromCloud())
       .subscribe();
 
+    if (isManualTest) {
+      alert('¡Conexión exitosa con Supabase! Tu tienda ahora está conectada en la nube en tiempo real.');
+    }
+    return true;
+
   } catch (err) {
     console.error('Error al inicializar Supabase:', err);
     if (badge) {
-      badge.textContent = '🔴 Error de conexión';
+      badge.textContent = '🔴 Error de conexión (Verifica URL/Key)';
       badge.style.background = '#FEE2E2';
       badge.style.color = '#991B1B';
     }
     isCloudConnected = false;
+    if (isManualTest) {
+      alert('Error de conexión con Supabase: ' + err.message + '\nVerifica que la URL y la Anon Key sean correctas.');
+    }
+    return false;
   }
 }
 
@@ -123,18 +188,18 @@ async function syncFromCloud() {
       const adminData = getAdminData();
       adminData.customProducts = prods.map(p => ({
         id: Number(p.id),
-        cat: p.cat,
-        name: p.name,
-        latin: p.latin,
-        price: Number(p.price),
+        cat: p.cat || 'Otros',
+        name: p.name || 'Sin nombre',
+        latin: p.latin || '',
+        price: Number(p.price) || 0,
         old: p.old_price ? Number(p.old_price) : null,
-        rarity: p.rarity,
+        rarity: p.rarity || 'Común',
         panel: p.panel || 'sage',
         stockQty: p.stock_qty || 0,
-        stock: p.stock,
+        stock: p.stock || (p.stock_qty > 0 ? `${p.stock_qty} disponibles` : 'Agotado'),
         order: p.order_num || 999,
-        description: p.description,
-        images: p.images,
+        description: p.description || '',
+        images: Array.isArray(p.images) && p.images.length > 0 ? p.images : [{ bg: 'var(--sage-100)', accent: '#3A5A40' }],
         deleted: !!p.deleted
       }));
       adminData.productOverrides = {};
@@ -178,12 +243,15 @@ async function syncProductToCloud(product) {
       stock: product.stock,
       order_num: product.order || 999,
       description: product.description,
-      images: product.images,
+      images: Array.isArray(product.images) ? product.images : [{ bg: 'var(--sage-100)', accent: '#3A5A40' }],
       deleted: !!product.deleted,
       updated_at: new Date().toISOString()
     };
 
-    await supabaseClient.from('gg_products').upsert(row);
+    const { error } = await supabaseClient.from('gg_products').upsert(row);
+    if (error) {
+      console.warn('Aviso al guardar en Supabase:', error);
+    }
   } catch (err) {
     console.error('Error guardando producto en Supabase:', err);
   }
@@ -193,11 +261,14 @@ async function syncHeroToCloud(heroData) {
   if (!supabaseClient || !isCloudConnected) return;
 
   try {
-    await supabaseClient.from('gg_hero').upsert({
+    const { error } = await supabaseClient.from('gg_hero').upsert({
       id: 'main',
       data: heroData,
       updated_at: new Date().toISOString()
     });
+    if (error) {
+      console.warn('Aviso al guardar Hero en Supabase:', error);
+    }
   } catch (err) {
     console.error('Error guardando hero en Supabase:', err);
   }
@@ -205,7 +276,7 @@ async function syncHeroToCloud(heroData) {
 
 async function uploadAllCurrentToCloud() {
   if (!supabaseClient || !isCloudConnected) {
-    alert('Primero guarda la URL y la Key de tu proyecto de Supabase.');
+    alert('Primero guarda la URL y la Key de tu proyecto de Supabase y asegúrate de que esté conectado.');
     return;
   }
 
@@ -226,7 +297,7 @@ async function uploadAllCurrentToCloud() {
       stock: p.stock,
       order_num: p.order || 999,
       description: p.description,
-      images: p.images,
+      images: Array.isArray(p.images) ? p.images : [{ bg: 'var(--sage-100)', accent: '#3A5A40' }],
       deleted: !!p.deleted,
       updated_at: new Date().toISOString()
     }));
@@ -239,7 +310,7 @@ async function uploadAllCurrentToCloud() {
     });
 
     if (pErr || hErr) {
-      alert('Error al subir a la nube: ' + (pErr?.message || hErr?.message || 'Verifica que ejecutaste el código SQL en Supabase'));
+      alert('Aviso de Supabase: ' + (pErr?.message || hErr?.message || 'Verifica que ejecutaste el código SQL en el SQL Editor de Supabase'));
     } else {
       alert('¡Catálogo y Portada subidos con éxito a la Nube! Ahora cualquier cambio se actualizará en vivo en todos los celulares y computadoras del mundo.');
     }
@@ -1622,8 +1693,7 @@ function initAdminEvents() {
       return;
     }
     saveSupabaseConfig(url, key);
-    alert('Guardando configuración y probando conexión con Supabase...');
-    await initSupabase();
+    await initSupabase(true);
   });
 
   document.getElementById('supabaseSyncUploadBtn')?.addEventListener('click', async () => {

@@ -37,7 +37,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,450;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,450;1,9..144,600&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=21.0">
+<link rel="stylesheet" href="styles.css?v=24.0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <!-- Datos Estructurados Google Schema.org (SEO Local, E-commerce & FAQ Rich Snippets) -->
@@ -376,12 +376,14 @@
 
         <div class="admin-form-grid" style="grid-template-columns:1fr 1fr;">
           <div>
-            <label class="mono">Project URL de Supabase</label>
-            <input type="text" id="supabaseUrlInput" class="admin-input" placeholder="https://xyzcompany.supabase.co">
+            <label class="mono">1. Project URL (Enlace del proyecto)</label>
+            <input type="text" id="supabaseUrlInput" class="admin-input" placeholder="https://xxxxxxxxxxxx.supabase.co">
+            <span style="font-size:.73rem;color:#64748B;display:block;margin-top:.3rem">En Supabase: ⚙️ Settings ➔ API ➔ Project URL (empieza con https://)</span>
           </div>
           <div>
-            <label class="mono">Anon Public API Key</label>
+            <label class="mono">2. Anon Public API Key (Clave API)</label>
             <input type="password" id="supabaseKeyInput" class="admin-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+            <span style="font-size:.73rem;color:#64748B;display:block;margin-top:.3rem">En Supabase: ⚙️ Settings ➔ API ➔ Project API Keys ➔ anon public</span>
           </div>
         </div>
 
@@ -399,7 +401,7 @@
           <div style="margin-top:.8rem;font-size:.78rem;color:#475569;">
             <p style="margin:0 0 .5rem;">Copia este código y pégalo en el <strong>SQL Editor</strong> de tu proyecto en Supabase. Creará las tablas automáticamente con permisos de lectura y escritura para tu tienda:</p>
             <pre style="background:#1E293B;color:#E2E8F0;padding:.8rem;border-radius:8px;overflow-x:auto;font-size:.74rem;font-family:'Space Mono',monospace;white-space:pre-wrap;">-- 1. Tabla de Productos del Catálogo
-create table if not exists gg_products (
+create table if not exists public.gg_products (
   id bigint primary key,
   cat text,
   name text,
@@ -418,18 +420,18 @@ create table if not exists gg_products (
 );
 
 -- 2. Tabla de Portada (Hero) y Configuración
-create table if not exists gg_hero (
+create table if not exists public.gg_hero (
   id text primary key,
   data jsonb,
   updated_at timestamp with time zone default now()
 );
 
--- 3. Habilitar lectura y escritura pública para tu web
-alter table gg_products enable row level security;
-alter table gg_hero enable row level security;
+-- 3. Desactivar RLS para permitir lectura y guardado inmediato sin bloqueos
+alter table public.gg_products disable row level security;
+alter table public.gg_hero disable row level security;
 
-create policy "Acceso total a productos" on gg_products for all using (true) with check (true);
-create policy "Acceso total a hero" on gg_hero for all using (true) with check (true);</pre>
+grant all on table public.gg_products to anon, authenticated, service_role;
+grant all on table public.gg_hero to anon, authenticated, service_role;</pre>
           </div>
         </details>
       </div>
@@ -774,6 +776,6 @@ create policy "Acceso total a hero" on gg_hero for all using (true) with check (
   </svg>
 </a>
 
-<script src="app.js?v=21.0"></script>
+<script src="app.js?v=24.0"></script>
 </body>
 </html>
