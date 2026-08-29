@@ -23,6 +23,10 @@ function getAdminData() {
 }
 
 /* =============== CONEXIÓN EN LA NUBE SUPABASE (CLOUD DATABASE) =============== */
+const DEFAULT_SUPABASE_CONFIG = {
+  url: 'https://jdtahguwisfekeifrond.supabase.co',
+  key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpkdGFoZ3V3aXNmZWtlaWZyb25kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc5MzkyNzUsImV4cCI6MjEwMzUxNTI3NX0.Ev48abAqnjkVVH8ZG4uUvhIDyefEoOF3gBQYgP8VwG4'
+};
 const SUPABASE_STORAGE_KEY = 'guategreen_supabase_config_v1';
 let supabaseClient = null;
 let isCloudConnected = false;
@@ -30,11 +34,14 @@ let isCloudConnected = false;
 function getSupabaseConfig() {
   try {
     const saved = localStorage.getItem(SUPABASE_STORAGE_KEY);
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return { ...DEFAULT_SUPABASE_CONFIG, ...parsed };
+    }
   } catch (e) {
     console.error('Error al leer configuración supabase', e);
   }
-  return { url: '', key: '' };
+  return DEFAULT_SUPABASE_CONFIG;
 }
 
 function saveSupabaseConfig(url, key) {
