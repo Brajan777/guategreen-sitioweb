@@ -439,20 +439,29 @@ function renderHero() {
 function getProducts() {
   const adminData = getAdminData();
   const overrides = adminData.productOverrides || {};
+  const customProds = adminData.customProducts || [];
 
-  const mergedDefaults = PRODUCTS.map((p, idx) => {
-    const ov = overrides[p.id];
-    const base = { ...p, order: p.order || (idx + 1) };
-    return ov ? { ...base, ...ov } : base;
+  const defaultMap = new Map();
+
+  // 1. Cargar productos base por defecto con overrides
+  PRODUCTS.forEach((p, idx) => {
+    const ov = overrides[p.id] || {};
+    defaultMap.set(p.id, { ...p, order: p.order || (idx + 1), ...ov });
   });
 
-  const customProds = (adminData.customProducts || []).map((p, idx) => {
-    const ov = overrides[p.id];
-    const base = { ...p, order: p.order || (mergedDefaults.length + idx + 1) };
-    return ov ? { ...base, ...ov } : base;
+  // 2. Cargar productos personalizados / sincronizados de Supabase (sin duplicar IDs)
+  customProds.forEach((p, idx) => {
+    const ov = overrides[p.id] || {};
+    const existing = defaultMap.get(p.id) || {};
+    defaultMap.set(p.id, {
+      ...existing,
+      ...p,
+      order: p.order || existing.order || (PRODUCTS.length + idx + 1),
+      ...ov
+    });
   });
 
-  const all = [...mergedDefaults, ...customProds].filter(p => !p.deleted);
+  const all = Array.from(defaultMap.values()).filter(p => !p.deleted);
 
   return all.sort((a, b) => {
     const ordA = (a.order !== undefined && a.order !== null && a.order !== '') ? Number(a.order) : 999;
@@ -1228,6 +1237,14 @@ function updateProductOverride(id, fields) {
   const adminData = getAdminData();
   adminData.productOverrides = adminData.productOverrides || {};
   adminData.productOverrides[id] = { ...(adminData.productOverrides[id] || {}), ...fields };
+
+  if (adminData.customProducts && adminData.customProducts.length > 0) {
+    const idx = adminData.customProducts.findIndex(p => p.id === id);
+    if (idx !== -1) {
+      adminData.customProducts[idx] = { ...adminData.customProducts[idx], ...fields };
+    }
+  }
+
   saveAdminData(adminData);
 
   const updatedP = getProducts().find(pp => pp.id === id);
