@@ -450,26 +450,29 @@ function getProducts() {
 
   const itemsMap = new Map();
 
-  // 1. Cargar productos base oficiales
+  // 1. Cargar productos base oficiales por ID
   PRODUCTS.forEach((p, idx) => {
-    const ov = overrides[p.id] || {};
-    const item = { ...p, order: p.order || (idx + 1), ...ov };
-    const key = p.name ? p.name.toLowerCase().trim() : `id_${p.id}`;
-    itemsMap.set(key, item);
+    itemsMap.set(Number(p.id), { ...p, order: p.order || (idx + 1) });
   });
 
-  // 2. Cargar productos personalizados o de Supabase (si coincide el nombre o el ID, se unifica y actualiza)
+  // 2. Cargar productos personalizados / sincronizados de Supabase por ID
   customProds.forEach((p, idx) => {
-    const ov = overrides[p.id] || {};
-    const key = p.name ? p.name.toLowerCase().trim() : `id_${p.id}`;
-    const existing = itemsMap.get(key) || {};
-    itemsMap.set(key, {
+    const pId = Number(p.id);
+    const existing = itemsMap.get(pId) || {};
+    itemsMap.set(pId, {
       ...existing,
       ...p,
-      id: existing.id || p.id,
-      order: p.order || existing.order || (PRODUCTS.length + idx + 1),
-      ...ov
+      id: pId,
+      order: (p.order !== undefined && p.order !== null) ? Number(p.order) : (existing.order || (PRODUCTS.length + idx + 1))
     });
+  });
+
+  // 3. Aplicar overrides locales específicos por ID
+  Object.keys(overrides).forEach(idStr => {
+    const pId = Number(idStr);
+    if (itemsMap.has(pId)) {
+      itemsMap.set(pId, { ...itemsMap.get(pId), ...overrides[idStr] });
+    }
   });
 
   const all = Array.from(itemsMap.values()).filter(p => !p.deleted);
@@ -1259,20 +1262,25 @@ function changeProductStock(id, delta) {
 }
 
 function updateProductOverride(id, fields) {
+  const pId = Number(id);
   const adminData = getAdminData();
   adminData.productOverrides = adminData.productOverrides || {};
-  adminData.productOverrides[id] = { ...(adminData.productOverrides[id] || {}), ...fields };
+  adminData.productOverrides[pId] = { ...(adminData.productOverrides[pId] || {}), ...fields };
 
-  if (adminData.customProducts && adminData.customProducts.length > 0) {
-    const idx = adminData.customProducts.findIndex(p => p.id === id);
-    if (idx !== -1) {
-      adminData.customProducts[idx] = { ...adminData.customProducts[idx], ...fields };
+  adminData.customProducts = adminData.customProducts || [];
+  const idx = adminData.customProducts.findIndex(p => Number(p.id) === pId);
+  if (idx !== -1) {
+    adminData.customProducts[idx] = { ...adminData.customProducts[idx], ...fields };
+  } else {
+    const existingFull = getProducts().find(pp => Number(pp.id) === pId);
+    if (existingFull) {
+      adminData.customProducts.push({ ...existingFull, ...fields });
     }
   }
 
   saveAdminData(adminData);
 
-  const updatedP = getProducts().find(pp => pp.id === id);
+  const updatedP = getProducts().find(pp => Number(pp.id) === pId);
   if (updatedP) {
     syncProductToCloud(updatedP);
   }
@@ -1603,10 +1611,11 @@ function initAdminEvents() {
     const orderVal = document.getElementById('editProdOrder').value;
     const order = orderVal ? Number(orderVal) : 999;
     const description = document.getElementById('editProdDesc').value.trim();
+    const finalStockText = stockText || (stockQty === 0 ? 'Agotado' : (stockQty === 1 ? 'Última unidad' : `${stockQty} disponibles`));
 
     let existingImages = [];
     if (editId) {
-      const existingP = getProducts().find(pp => pp.id === Number(editId));
+      const existingP = getProducts().find(pp => Number(pp.id) === Number(editId));
       if (existingP && existingP.images) existingImages = existingP.images;
     }
 
@@ -1622,16 +1631,28 @@ function initAdminEvents() {
     let savedProductObj = null;
 
     if (editId) {
+      const numId = Number(editId);
       savedProductObj = {
-        id: Number(editId),
-        name, latin, cat, rarity, price, old: oldPrice, stockQty, stock: stockText, order, description, images: finalImages
+        id: numId,
+        name,
+        latin,
+        cat,
+        rarity,
+        price,
+        old: oldPrice,
+        stockQty,
+        stock: finalStockText,
+        order,
+        description,
+        images: finalImages
       };
-      updateProductOverride(Number(editId), savedProductObj);
-      alert('¡Producto actualizado exitosamente con su orden y fotografías!');
+      updateProductOverride(numId, savedProductObj);
+      alert('¡Planta y todos sus datos actualizados exitosamente!');
     } else {
+      const newId = Date.now();
       const adminData = getAdminData();
       savedProductObj = {
-        id: Date.now(),
+        id: newId,
         cat,
         name,
         latin,
@@ -1640,7 +1661,7 @@ function initAdminEvents() {
         rarity,
         panel: 'sage',
         stockQty,
-        stock: stockText,
+        stock: finalStockText,
         order,
         description,
         images: finalImages
@@ -1649,7 +1670,7 @@ function initAdminEvents() {
       adminData.customProducts.push(savedProductObj);
       saveAdminData(adminData);
       syncProductToCloud(savedProductObj);
-      alert('¡Planta añadida exitosamente al catálogo con su orden y fotografías!');
+      alert('¡Nueva planta añadida exitosamente al catálogo con todos sus datos!');
     }
 
     closeProdEditModal();
