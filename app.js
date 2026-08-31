@@ -705,13 +705,13 @@ function renderGrid() {
     <div class="card" data-id="${p.id}">
       <div class="card-media">
         ${frames}
-        <span class="tag-rarity" style="background:${rc.bg};color:${rc.c}">${p.rarity}</span>
         <div class="thumbs">${thumbs}</div>
       </div>
       <div class="card-body">
         <span class="latin">${p.latin}</span>
         <h3 class="name">${p.name}</h3>
         <div class="stock-row"><span class="dot-live" style="background:var(--sage-500)"></span>${p.stock}</div>
+        <div class="rarity-row"><span class="tag-rarity-inline" style="background:${rc.bg};color:${rc.c}">${p.rarity}</span></div>
         <div class="card-foot">
           <span class="price">${p.old ? `<span class="old">${money(p.old)}</span>` : ''}${money(p.price)}</span>
           <button class="add-btn" aria-label="Agregar al carrito">+</button>
@@ -804,13 +804,11 @@ function openProductModal(id) {
         </div>
       </div>
       <div class="modal-info">
-        <div style="display:flex;gap:.5rem;align-items:center;">
-          <span class="tag-rarity" style="position:static;background:${rc.bg};color:${rc.c}">${p.rarity}</span>
-        </div>
         <span class="latin">${p.latin}</span>
         <h2 class="name">${p.name}</h2>
         <div class="price" style="font-size:1.4rem;margin:.4rem 0">${money(p.price)}</div>
         <div class="stock-row"><span class="dot-live" style="background:var(--sage-500)"></span>${p.stock}</div>
+        <div class="rarity-row" style="margin:.3rem 0 .5rem"><span class="tag-rarity-inline" style="background:${rc.bg};color:${rc.c}">${p.rarity}</span></div>
         <p class="desc">${p.description}</p>
         <div style="margin-top:auto;display:flex;gap:.8rem;flex-wrap:wrap;">
           <button class="btn btn-block" id="modalAddToCartBtn">Agregar al carrito y apartar</button>
