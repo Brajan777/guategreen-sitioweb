@@ -705,7 +705,6 @@ function renderGrid() {
     <div class="card" data-id="${p.id}">
       <div class="card-media">
         ${frames}
-        <span class="tag-num mono">ESP. ${String(p.id).padStart(3, '0')}</span>
         <span class="tag-rarity" style="background:${rc.bg};color:${rc.c}">${p.rarity}</span>
         <div class="thumbs">${thumbs}</div>
       </div>
@@ -806,7 +805,6 @@ function openProductModal(id) {
       </div>
       <div class="modal-info">
         <div style="display:flex;gap:.5rem;align-items:center;">
-          <span class="tag-num mono" style="position:static">ESP. ${String(p.id).padStart(3, '0')}</span>
           <span class="tag-rarity" style="position:static;background:${rc.bg};color:${rc.c}">${p.rarity}</span>
         </div>
         <span class="latin">${p.latin}</span>

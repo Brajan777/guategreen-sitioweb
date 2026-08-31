@@ -2080,25 +2080,40 @@ a:focus-visible,button:focus-visible{
 
 @media(max-width:768px){
   .admin-panel-card{
-    width:98vw;
-    height:96vh;
-    max-height:96vh;
-    border-radius:18px;
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    width:100vw !important;
+    height:100vh !important;
+    height:100dvh !important;
+    max-height:100vh !important;
+    max-height:100dvh !important;
+    transform:none !important;
+    border-radius:0 !important;
+    border:none !important;
+    z-index:9999;
+  }
+  .admin-panel-card.open{
+    transform:none !important;
   }
   .admin-header-bar{
-    padding:.9rem 1rem;
-    gap:.6rem;
+    padding:.8rem 1rem;
+    gap:.5rem;
+    position:sticky;
+    top:0;
+    z-index:10;
+    box-shadow:0 2px 8px rgba(0,0,0,.04);
   }
   .admin-header-title{
-    gap:.6rem;
+    gap:.5rem;
   }
   .admin-badge-icon{
-    width:2.2rem;
-    height:2.2rem;
-    font-size:1.1rem;
+    width:2rem;
+    height:2rem;
+    font-size:1rem;
   }
   .admin-main-title{
-    font-size:1.1rem;
+    font-size:1.05rem;
   }
   .admin-main-sub{
     display:none;
@@ -2106,46 +2121,56 @@ a:focus-visible,button:focus-visible{
   .admin-header-actions{
     width:100%;
     justify-content:space-between;
-    gap:.5rem;
+    gap:.4rem;
   }
   .admin-tab-pills{
     flex:1;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .admin-tab-pills::-webkit-scrollbar{
+    display:none;
   }
   .admin-pill-btn{
     flex:1;
     text-align:center;
-    padding:.45rem .6rem;
-    font-size:.8rem;
+    padding:.45rem .5rem;
+    font-size:.76rem;
+    white-space:nowrap;
   }
   .admin-panel-content-wrap{
-    padding:1rem .8rem;
+    padding:.8rem .6rem 2rem;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    flex:1;
   }
   .admin-kpi-grid{
     grid-template-columns:repeat(2,1fr);
-    gap:.6rem;
-    margin-bottom:1rem;
+    gap:.5rem;
+    margin-bottom:.8rem;
   }
   .admin-kpi-card{
-    padding:.8rem .9rem;
-    border-radius:14px;
+    padding:.7rem .8rem;
+    border-radius:12px;
   }
   .kpi-label{
-    font-size:.72rem;
+    font-size:.7rem;
   }
   .kpi-val{
-    font-size:1.25rem;
+    font-size:1.15rem;
   }
   .kpi-icon-box{
-    width:2.2rem;
-    height:2.2rem;
-    font-size:1rem;
-    border-radius:10px;
+    width:2rem;
+    height:2rem;
+    font-size:.95rem;
+    border-radius:8px;
   }
   
   .admin-filter-bar{
     flex-direction:column;
-    gap:.6rem;
-    margin-bottom:1rem;
+    gap:.5rem;
+    margin-bottom:.8rem;
   }
   .admin-search-box{
     width:100%;
@@ -2153,42 +2178,172 @@ a:focus-visible,button:focus-visible{
   }
   .admin-select-filter{
     width:100%;
+    font-size:16px;
+    padding:.7rem .9rem;
   }
   .admin-btn-add-product{
     width:100%;
     justify-content:center;
-    padding:.8rem 1rem;
+    padding:.85rem 1rem;
     font-size:.95rem;
     margin-left:0;
+    border-radius:12px;
   }
 
+  /* Vista de Tarjetas Móvil para el Inventario */
   .admin-table-responsive{
     border-radius:14px;
+    border:none;
+    background:transparent;
+    box-shadow:none;
+    overflow:visible;
   }
   .admin-table{
-    min-width:640px;
+    display:block;
+    width:100%;
+    min-width:0 !important;
   }
-  .admin-table th, .admin-table td{
-    padding:.8rem .9rem;
+  .admin-table thead{
+    display:none;
+  }
+  .admin-table tbody{
+    display:flex;
+    flex-direction:column;
+    gap:.75rem;
+    width:100%;
+  }
+  .admin-table tr{
+    display:flex;
+    flex-direction:column;
+    background:#FFFFFF;
+    border:1.5px solid #E2E8F0;
+    border-radius:16px;
+    padding:.9rem;
+    box-shadow:0 2px 8px rgba(0,0,0,.03);
+    gap:.6rem;
+  }
+  .admin-table td{
+    padding:0 !important;
+    border:none !important;
+    display:flex;
+    align-items:center;
   }
 
+  .admin-table td:nth-child(1){ /* Orden */
+    display:none;
+  }
+  .admin-table td:nth-child(2){ /* Producto info */
+    width:100%;
+  }
+  .admin-table td:nth-child(3){ /* Categoría */
+    display:inline-block;
+  }
+  .admin-table td:nth-child(4){ /* Precio */
+    font-size:1.1rem;
+  }
+  .admin-table td:nth-child(5){ /* Stepper stock */
+    justify-content:flex-start;
+  }
+  .admin-table td:nth-child(6){ /* Estado */
+    display:inline-block;
+  }
+  .admin-table td:nth-child(7){ /* Acciones */
+    display:flex;
+    gap:.6rem;
+    width:100%;
+    margin-top:.4rem;
+    padding-top:.6rem !important;
+    border-top:1px dashed #E2E8F0 !important;
+    justify-content:flex-end;
+  }
+
+  .tbl-prod-thumb{
+    width:3.2rem;
+    height:3.2rem;
+    border-radius:10px;
+  }
+  .tbl-prod-title{
+    font-size:1rem;
+  }
+  .tbl-prod-sub{
+    font-size:.8rem;
+  }
+
+  .btn-edit-item{
+    flex:1;
+    background:#EFF5E1 !important;
+    color:#15803D !important;
+    font-weight:700 !important;
+    font-size:.85rem !important;
+    padding:.6rem 1rem !important;
+    border-radius:10px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    gap:.4rem !important;
+    opacity:1 !important;
+    border:1px solid #CBD5E1 !important;
+  }
+  .btn-edit-item::after{
+    content:" Editar";
+  }
+
+  .btn-delete-item{
+    background:#FEE2E2 !important;
+    color:#991B1B !important;
+    font-size:.85rem !important;
+    padding:.6rem .8rem !important;
+    border-radius:10px !important;
+    opacity:1 !important;
+    border:1px solid #FECACA !important;
+  }
+
+  /* Submodal de Edición Móvil */
+  .admin-submodal-card{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    width:100vw !important;
+    height:100vh !important;
+    height:100dvh !important;
+    max-height:100vh !important;
+    max-height:100dvh !important;
+    transform:none !important;
+    border-radius:0 !important;
+    border:none !important;
+    display:flex;
+    flex-direction:column;
+    z-index:99999;
+  }
+  .admin-submodal-card.open{
+    transform:none !important;
+  }
+  .admin-panel-head{
+    padding:1rem;
+    border-bottom:1.5px solid #E2E8F0;
+    position:sticky;
+    top:0;
+    background:#FFFFFF;
+    z-index:10;
+  }
+  .admin-submodal-card form{
+    padding:1rem !important;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    flex:1;
+  }
   .admin-form-grid{
     grid-template-columns:1fr !important;
     gap:.8rem;
   }
-  .admin-submodal-card{
-    width:98vw;
-    max-height:95vh;
-    border-radius:16px;
-  }
-  .admin-submodal-card form{
-    padding:1rem !important;
-  }
   .admin-photo-uploads-grid{
     grid-template-columns:1fr;
+    gap:.8rem;
   }
   .admin-input{
     font-size:16px !important;
+    padding:.75rem .9rem;
+    border-radius:10px;
   }
 }
 
