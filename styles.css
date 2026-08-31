@@ -1467,21 +1467,28 @@ a:focus-visible,button:focus-visible{
 }
 
 .admin-lock-btn{
-  background:#EFF5E1;
-  border:1px solid #CBD5E1;
-  border-radius:50%;
-  font-size:.9rem;
+  background:transparent;
+  border:none;
+  font-size:.72rem;
   cursor:pointer;
-  width:1.8rem;
-  height:1.8rem;
+  padding:0;
+  margin:0;
+  width:1.2rem;
+  height:1.2rem;
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  transition:all .2s var(--ease);
+  opacity:.25;
+  filter:grayscale(100%);
+  transition:opacity .25s var(--ease), transform .2s var(--ease);
+  color:inherit;
+  -webkit-tap-highlight-color:transparent;
 }
-.admin-lock-btn:hover{
-  background:var(--sage-100);
-  transform:scale(1.15);
+.admin-lock-btn:hover,
+.admin-lock-btn:active{
+  opacity:.85;
+  filter:grayscale(0%);
+  transform:scale(1.1);
 }
 
 .admin-login-overlay,.admin-panel-overlay{
