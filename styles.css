@@ -1896,6 +1896,34 @@ a:focus-visible,button:focus-visible{
   align-items:center;
   justify-content:center;
   flex-shrink:0;
+  position:relative;
+}
+.thumb-order-badge{
+  position:absolute;
+  top:-5px;
+  left:-5px;
+  background:var(--brand-green);
+  color:#FFFFFF;
+  font-family:'Space Mono',monospace;
+  font-size:.62rem;
+  font-weight:700;
+  padding:.1rem .35rem;
+  border-radius:6px;
+  box-shadow:0 2px 4px rgba(0,0,0,.18);
+  line-height:1;
+  z-index:2;
+}
+.mobile-order-badge{
+  display:none;
+  background:#EFF5E1;
+  color:#15803D;
+  font-family:'Space Mono',monospace;
+  font-size:.68rem;
+  font-weight:700;
+  padding:.15rem .45rem;
+  border-radius:6px;
+  margin-right:.4rem;
+  vertical-align:middle;
 }
 .tbl-prod-title{
   font-weight:700;
@@ -2278,6 +2306,9 @@ a:focus-visible,button:focus-visible{
     align-items:center;
   }
 
+  .mobile-order-badge{
+    display:inline-block !important;
+  }
   .admin-table td:nth-child(1){ /* Orden */
     display:none;
   }

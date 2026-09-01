@@ -644,7 +644,8 @@ const PRODUCTS = [
 
 const CATEGORIES = ['Todas', 'Monstera', 'Philodendron', 'Alocasia', 'Caladium', 'Otros'];
 let activeCat = 'Todas';
-let visibleCount = 16;
+const INITIAL_VISIBLE_COUNT = 16;
+let visibleCount = INITIAL_VISIBLE_COUNT;
 
 function leafSVG(accent) {
   return `<svg viewBox="0 0 100 100" fill="none">
@@ -676,7 +677,7 @@ function renderChips() {
   el.querySelectorAll('.chip').forEach(btn => {
     btn.addEventListener('click', () => {
       activeCat = btn.dataset.cat;
-      visibleCount = 4;
+      visibleCount = INITIAL_VISIBLE_COUNT;
       renderChips();
       renderGrid();
     });
@@ -764,7 +765,13 @@ function renderGrid() {
 
   const loadMoreBtn = document.getElementById('loadMoreBtn');
   if (loadMoreBtn) {
-    loadMoreBtn.style.display = shown.length < filtered.length ? 'inline-flex' : 'none';
+    const remaining = filtered.length - shown.length;
+    if (remaining > 0) {
+      loadMoreBtn.style.display = 'inline-flex';
+      loadMoreBtn.innerHTML = `Ver catálogo completo (+${remaining} plantas más) ↓`;
+    } else {
+      loadMoreBtn.style.display = 'none';
+    }
   }
 }
 
@@ -1156,15 +1163,21 @@ function renderAdminTable() {
         <td style="text-align:center">
           <div class="tbl-order-box">
             <button type="button" class="btn-order-move" data-act="move-up" title="Mover arriba en catálogo">▲</button>
-            <span class="order-num-pill">${pos}</span>
+            <span class="order-num-pill" title="Posición en catálogo">#${pos}</span>
             <button type="button" class="btn-order-move" data-act="move-down" title="Mover abajo en catálogo">▼</button>
           </div>
         </td>
         <td>
           <div class="tbl-prod-info">
-            <div class="tbl-prod-thumb" style="background:${(im && im.bg) || '#EFF5E1'}">${thumbContent}</div>
+            <div class="tbl-prod-thumb" style="background:${(im && im.bg) || '#EFF5E1'};position:relative;">
+              ${thumbContent}
+              <span class="thumb-order-badge">#${pos}</span>
+            </div>
             <div>
-              <div class="tbl-prod-title">${p.name}</div>
+              <div class="tbl-prod-title">
+                <span class="mobile-order-badge">Posición #${pos}</span>
+                ${p.name}
+              </div>
               <div class="tbl-prod-sub">${p.latin}</div>
             </div>
           </div>
@@ -1783,7 +1796,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const loadMoreBtn = document.getElementById('loadMoreBtn');
   if (loadMoreBtn) {
     loadMoreBtn.addEventListener('click', () => {
-      visibleCount += 4;
+      visibleCount = 9999;
       renderGrid();
     });
   }
