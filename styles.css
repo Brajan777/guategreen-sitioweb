@@ -1,20 +1,23 @@
 :root{
   --cream:#FFFFFF;
   --paper:#FFFFFF;
-  --sage-100:#ECF39E;
-  --sage-300:#90A955;
-  --sage-500:#4F772D;
-  --sage-700:#3A5A40;
-  --blush-100:#D8F367;
-  --coral:#4F772D;
-  --coral-dark:#31572C;
-  --lilac-100:#C9DBA6;
-  --lilac-500:#35521F;
-  --ink:#241D16;
-  --ink-70:rgba(36,29,22,.72);
-  --ink-45:rgba(36,29,22,.45);
+  --brand-green:#0A5A3C;
+  --brand-green-dark:#06402A;
+  --sage-100:#E6F4ED;
+  --sage-300:#4B9E7B;
+  --sage-500:#128059;
+  --sage-700:#0A5A3C;
+  --sage-900:#04281B;
+  --blush-100:#E6F4ED;
+  --coral:#0A5A3C;
+  --coral-dark:#06402A;
+  --lilac-100:#D0EBE0;
+  --lilac-500:#0A5A3C;
+  --ink:#17221C;
+  --ink-70:rgba(23,34,28,.75);
+  --ink-45:rgba(23,34,28,.45);
   --line:2px solid var(--ink);
-  --line-soft:1.5px solid rgba(36,29,22,.18);
+  --line-soft:1.5px solid rgba(23,34,28,.15);
   --shadow-hard:5px 5px 0 var(--ink);
   --shadow-hard-sm:3px 3px 0 var(--ink);
   --shadow-hard-lg:8px 8px 0 var(--ink);
@@ -99,7 +102,7 @@ header{
   position:sticky;
   top:0;
   z-index:60;
-  background:rgba(255,255,255,.86);
+  background:rgba(255,255,255,.92);
   backdrop-filter:blur(10px);
   border-bottom:var(--line);
   transition:padding .35s var(--ease);
@@ -121,7 +124,7 @@ header.shrink .nav{
 .logo-brand{
   display:inline-flex;
   align-items:center;
-  gap:.7rem;
+  gap:.75rem;
   text-decoration:none;
 }
 
@@ -130,30 +133,30 @@ header.shrink .nav{
   height:3.3rem;
   border-radius:50%;
   object-fit:cover;
-  border:1.5px solid var(--sage-700);
+  border:2px solid var(--brand-green);
   box-shadow:var(--shadow-hard-sm);
   transition:transform .25s var(--ease), width .25s var(--ease), height .25s var(--ease);
   flex-shrink:0;
 }
 
 header.shrink .brand-icon{
-  width:2.7rem;
-  height:2.7rem;
+  width:2.6rem;
+  height:2.6rem;
 }
 
 .logo-brand:hover .brand-icon{
-  transform:scale(1.08) rotate(6deg);
+  transform:scale(1.06) rotate(4deg);
 }
 
 .logo{
-  font-size:1.5rem;
-  font-weight:700;
-  letter-spacing:-.01em;
-}
-
-.logo em{
-  font-style:italic;
-  color:var(--sage-500);
+  font-family:'Archivo',sans-serif;
+  font-size:1.6rem;
+  font-weight:800;
+  letter-spacing:-.035em;
+  color:var(--brand-green);
+  line-height:1;
+  display:inline-flex;
+  align-items:center;
 }
 
 .nav-links{
