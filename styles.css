@@ -1980,6 +1980,22 @@ a:focus-visible,button:focus-visible{
   color:var(--sage-700);
   transform:scale(1.25);
 }
+.sel-prod-order{
+  background:#EFF5E1;
+  color:#15803D;
+  font-family:'Space Mono',monospace;
+  font-size:.78rem;
+  font-weight:700;
+  padding:.22rem .45rem;
+  border-radius:8px;
+  border:1.5px solid #CBD5E1;
+  cursor:pointer;
+  outline:none;
+  transition:border-color .2s var(--ease);
+}
+.sel-prod-order:focus{
+  border-color:var(--brand-green);
+}
 .order-num-pill{
   background:#EFF5E1;
   color:#15803D;
@@ -2310,7 +2326,18 @@ a:focus-visible,button:focus-visible{
     display:inline-block !important;
   }
   .admin-table td:nth-child(1){ /* Orden */
-    display:none;
+    display:flex !important;
+    align-items:center;
+    justify-content:space-between;
+    width:100%;
+    background:#F8FAFC;
+    border:1px solid #E2E8F0 !important;
+    border-radius:10px;
+    padding:.4rem .7rem !important;
+  }
+  .admin-table td:nth-child(1) .tbl-order-box{
+    width:100%;
+    justify-content:space-between;
   }
   .admin-table td:nth-child(2){ /* Producto info */
     width:100%;

@@ -477,11 +477,18 @@ function getProducts() {
 
   const all = Array.from(itemsMap.values()).filter(p => !p.deleted);
 
-  return all.sort((a, b) => {
-    const ordA = (a.order !== undefined && a.order !== null && a.order !== '') ? Number(a.order) : 999;
-    const ordB = (b.order !== undefined && b.order !== null && b.order !== '') ? Number(b.order) : 999;
-    return ordA - ordB;
+  all.sort((a, b) => {
+    const ordA = (a.order !== undefined && a.order !== null && a.order !== '') ? Number(a.order) : 9999;
+    const ordB = (b.order !== undefined && b.order !== null && b.order !== '') ? Number(b.order) : 9999;
+    if (ordA !== ordB) return ordA - ordB;
+    return Number(a.id) - Number(b.id);
   });
+
+  all.forEach((p, idx) => {
+    p.order = idx + 1;
+  });
+
+  return all;
 }
 
 function cleanDuplicateProducts() {
@@ -1148,6 +1155,8 @@ function renderAdminTable() {
     return;
   }
 
+  const totalProds = prods.length;
+
   tbody.innerHTML = prods.map((p, i) => {
     const qty = parseStockQty(p);
     const im = p.images ? p.images[0] : null;
@@ -1156,15 +1165,23 @@ function renderAdminTable() {
       ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">` 
       : leafSVG(im ? im.accent : '#3A5A40');
     
-    const pos = p.order || (i + 1);
+    const pos = i + 1;
+
+    const orderOptions = Array.from({ length: totalProds }, (_, idx) => {
+      const num = idx + 1;
+      return `<option value="${num}" ${num === pos ? 'selected' : ''}>#${num}</option>`;
+    }).join('');
 
     return `
       <tr data-id="${p.id}">
         <td style="text-align:center">
           <div class="tbl-order-box">
-            <button type="button" class="btn-order-move" data-act="move-up" title="Mover arriba en catálogo">▲</button>
-            <span class="order-num-pill" title="Posición en catálogo">#${pos}</span>
-            <button type="button" class="btn-order-move" data-act="move-down" title="Mover abajo en catálogo">▼</button>
+            <span style="font-size:.72rem;color:#64748B;font-weight:700">Posición</span>
+            <button type="button" class="btn-order-move" data-act="move-up" title="Subir posición" ${pos === 1 ? 'disabled style="opacity:0.25;cursor:not-allowed"' : ''}>▲</button>
+            <select class="sel-prod-order" data-id="${p.id}" title="Cambiar posición directa en el catálogo">
+              ${orderOptions}
+            </select>
+            <button type="button" class="btn-order-move" data-act="move-down" title="Bajar posición" ${pos === totalProds ? 'disabled style="opacity:0.25;cursor:not-allowed"' : ''}>▼</button>
           </div>
         </td>
         <td>
@@ -1219,6 +1236,11 @@ function renderAdminTable() {
     row.querySelector('[data-act="move-up"]')?.addEventListener('click', () => moveProductOrder(id, -1));
     row.querySelector('[data-act="move-down"]')?.addEventListener('click', () => moveProductOrder(id, 1));
 
+    // Direct order dropdown
+    row.querySelector('.sel-prod-order')?.addEventListener('change', (e) => {
+      setProductPosition(id, Number(e.target.value));
+    });
+
     // Edit button
     row.querySelector('.btn-edit-item')?.addEventListener('click', () => openProdEditModal(id));
 
@@ -1234,28 +1256,50 @@ function renderAdminTable() {
   });
 }
 
-function moveProductOrder(id, direction) {
+function setProductPosition(id, newPosition) {
+  const numId = Number(id);
   const prods = getProducts();
-  const index = prods.findIndex(pp => pp.id === id);
+  const index = prods.findIndex(pp => Number(pp.id) === numId);
   if (index === -1) return;
 
-  const targetIndex = index + direction;
-  if (targetIndex < 0 || targetIndex >= prods.length) return;
+  const targetPos = Math.max(1, Math.min(prods.length, Number(newPosition)));
+  const targetIndex = targetPos - 1;
 
-  const currentProd = prods[index];
-  const targetProd = prods[targetIndex];
+  if (index === targetIndex) return;
 
-  const currentOrder = currentProd.order || (index + 1);
-  const targetOrder = targetProd.order || (targetIndex + 1);
+  // Mover producto a la nueva posición deseada
+  const [item] = prods.splice(index, 1);
+  prods.splice(targetIndex, 0, item);
 
-  const newCurrentOrder = targetOrder;
-  const newTargetOrder = currentOrder === targetOrder ? (direction > 0 ? currentOrder - 1 : currentOrder + 1) : currentOrder;
+  // Reasignar posiciones estrictas 1..N sin duplicados
+  const adminData = getAdminData();
+  adminData.productOverrides = adminData.productOverrides || {};
+  adminData.customProducts = adminData.customProducts || [];
 
-  updateProductOverride(currentProd.id, { order: newCurrentOrder });
-  updateProductOverride(targetProd.id, { order: newTargetOrder });
+  prods.forEach((p, idx) => {
+    const strictOrder = idx + 1;
+    p.order = strictOrder;
+    adminData.productOverrides[p.id] = { ...(adminData.productOverrides[p.id] || {}), order: strictOrder };
+    const customIdx = adminData.customProducts.findIndex(cp => Number(cp.id) === Number(p.id));
+    if (customIdx !== -1) {
+      adminData.customProducts[customIdx].order = strictOrder;
+    }
+    syncProductToCloud(p);
+  });
 
+  saveAdminData(adminData);
   renderAdminTable();
   renderGrid();
+}
+
+function moveProductOrder(id, direction) {
+  const numId = Number(id);
+  const prods = getProducts();
+  const index = prods.findIndex(pp => Number(pp.id) === numId);
+  if (index === -1) return;
+
+  const newPosition = (index + 1) + direction;
+  setProductPosition(numId, newPosition);
 }
 
 function changeProductStock(id, delta) {
@@ -1680,6 +1724,10 @@ function initAdminEvents() {
       saveAdminData(adminData);
       syncProductToCloud(savedProductObj);
       alert('¡Nueva planta añadida exitosamente al catálogo con todos sus datos!');
+    }
+
+    if (savedProductObj && order) {
+      setProductPosition(savedProductObj.id, order);
     }
 
     closeProdEditModal();
