@@ -463,8 +463,8 @@ header.shrink .brand-icon{
   padding:.85rem 1.6rem;
   border-radius:var(--radius-pill);
   border:var(--line);
-  background:var(--ink);
-  color:var(--paper);
+  background:var(--brand-green);
+  color:#FFFFFF;
   box-shadow:var(--shadow-hard-sm);
   transition:transform .22s var(--ease),box-shadow .22s var(--ease),background .22s var(--ease);
   white-space:nowrap;
@@ -472,7 +472,9 @@ header.shrink .brand-icon{
 
 .btn:hover{
   transform:translate(-2px,-2px);
-  box-shadow:6px 6px 0 var(--ink);
+  background:var(--brand-green-dark);
+  box-shadow:5px 5px 0 var(--ink);
+  color:#FFFFFF;
 }
 
 .btn:active{
@@ -481,14 +483,20 @@ header.shrink .brand-icon{
 }
 
 .btn-coral{
-  background:var(--coral);
+  background:var(--brand-green);
   border-color:var(--ink);
-  color:var(--ink);
+  color:#FFFFFF;
 }
 
 .btn-outline{
   background:var(--paper);
-  color:var(--ink);
+  color:var(--brand-green);
+  border:2px solid var(--brand-green);
+}
+
+.btn-outline:hover{
+  background:var(--brand-green);
+  color:#FFFFFF;
 }
 
 .btn-sm{
@@ -1022,8 +1030,8 @@ section{
   height:2.5rem;
   border-radius:50%;
   border:var(--line);
-  background:var(--ink);
-  color:var(--cream);
+  background:var(--brand-green);
+  color:#FFFFFF;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -1035,7 +1043,7 @@ section{
 
 .add-btn:hover{
   transform:scale(1.08) rotate(90deg);
-  background:var(--sage-700);
+  background:var(--brand-green-dark);
 }
 
 .stock-row{
@@ -1111,31 +1119,35 @@ section{
   margin:0;
 }
 
-/* ---------- TESTIMONIALS ---------- */
+/* ---------- TESTIMONIALS (COMUNIDAD) ---------- */
 .testi-section{
-  background:var(--blush-100);
+  background:#EBF5F0;
   border-top:var(--line);
   border-bottom:var(--line);
+  padding:clamp(3.2rem,6vw,5.5rem) 0;
 }
 
 .testi-grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:1.2rem;
+  gap:1.4rem;
 }
 
 .testi{
-  background:var(--paper);
+  background:#FFFFFF;
   border:var(--line);
   border-radius:var(--radius-card);
-  padding:1.6rem;
+  padding:1.8rem;
   box-shadow:var(--shadow-hard-sm);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
 }
 
 .stars{
-  color:var(--coral);
+  color:var(--brand-green);
   letter-spacing:.15em;
-  font-size:.9rem;
+  font-size:.95rem;
 }
 
 .testi p.quote{
