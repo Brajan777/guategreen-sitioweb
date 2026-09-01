@@ -806,10 +806,10 @@ header.shrink .brand-icon{
 .marquee-strip{
   border-top:var(--line);
   border-bottom:var(--line);
-  background:var(--ink);
-  color:var(--cream);
+  background:var(--brand-green);
+  color:#FFFFFF;
   overflow:hidden;
-  padding:.85rem 0;
+  padding:.9rem 0;
 }
 
 .marquee-track{
@@ -820,17 +820,17 @@ header.shrink .brand-icon{
 
 .marquee-track span{
   font-family:'Space Mono',monospace;
-  font-size:.82rem;
+  font-size:.84rem;
+  font-weight:700;
   letter-spacing:.06em;
   padding:0 2.2rem;
   white-space:nowrap;
   text-transform:uppercase;
+  color:#FFFFFF;
 }
 
 .marquee-track span::before{
-  content:'✦';
-  margin-right:2.2rem;
-  color:var(--sage-300);
+  display:none;
 }
 
 @keyframes scroll{
