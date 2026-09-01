@@ -802,40 +802,91 @@ header.shrink .brand-icon{
   transform:rotate(3deg);
 }
 
-/* ---------- MARQUEE ---------- */
-.marquee-strip{
+/* ---------- BENEFITS BAR (ESTÁTICA CON ÍCONOS) ---------- */
+.benefits-bar{
   border-top:var(--line);
   border-bottom:var(--line);
   background:var(--brand-green);
   color:#FFFFFF;
-  overflow:hidden;
-  padding:.9rem 0;
+  padding:1.1rem 0;
 }
 
-.marquee-track{
+.benefits-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1.5rem;
+  align-items:center;
+}
+
+.benefit-item{
   display:flex;
-  width:max-content;
-  animation:scroll 26s linear infinite;
+  align-items:center;
+  gap:.85rem;
 }
 
-.marquee-track span{
-  font-family:'Space Mono',monospace;
-  font-size:.84rem;
-  font-weight:700;
-  letter-spacing:.06em;
-  padding:0 2.2rem;
-  white-space:nowrap;
-  text-transform:uppercase;
+.benefit-icon{
+  width:2.5rem;
+  height:2.5rem;
+  border-radius:50%;
+  background:rgba(255,255,255,.12);
+  border:1.5px solid rgba(255,255,255,.25);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
   color:#FFFFFF;
 }
 
-.marquee-track span::before{
-  display:none;
+.benefit-text{
+  display:flex;
+  flex-direction:column;
+  line-height:1.25;
 }
 
-@keyframes scroll{
-  from{transform:translateX(0);}
-  to{transform:translateX(-50%);}
+.benefit-text strong{
+  font-family:'Archivo',sans-serif;
+  font-size:.86rem;
+  font-weight:700;
+  letter-spacing:-.01em;
+  color:#FFFFFF;
+}
+
+.benefit-text span{
+  font-family:'Space Mono',monospace;
+  font-size:.68rem;
+  color:rgba(255,255,255,.82);
+  margin-top:2px;
+}
+
+@media(max-width:960px){
+  .benefits-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:1rem 1.4rem;
+  }
+}
+
+@media(max-width:540px){
+  .benefits-bar{
+    padding:.9rem 0;
+  }
+  .benefits-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:.8rem .6rem;
+  }
+  .benefit-icon{
+    width:2.1rem;
+    height:2.1rem;
+  }
+  .benefit-icon svg{
+    width:17px;
+    height:17px;
+  }
+  .benefit-text strong{
+    font-size:.76rem;
+  }
+  .benefit-text span{
+    font-size:.6rem;
+  }
 }
 
 /* ---------- SECTION HEADS ---------- */

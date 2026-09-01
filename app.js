@@ -200,7 +200,7 @@ async function syncFromCloud() {
         latin: p.latin || '',
         price: Number(p.price) || 0,
         old: p.old_price ? Number(p.old_price) : null,
-        rarity: p.rarity || 'Común',
+        rarity: (p.rarity === 'Común' || !p.rarity) ? 'Esencial' : p.rarity,
         panel: p.panel || 'sage',
         stockQty: p.stock_qty || 0,
         stock: p.stock || (p.stock_qty > 0 ? `${p.stock_qty} disponibles` : 'Agotado'),
@@ -524,7 +524,7 @@ const PRODUCTS = [
     rarity: 'Ultra rara', 
     panel: 'sage', 
     stock: 'Última unidad',
-    description: 'Ejemplar exclusivo de colección con variegación crema bien definida y excelente patrón de constelación. Planta fuerte, perfectamente enraizada y aclimatada en nuestro vivero local.',
+    description: '🌿 ¡Joya botánica de colección disponible! Monstera Thai Constellation. Destaca por sus impresionantes hojas con variegación crema marfil salpicada y fenestraciones definidas sobre un verde esmeralda profundo. Además, cuenta con excelente sistema radicular y nuevo brote activo en desarrollo. 🌱 Planta sana, perfectamente aclimatada y establecida.',
     images: [
       { bg: 'var(--sage-100)', accent: '#3A5A40' },
       { bg: 'var(--blush-100)', accent: '#35521F' },
@@ -541,7 +541,7 @@ const PRODUCTS = [
     rarity: 'Rara', 
     panel: 'blush', 
     stock: '3 disponibles',
-    description: 'Hermosa especie rastrera de hojas acorazonadas y aterciopeladas con marcados tonos variegados. Incluye sustrato especial para aráceas y maceta con excelente drenaje.',
+    description: '🌿 ¡Pieza exclusiva de colección disponible! Philodendron Gloriosum Tricolor. Destaca por sus majestuosas hojas acorazonadas de textura aterciopelada con marcadas nervaduras blancas y matices variegados tricolor. Además, su rizoma rastrero viene activo con nuevos puntos de crecimiento listos para expandirse. 🌱 Planta sana y establecida.',
     images: [
       { bg: 'var(--blush-100)', accent: '#35521F' },
       { bg: 'var(--sage-100)', accent: '#3A5A40' },
@@ -558,7 +558,7 @@ const PRODUCTS = [
     rarity: 'Rara', 
     panel: 'lilac', 
     stock: '5 disponibles',
-    description: 'Reconocida por la textura profunda de sus hojas arrugadas y tonos verdes vivos. Espécimen aclimatado de rápido desarrollo bajo luz indirecta brillante.',
+    description: '🌿 ¡Rareza exótica de colección disponible! Alocasia Jacklyn (Alocasia tandem). Destaca por sus llamativas hojas profundamente lobuladas con textura rugosa tridimensional, nervaduras oscuras y pecíolos atigrados de gran contraste. Además, cuenta con raíces fuertes y brotes vigorosos listos para lucir. 🌱 Planta sana y aclimatada.',
     images: [
       { bg: 'var(--lilac-100)', accent: '#4F772D' },
       { bg: 'var(--sage-100)', accent: '#3A5A40' },
@@ -572,10 +572,10 @@ const PRODUCTS = [
     latin: 'Caladium bicolor', 
     price: 420, 
     old: null, 
-    rarity: 'Común', 
+    rarity: 'Esencial', 
     panel: 'sage', 
     stock: '12 disponibles',
-    description: 'Follaje delgado vibrante con patrones rosados y crema únicos. Ideal para decorar interiores iluminados o terrazas protegidas.',
+    description: '🌿 ¡Belleza de colección disponible! Caladium Indonesia (Versión Lance Leaf). Destaca por sus espectaculares hojas tricolor de patrón único y un elegante tallo oscuro/negro que hace un contraste increíble. Además, viene con hijuelos activos listos para separar y propagar. 🌱 Planta sana y establecida.',
     images: [
       { bg: 'var(--sage-100)', accent: '#3A5A40' },
       { bg: 'var(--lilac-100)', accent: '#4F772D' },
@@ -589,10 +589,10 @@ const PRODUCTS = [
     latin: 'Syngonium chiapense', 
     price: 390, 
     old: null, 
-    rarity: 'Común', 
+    rarity: 'Esencial', 
     panel: 'blush', 
     stock: '8 disponibles',
-    description: 'Hojas coriáceas de color verde mate profundo y textura firme. Muy resistente y fácil de cuidar en clima guatemalteco.',
+    description: '🌿 ¡Ejemplar robusto de colección disponible! Syngonium Chiapense. Destaca por sus gruesas hojas coriáceas de acabado verde mate aterciopelado y pecíolos firmes que aportan un toque selvático impecable. Además, presenta rápido desarrollo vegetativo y excelente resistencia al entorno. 🌱 Planta sana, establecida y de fácil cuidado.',
     images: [
       { bg: 'var(--blush-100)', accent: '#35521F' },
       { bg: 'var(--sage-100)', accent: '#3A5A40' },
@@ -609,7 +609,7 @@ const PRODUCTS = [
     rarity: 'Rara', 
     panel: 'lilac', 
     stock: '4 disponibles',
-    description: 'Orquídea joya terrestre famosa por las venas doradas brillantes en sus hojas aterciopeladas. Cultivada en terrario controlado.',
+    description: '🌿 ¡Tesoro botánico de colección disponible! Jewel Orchid (Macodes petola). Destaca por sus fascinantes hojas aterciopeladas de color verde bosque con un entramado de venas doradas que brillan como relámpagos bajo la luz. Además, viene cultivada con sustrato ideal y raíces sanas en crecimiento activo. 🌱 Planta sana, aclimatada y establecida.',
     images: [
       { bg: 'var(--lilac-100)', accent: '#4F772D' },
       { bg: 'var(--blush-100)', accent: '#35521F' },
@@ -626,7 +626,7 @@ const PRODUCTS = [
     rarity: 'Ultra rara', 
     panel: 'sage', 
     stock: '2 disponibles',
-    description: 'Espécimen de alto contraste blanco y verde con fenestraciones definidas. Enraizado y listo para prosperar.',
+    description: '🌿 ¡Máxima exclusividad de colección disponible! Monstera Deliciosa Albo Variegata. Destaca por sus espectaculares patrones de variegación blanco nieve puro en alto contraste con verde intenso y fenestraciones bien marcadas. Además, posee un nudo fuerte con excelente desarrollo de raíces aéreas activas. 🌱 Planta sana y establecida.',
     images: [
       { bg: 'var(--sage-100)', accent: '#3A5A40' },
       { bg: 'var(--blush-100)', accent: '#35521F' },
@@ -640,10 +640,10 @@ const PRODUCTS = [
     latin: 'Alocasia baginda', 
     price: 340, 
     old: null, 
-    rarity: 'Común', 
+    rarity: 'Esencial', 
     panel: 'blush', 
     stock: '9 disponibles',
-    description: 'Estructura rígida de aspecto escamoso y envés rojizo deslumbrante. Una joya botánica para coleccionistas.',
+    description: '🌿 ¡Maravilla geométrica de colección disponible! Alocasia Dragon Scale (Alocasia baginda). Destaca por sus hojas duras y abultadas con textura similar a escamas de dragón, nervios verde oscuro profundo y envés con tonalidades rojizas. Además, viene con cormo firme y nuevo follaje en formación. 🌱 Planta sana, aclimatada y establecida.',
     images: [
       { bg: 'var(--blush-100)', accent: '#35521F' },
       { bg: 'var(--lilac-100)', accent: '#4F772D' },
@@ -671,9 +671,9 @@ function money(n) {
 }
 
 function rarityColor(r) {
-  if (r === 'Ultra rara') return { bg: 'var(--coral)', c: 'var(--ink)' };
-  if (r === 'Rara') return { bg: 'var(--lilac-500)', c: 'var(--paper)' };
-  return { bg: 'var(--sage-300)', c: 'var(--ink)' };
+  if (r === 'Ultra rara') return { bg: 'var(--brand-green)', c: '#FFFFFF' };
+  if (r === 'Rara') return { bg: '#4338CA', c: '#FFFFFF' };
+  return { bg: '#E8F5EF', c: '#0A5A3C' };
 }
 
 /* =============== RENDERIZADO DE FILTROS Y PRODUCTOS =============== */
