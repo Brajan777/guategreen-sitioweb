@@ -1673,10 +1673,6 @@ function initAdminEvents() {
     renderAdminTable();
     renderGrid();
     renderChips();
-    closeAdminPanel();
-    setTimeout(() => {
-      document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' });
-    }, 150);
   });
 
   // Guardado de la Portada (Hero)
@@ -1707,10 +1703,6 @@ function initAdminEvents() {
 
     renderHero();
     alert('¡Portada principal (Hero) actualizada correctamente!');
-    closeAdminPanel();
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 150);
   });
 
   // Ajustes: WhatsApp
