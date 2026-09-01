@@ -1262,8 +1262,13 @@ section{
 }
 
 .cta-inner .btn{
-  background:var(--coral);
-  color:var(--ink);
+  background:var(--brand-green);
+  color:#FFFFFF !important;
+  border-color:#FFFFFF;
+}
+.cta-inner .btn:hover{
+  background:var(--brand-green-dark);
+  color:#FFFFFF !important;
 }
 
 /* ---------- FOOTER ---------- */
