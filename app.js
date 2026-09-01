@@ -448,35 +448,37 @@ function getProducts() {
   const overrides = adminData.productOverrides || {};
   const customProds = adminData.customProducts || [];
 
-  const itemsMap = new Map();
+  let itemsList = [];
 
-  // 1. Cargar productos base oficiales por ID
-  PRODUCTS.forEach((p, idx) => {
-    itemsMap.set(Number(p.id), { ...p, order: p.order || (idx + 1) });
-  });
-
-  // 2. Cargar productos personalizados / sincronizados de Supabase por ID
-  customProds.forEach((p, idx) => {
-    const pId = Number(p.id);
-    const existing = itemsMap.get(pId) || {};
-    itemsMap.set(pId, {
-      ...existing,
+  if (customProds.length > 0) {
+    // Si ya existen productos en Supabase/admin, esa es la lista real exclusiva
+    itemsList = customProds.map(p => ({
       ...p,
-      id: pId,
-      order: (p.order !== undefined && p.order !== null) ? Number(p.order) : (existing.order || (PRODUCTS.length + idx + 1))
-    });
-  });
+      id: Number(p.id),
+      order: (p.order !== undefined && p.order !== null && p.order !== '') ? Number(p.order) : 999
+    }));
+  } else {
+    // Fallback inicial únicamente si la base de datos está totalmente vacía
+    itemsList = PRODUCTS.map((p, idx) => ({
+      ...p,
+      id: Number(p.id),
+      order: p.order || (idx + 1)
+    }));
+  }
 
-  // 3. Aplicar overrides locales específicos por ID
-  Object.keys(overrides).forEach(idStr => {
-    const pId = Number(idStr);
-    if (itemsMap.has(pId)) {
-      itemsMap.set(pId, { ...itemsMap.get(pId), ...overrides[idStr] });
+  // Aplicar overrides locales específicos por ID si existen
+  itemsList = itemsList.map(p => {
+    const pId = Number(p.id);
+    if (overrides[pId]) {
+      return { ...p, ...overrides[pId] };
     }
+    return p;
   });
 
-  const all = Array.from(itemsMap.values()).filter(p => !p.deleted);
+  // Filtrar plantas eliminadas
+  const all = itemsList.filter(p => !p.deleted);
 
+  // Ordenar por orden numérico y desempate por ID
   all.sort((a, b) => {
     const ordA = (a.order !== undefined && a.order !== null && a.order !== '') ? Number(a.order) : 9999;
     const ordB = (b.order !== undefined && b.order !== null && b.order !== '') ? Number(b.order) : 9999;
@@ -484,6 +486,7 @@ function getProducts() {
     return Number(a.id) - Number(b.id);
   });
 
+  // Normalizar posiciones 1..N estrictamente
   all.forEach((p, idx) => {
     p.order = idx + 1;
   });
@@ -1824,10 +1827,6 @@ function initAdminEvents() {
 
 /* =============== INICIALIZACIÓN GENERAL =============== */
 document.addEventListener('DOMContentLoaded', async () => {
-  cleanDuplicateProducts();
-  renderHero();
-  renderChips();
-  renderGrid();
   initMarquee();
   initHeaderShrink();
   initMobileNav();
@@ -1838,8 +1837,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   initScrollSpy();
   initScrollReveal();
 
-  // Inicializar sincronización en la nube Supabase
-  await initSupabase();
+  // Sincronizar catálogo real desde Supabase antes de renderizar
+  try {
+    await Promise.race([
+      initSupabase(),
+      new Promise(resolve => setTimeout(resolve, 1500))
+    ]);
+  } catch (e) {
+    console.warn('Supabase sync timeout/fallback:', e);
+  }
+
+  cleanDuplicateProducts();
+  renderHero();
+  renderChips();
+  renderGrid();
 
   const loadMoreBtn = document.getElementById('loadMoreBtn');
   if (loadMoreBtn) {
