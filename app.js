@@ -671,8 +671,8 @@ function money(n) {
 }
 
 function rarityColor(r) {
-  if (r === 'Ultra rara') return { bg: 'var(--brand-green)', c: '#FFFFFF' };
-  if (r === 'Rara') return { bg: '#4338CA', c: '#FFFFFF' };
+  if (r === 'Ultra rara') return { bg: '#0A5A3C', c: '#FFFFFF' };
+  if (r === 'Rara') return { bg: '#2E6B4F', c: '#FFFFFF' };
   return { bg: '#E8F5EF', c: '#0A5A3C' };
 }
 
