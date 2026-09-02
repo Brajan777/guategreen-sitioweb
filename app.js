@@ -1279,6 +1279,7 @@ function setProductPosition(id, newPosition) {
   adminData.productOverrides = adminData.productOverrides || {};
   adminData.customProducts = adminData.customProducts || [];
 
+  const bulkUpdates = [];
   prods.forEach((p, idx) => {
     const strictOrder = idx + 1;
     p.order = strictOrder;
@@ -1287,10 +1288,18 @@ function setProductPosition(id, newPosition) {
     if (customIdx !== -1) {
       adminData.customProducts[customIdx].order = strictOrder;
     }
-    syncProductToCloud(p);
+    bulkUpdates.push({ id: p.id, order_num: strictOrder, deleted: false });
   });
 
   saveAdminData(adminData);
+
+  // Sincronizar en un solo envío en bloque a Supabase
+  if (supabaseClient && isCloudConnected) {
+    supabaseClient.from('gg_products').upsert(bulkUpdates, { onConflict: 'id' }).then(({ error }) => {
+      if (error) console.warn('Aviso sincronizando orden con Supabase:', error);
+    });
+  }
+
   renderAdminTable();
   renderGrid();
 }
@@ -1342,16 +1351,27 @@ function updateProductOverride(id, fields) {
   }
 }
 
-function deleteProduct(id) {
+async function deleteProduct(id) {
+  const numId = Number(id);
   const adminData = getAdminData();
   if (adminData.customProducts) {
-    adminData.customProducts = adminData.customProducts.filter(p => p.id !== id);
+    adminData.customProducts = adminData.customProducts.filter(p => Number(p.id) !== numId);
   }
   adminData.productOverrides = adminData.productOverrides || {};
-  adminData.productOverrides[id] = { deleted: true };
+  adminData.productOverrides[numId] = { deleted: true };
   saveAdminData(adminData);
 
-  syncProductToCloud({ id, deleted: true });
+  if (supabaseClient && isCloudConnected) {
+    try {
+      const { error } = await supabaseClient
+        .from('gg_products')
+        .update({ deleted: true, updated_at: new Date().toISOString() })
+        .eq('id', numId);
+      if (error) console.error('Error al marcar eliminado en Supabase:', error);
+    } catch (e) {
+      console.error('Error delete Supabase:', e);
+    }
+  }
 }
 
 function renderAdminSettings() {
@@ -1652,7 +1672,7 @@ function initAdminEvents() {
   document.getElementById('adminProdModalOverlay')?.addEventListener('click', closeProdEditModal);
 
   // Guardado de Producto (Crear / Editar)
-  document.getElementById('adminProdForm')?.addEventListener('submit', (e) => {
+  document.getElementById('adminProdForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const editId = document.getElementById('editProdId').value;
     const name = document.getElementById('editProdName').value.trim();
@@ -1700,10 +1720,12 @@ function initAdminEvents() {
         stock: finalStockText,
         order,
         description,
-        images: finalImages
+        images: finalImages,
+        deleted: false
       };
       updateProductOverride(numId, savedProductObj);
-      alert('¡Planta y todos sus datos actualizados exitosamente!');
+      await syncProductToCloud(savedProductObj);
+      alert('¡Planta y todos sus datos guardados exitosamente en la nube!');
     } else {
       const newId = Date.now();
       const adminData = getAdminData();
@@ -1720,13 +1742,14 @@ function initAdminEvents() {
         stock: finalStockText,
         order,
         description,
-        images: finalImages
+        images: finalImages,
+        deleted: false
       };
       adminData.customProducts = adminData.customProducts || [];
       adminData.customProducts.push(savedProductObj);
       saveAdminData(adminData);
-      syncProductToCloud(savedProductObj);
-      alert('¡Nueva planta añadida exitosamente al catálogo con todos sus datos!');
+      await syncProductToCloud(savedProductObj);
+      alert('¡Nueva planta añadida exitosamente al catálogo y guardada en la nube!');
     }
 
     if (savedProductObj && order) {
@@ -1841,7 +1864,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   try {
     await Promise.race([
       initSupabase(),
-      new Promise(resolve => setTimeout(resolve, 1500))
+      new Promise(resolve => setTimeout(resolve, 3500))
     ]);
   } catch (e) {
     console.warn('Supabase sync timeout/fallback:', e);
