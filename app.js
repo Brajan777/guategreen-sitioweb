@@ -496,12 +496,12 @@ function getProducts() {
 
 function cleanDuplicateProducts() {
   const adminData = getAdminData();
-  const seen = new Set();
+  const seenIds = new Set();
   if (adminData.customProducts && adminData.customProducts.length > 0) {
     adminData.customProducts = adminData.customProducts.filter(p => {
-      const key = (p.name || '').toLowerCase().trim();
-      if (!key || seen.has(key)) return false;
-      seen.add(key);
+      const pid = Number(p.id);
+      if (!pid || seenIds.has(pid)) return false;
+      seenIds.add(pid);
       return true;
     });
     saveAdminData(adminData);
