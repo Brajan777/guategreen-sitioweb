@@ -30,6 +30,8 @@ const DEFAULT_SUPABASE_CONFIG = {
 const SUPABASE_STORAGE_KEY = 'guategreen_supabase_config_v1';
 let supabaseClient = null;
 let isCloudConnected = false;
+let cloudProducts = null;
+let cloudHero = null;
 
 function getSupabaseConfig() {
   try {
@@ -192,8 +194,7 @@ async function syncFromCloud() {
       .order('order_num', { ascending: true });
 
     if (!pErr && prods && prods.length > 0) {
-      const adminData = getAdminData();
-      adminData.customProducts = prods.map(p => ({
+      cloudProducts = prods.map(p => ({
         id: Number(p.id),
         cat: p.cat || 'Otros',
         name: p.name || 'Sin nombre',
@@ -204,13 +205,22 @@ async function syncFromCloud() {
         panel: p.panel || 'sage',
         stockQty: p.stock_qty || 0,
         stock: p.stock || (p.stock_qty > 0 ? `${p.stock_qty} disponibles` : 'Agotado'),
-        order: p.order_num || 999,
+        order: Number(p.order_num) || 999,
         description: p.description || '',
         images: Array.isArray(p.images) && p.images.length > 0 ? p.images : [{ bg: 'var(--sage-100)', accent: '#3A5A40' }],
         deleted: !!p.deleted
       }));
-      adminData.productOverrides = {};
-      localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(adminData));
+
+      // Guardar copia ligera en localStorage sin exceder cuota
+      try {
+        const adminData = getAdminData();
+        adminData.customProducts = cloudProducts.map(p => ({ ...p, images: [{ bg: 'var(--sage-100)', accent: '#3A5A40' }] }));
+        adminData.productOverrides = {};
+        localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(adminData));
+      } catch (quotaErr) {
+        console.warn('Uso exclusivo de memoria para datos en tiempo real.');
+      }
+
       renderChips();
       renderGrid();
       renderAdminTable();
@@ -224,7 +234,10 @@ async function syncFromCloud() {
       .single();
 
     if (!hErr && heroRow && heroRow.data) {
-      saveHeroData(heroRow.data);
+      cloudHero = heroRow.data;
+      try {
+        saveHeroData(heroRow.data);
+      } catch (qErr) {}
       renderHero();
       renderAdminHero();
     }
@@ -393,6 +406,9 @@ const DEFAULT_HERO_DATA = {
 };
 
 function getHeroData() {
+  if (cloudHero) {
+    return { ...DEFAULT_HERO_DATA, ...cloudHero };
+  }
   try {
     const saved = localStorage.getItem(HERO_STORAGE_KEY);
     if (saved) {
@@ -456,15 +472,22 @@ function getProducts() {
 
   let itemsList = [];
 
-  if (customProds.length > 0) {
-    // Si ya existen productos en Supabase/admin, esa es la lista real exclusiva
+  if (cloudProducts && cloudProducts.length > 0) {
+    // Si ya descargamos de Supabase en vivo, esa es la verdad absoluta
+    itemsList = cloudProducts.map(p => ({
+      ...p,
+      id: Number(p.id),
+      order: (p.order !== undefined && p.order !== null && p.order !== '') ? Number(p.order) : 999
+    }));
+  } else if (customProds.length > 0) {
+    // Si ya existen productos en Supabase/admin guardados
     itemsList = customProds.map(p => ({
       ...p,
       id: Number(p.id),
       order: (p.order !== undefined && p.order !== null && p.order !== '') ? Number(p.order) : 999
     }));
   } else {
-    // Fallback inicial únicamente si la base de datos está totalmente vacía
+    // Fallback inicial
     itemsList = PRODUCTS.map((p, idx) => ({
       ...p,
       id: Number(p.id),
@@ -1807,6 +1830,14 @@ function changeProductStock(id, delta) {
 
 function updateProductOverride(id, fields) {
   const pId = Number(id);
+
+  if (cloudProducts) {
+    const cIdx = cloudProducts.findIndex(p => Number(p.id) === pId);
+    if (cIdx !== -1) {
+      cloudProducts[cIdx] = { ...cloudProducts[cIdx], ...fields };
+    }
+  }
+
   const adminData = getAdminData();
   adminData.productOverrides = adminData.productOverrides || {};
   adminData.productOverrides[pId] = { ...(adminData.productOverrides[pId] || {}), ...fields };
@@ -1832,6 +1863,11 @@ function updateProductOverride(id, fields) {
 
 async function deleteProduct(id) {
   const numId = Number(id);
+
+  if (cloudProducts) {
+    cloudProducts = cloudProducts.filter(p => Number(p.id) !== numId);
+  }
+
   const adminData = getAdminData();
   if (adminData.customProducts) {
     adminData.customProducts = adminData.customProducts.filter(p => Number(p.id) !== numId);
