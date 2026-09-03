@@ -87,9 +87,9 @@ async function initSupabase(isManualTest = false) {
 
   if (!cleanUrl || !cleanKey || !window.supabase) {
     if (badge) {
-      badge.textContent = '⚪ Sin configurar (Modo local)';
-      badge.style.background = '#E2E8F0';
-      badge.style.color = '#475569';
+      badge.textContent = '🔴 Sin conexión con la Nube';
+      badge.style.background = '#FEE2E2';
+      badge.style.color = '#991B1B';
     }
     isCloudConnected = false;
     if (isManualTest) {
@@ -413,26 +413,12 @@ function getHeroData() {
   if (cloudHero) {
     return { ...DEFAULT_HERO_DATA, ...cloudHero };
   }
-  try {
-    const saved = localStorage.getItem(HERO_STORAGE_KEY);
-    if (saved) {
-      return { ...DEFAULT_HERO_DATA, ...JSON.parse(saved) };
-    }
-  } catch(e) {
-    console.error('Error al leer hero data', e);
-  }
   return DEFAULT_HERO_DATA;
 }
 
 function saveHeroData(data) {
-  try {
-    localStorage.setItem(HERO_STORAGE_KEY, JSON.stringify(data));
-    return true;
-  } catch (e) {
-    console.error('Error al guardar hero data', e);
-    alert('Aviso: El almacenamiento del navegador está lleno. Intenta usar una imagen con menor resolución o una URL directa.');
-    return false;
-  }
+  cloudHero = data;
+  return true;
 }
 
 function renderHero() {
@@ -470,43 +456,21 @@ function renderHero() {
 }
 
 function getProducts() {
-  const adminData = getAdminData();
-  const overrides = adminData.productOverrides || {};
-  const customProds = adminData.customProducts || [];
-
   let itemsList = [];
 
   if (cloudProducts && cloudProducts.length > 0) {
-    // Si ya descargamos de Supabase en vivo, esa es la verdad absoluta
     itemsList = cloudProducts.map(p => ({
       ...p,
       id: Number(p.id),
       order: (p.order !== undefined && p.order !== null && p.order !== '') ? Number(p.order) : 999
     }));
-  } else if (customProds.length > 0) {
-    // Si ya existen productos en Supabase/admin guardados
-    itemsList = customProds.map(p => ({
-      ...p,
-      id: Number(p.id),
-      order: (p.order !== undefined && p.order !== null && p.order !== '') ? Number(p.order) : 999
-    }));
   } else {
-    // Fallback inicial
     itemsList = PRODUCTS.map((p, idx) => ({
       ...p,
       id: Number(p.id),
       order: p.order || (idx + 1)
     }));
   }
-
-  // Aplicar overrides locales específicos por ID si existen
-  itemsList = itemsList.map(p => {
-    const pId = Number(p.id);
-    if (overrides[pId]) {
-      return { ...p, ...overrides[pId] };
-    }
-    return p;
-  });
 
   // Filtrar plantas eliminadas
   const all = itemsList.filter(p => !p.deleted);
@@ -525,20 +489,6 @@ function getProducts() {
   });
 
   return all;
-}
-
-function cleanDuplicateProducts() {
-  const adminData = getAdminData();
-  const seenIds = new Set();
-  if (adminData.customProducts && adminData.customProducts.length > 0) {
-    adminData.customProducts = adminData.customProducts.filter(p => {
-      const pid = Number(p.id);
-      if (!pid || seenIds.has(pid)) return false;
-      seenIds.add(pid);
-      return true;
-    });
-    saveAdminData(adminData);
-  }
 }
 
 function getWhatsAppNumber() {
@@ -1781,23 +1731,16 @@ function setProductPosition(id, newPosition) {
   prods.splice(targetIndex, 0, item);
 
   // Reasignar posiciones estrictas 1..N sin duplicados
-  const adminData = getAdminData();
-  adminData.productOverrides = adminData.productOverrides || {};
-  adminData.customProducts = adminData.customProducts || [];
-
   const bulkUpdates = [];
   prods.forEach((p, idx) => {
     const strictOrder = idx + 1;
     p.order = strictOrder;
-    adminData.productOverrides[p.id] = { ...(adminData.productOverrides[p.id] || {}), order: strictOrder };
-    const customIdx = adminData.customProducts.findIndex(cp => Number(cp.id) === Number(p.id));
-    if (customIdx !== -1) {
-      adminData.customProducts[customIdx].order = strictOrder;
+    if (cloudProducts) {
+      const cp = cloudProducts.find(x => Number(x.id) === Number(p.id));
+      if (cp) cp.order = strictOrder;
     }
-    bulkUpdates.push({ id: p.id, order_num: strictOrder, deleted: false });
+    bulkUpdates.push({ id: Number(p.id), order_num: strictOrder, deleted: false });
   });
-
-  saveAdminData(adminData);
 
   // Sincronizar en un solo envío en bloque a Supabase
   if (supabaseClient && isCloudConnected) {
@@ -1821,13 +1764,14 @@ function moveProductOrder(id, direction) {
 }
 
 function changeProductStock(id, delta) {
-  const p = getProducts().find(pp => pp.id === id);
+  const numId = Number(id);
+  const p = getProducts().find(pp => Number(pp.id) === numId);
   if (!p) return;
   const currentQty = parseStockQty(p);
   const newQty = Math.max(0, currentQty + delta);
   const newStockText = newQty === 0 ? 'Agotado' : (newQty === 1 ? 'Última unidad' : `${newQty} disponibles`);
 
-  updateProductOverride(id, { stockQty: newQty, stock: newStockText });
+  updateProductOverride(numId, { stockQty: newQty, stock: newStockText });
   renderAdminTable();
   renderGrid();
 }
@@ -1842,23 +1786,6 @@ function updateProductOverride(id, fields) {
     }
   }
 
-  const adminData = getAdminData();
-  adminData.productOverrides = adminData.productOverrides || {};
-  adminData.productOverrides[pId] = { ...(adminData.productOverrides[pId] || {}), ...fields };
-
-  adminData.customProducts = adminData.customProducts || [];
-  const idx = adminData.customProducts.findIndex(p => Number(p.id) === pId);
-  if (idx !== -1) {
-    adminData.customProducts[idx] = { ...adminData.customProducts[idx], ...fields };
-  } else {
-    const existingFull = getProducts().find(pp => Number(pp.id) === pId);
-    if (existingFull) {
-      adminData.customProducts.push({ ...existingFull, ...fields });
-    }
-  }
-
-  saveAdminData(adminData);
-
   const updatedP = getProducts().find(pp => Number(pp.id) === pId);
   if (updatedP) {
     syncProductToCloud(updatedP);
@@ -1871,14 +1798,6 @@ async function deleteProduct(id) {
   if (cloudProducts) {
     cloudProducts = cloudProducts.filter(p => Number(p.id) !== numId);
   }
-
-  const adminData = getAdminData();
-  if (adminData.customProducts) {
-    adminData.customProducts = adminData.customProducts.filter(p => Number(p.id) !== numId);
-  }
-  adminData.productOverrides = adminData.productOverrides || {};
-  adminData.productOverrides[numId] = { deleted: true };
-  saveAdminData(adminData);
 
   if (supabaseClient && isCloudConnected) {
     try {
