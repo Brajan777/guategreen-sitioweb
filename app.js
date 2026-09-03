@@ -349,7 +349,7 @@ async function uploadAllCurrentToCloud() {
 /* =============== COMPRESOR Y OPTIMIZADOR DE IMÁGENES =============== */
 function compressImageFile(file, maxWidth = 800, quality = 0.72) {
   return new Promise((resolve) => {
-    if (!file || !file.type.startsWith('image/')) {
+    if (!file) {
       resolve(null);
       return;
     }
@@ -357,22 +357,26 @@ function compressImageFile(file, maxWidth = 800, quality = 0.72) {
     reader.onload = (e) => {
       const img = new Image();
       img.onload = () => {
-        const canvas = document.createElement('canvas');
-        let width = img.width;
-        let height = img.height;
+        try {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
 
-        if (width > maxWidth) {
-          height = Math.round((height * maxWidth) / width);
-          width = maxWidth;
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+          resolve(compressedDataUrl);
+        } catch (cvErr) {
+          resolve(e.target.result);
         }
-
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-
-        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
-        resolve(compressedDataUrl);
       };
       img.onerror = () => resolve(e.target.result);
       img.src = e.target.result;
@@ -2013,8 +2017,8 @@ function openProdEditModal(id = null) {
 
   currentPhotoSources = [null, null, null];
 
-  if (id) {
-    const p = getProducts().find(pp => pp.id === id);
+  if (id !== null && id !== undefined && id !== '') {
+    const p = getProducts().find(pp => Number(pp.id) === Number(id));
     if (!p) return;
     title.textContent = 'Editar Producto';
     document.getElementById('editProdId').value = p.id;
