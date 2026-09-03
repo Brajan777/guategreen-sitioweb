@@ -441,7 +441,7 @@ function renderHero() {
 
   if (visualPanel) {
     if (data.photoSrc) {
-      visualPanel.innerHTML = `<img src="${data.photoSrc}" alt="${data.plantName}">`;
+      visualPanel.innerHTML = `<img src="${data.photoSrc}" alt="${data.plantName}" fetchpriority="high" decoding="async" style="width:100%;height:100%;object-fit:cover;">`;
     } else {
       visualPanel.innerHTML = `
         <svg viewBox="0 0 200 200" fill="none">
@@ -1110,7 +1110,7 @@ const PRODUCTS = [
 
 const CATEGORIES = ['Todas', 'Monstera', 'Philodendron', 'Alocasia', 'Caladium', 'Otros'];
 let activeCat = 'Todas';
-const INITIAL_VISIBLE_COUNT = 16;
+const INITIAL_VISIBLE_COUNT = 999;
 let visibleCount = INITIAL_VISIBLE_COUNT;
 
 function leafSVG(accent) {
@@ -1163,7 +1163,7 @@ function renderGrid() {
     const frames = p.images.map((im, i) => {
       const imgSrc = typeof im === 'string' ? im : (im && im.src ? im.src : null);
       const content = imgSrc 
-        ? `<img src="${imgSrc}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">`
+        ? `<img src="${imgSrc}" alt="${p.name}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">`
         : leafSVG(im.accent || '#3A5A40');
       return `<div class="frame" data-idx="${i}" style="background:${im.bg || 'var(--sage-100)'};opacity:${i === 0 ? 1 : 0};position:absolute;inset:0;overflow:hidden;">${content}</div>`;
     }).join('');
@@ -2299,7 +2299,7 @@ function initAdminEvents() {
 }
 
 /* =============== INICIALIZACIÓN GENERAL =============== */
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   initMarquee();
   initHeaderShrink();
   initMobileNav();
@@ -2310,20 +2310,26 @@ document.addEventListener('DOMContentLoaded', async () => {
   initScrollSpy();
   initScrollReveal();
 
-  // Sincronizar catálogo real desde Supabase antes de renderizar
-  try {
-    await Promise.race([
-      initSupabase(),
-      new Promise(resolve => setTimeout(resolve, 3500))
-    ]);
-  } catch (e) {
-    console.warn('Supabase sync timeout/fallback:', e);
-  }
-
-  cleanDuplicateProducts();
+  // 1. Renderizado instantáneo (0ms) de la interfaz
   renderHero();
   renderChips();
   renderGrid();
+
+  // 2. Conectar con Supabase en segundo plano sin congelar la pantalla
+  initSupabase();
+
+  // 3. Soporte para botones y enlaces de navegación suave (ej. 'Ver catálogo completo')
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      const targetId = this.getAttribute('href');
+      if (!targetId || targetId === '#' || targetId === '#admin') return;
+      const targetEl = document.querySelector(targetId);
+      if (targetEl) {
+        e.preventDefault();
+        targetEl.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
 
   const loadMoreBtn = document.getElementById('loadMoreBtn');
   if (loadMoreBtn) {
