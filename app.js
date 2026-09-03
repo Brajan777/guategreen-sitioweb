@@ -402,7 +402,7 @@ const HERO_STORAGE_KEY = 'guategreen_hero_data_v1';
 const DEFAULT_HERO_DATA = {
   eyebrow: "Especies raras, variedad de plantas exóticas.",
   title: "Plantas Exóticas y de Colección en Guatemala",
-  desc: "Priorizamos la calidad sobre la cantidad. Descubre nuestra selección exclusiva de Araceae (Monsteras, Philodendrons, Alocasias) con origen certificado para verdaderos coleccionistas.",
+  desc: "Priorizamos la calidad sobre la cantidad. Descubre nuestra selección exclusiva de Araceae (Monsteras, Philodendrons, Alocasias) para verdaderos coleccionistas.",
   plantName: "Anthurium Crystalinium variegado",
   plantPrice: "Q5,800.00",
   plantStatus: "DISPONIBLE HOY",
