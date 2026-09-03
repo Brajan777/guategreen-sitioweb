@@ -234,7 +234,7 @@ async function syncFromCloud() {
 }
 
 async function syncProductToCloud(product) {
-  if (!supabaseClient || !isCloudConnected) return;
+  if (!supabaseClient || !isCloudConnected) return { success: false, reason: 'not_connected' };
 
   try {
     const row = {
@@ -258,14 +258,17 @@ async function syncProductToCloud(product) {
     const { error } = await supabaseClient.from('gg_products').upsert(row);
     if (error) {
       console.warn('Aviso al guardar en Supabase:', error);
+      return { success: false, error };
     }
+    return { success: true };
   } catch (err) {
     console.error('Error guardando producto en Supabase:', err);
+    return { success: false, error: err };
   }
 }
 
 async function syncHeroToCloud(heroData) {
-  if (!supabaseClient || !isCloudConnected) return;
+  if (!supabaseClient || !isCloudConnected) return { success: false, reason: 'not_connected' };
 
   try {
     const { error } = await supabaseClient.from('gg_hero').upsert({
@@ -275,9 +278,12 @@ async function syncHeroToCloud(heroData) {
     });
     if (error) {
       console.warn('Aviso al guardar Hero en Supabase:', error);
+      return { success: false, error };
     }
+    return { success: true };
   } catch (err) {
     console.error('Error guardando hero en Supabase:', err);
+    return { success: false, error: err };
   }
 }
 
@@ -380,8 +386,8 @@ const DEFAULT_HERO_DATA = {
   eyebrow: "Especies raras, variedad de plantas exóticas.",
   title: "Plantas Exóticas y de Colección en Guatemala",
   desc: "Priorizamos la calidad sobre la cantidad. Descubre nuestra selección exclusiva de Araceae (Monsteras, Philodendrons, Alocasias) con origen certificado para verdaderos coleccionistas.",
-  plantName: "Monstera Thai Constellation",
-  plantPrice: "Q1,450.00",
+  plantName: "Anthurium Crystalinium variegado",
+  plantPrice: "Q5,800.00",
   plantStatus: "DISPONIBLE HOY",
   photoSrc: null
 };
@@ -514,141 +520,614 @@ function getWhatsAppNumber() {
 }
 
 const PRODUCTS = [
-  { 
-    id: 1, 
-    cat: 'Monstera', 
-    name: 'Monstera Thai Constellation', 
-    latin: 'Monstera deliciosa var.', 
-    price: 1450, 
-    old: null, 
-    rarity: 'Ultra rara', 
-    panel: 'sage', 
-    stock: 'Última unidad',
-    description: '🌿 ¡Joya botánica de colección disponible! Monstera Thai Constellation. Destaca por sus impresionantes hojas con variegación crema marfil salpicada y fenestraciones definidas sobre un verde esmeralda profundo. Además, cuenta con excelente sistema radicular y nuevo brote activo en desarrollo. 🌱 Planta sana, perfectamente aclimatada y establecida.',
-    images: [
-      { bg: 'var(--sage-100)', accent: '#3A5A40' },
-      { bg: 'var(--blush-100)', accent: '#35521F' },
-      { bg: 'var(--lilac-100)', accent: '#4F772D' }
-    ]
+  {
+    "id": 1788201646973,
+    "cat": "Caladium",
+    "name": "Caladium tricolor",
+    "latin": "Caladium Indonesia",
+    "price": 325,
+    "old": null,
+    "rarity": "Rara",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Única disponible 🌱",
+    "order": 1,
+    "description": "🌿 ¡Belleza de colección disponible! Caladium Indonesia (Versión Lance Leaf). Destaca por sus espectaculares hojas tricolor de patrón único y un elegante tallo oscuro/negro que hace un contraste increíble. Además, viene con hijuelos activos listos para separar y propagar. 🌱 Planta sana y establecida.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
   },
-  { 
-    id: 2, 
-    cat: 'Philodendron', 
-    name: 'Philodendron Gloriosum Tricolor', 
-    latin: 'Philodendron gloriosum', 
-    price: 980, 
-    old: null, 
-    rarity: 'Rara', 
-    panel: 'blush', 
-    stock: '3 disponibles',
-    description: '🌿 ¡Pieza exclusiva de colección disponible! Philodendron Gloriosum Tricolor. Destaca por sus majestuosas hojas acorazonadas de textura aterciopelada con marcadas nervaduras blancas y matices variegados tricolor. Además, su rizoma rastrero viene activo con nuevos puntos de crecimiento listos para expandirse. 🌱 Planta sana y establecida.',
-    images: [
-      { bg: 'var(--blush-100)', accent: '#35521F' },
-      { bg: 'var(--sage-100)', accent: '#3A5A40' },
-      { bg: 'var(--lilac-100)', accent: '#4F772D' }
-    ]
+  {
+    "id": 1788236453569,
+    "cat": "Philodendron",
+    "name": "Philodendron florida Beauty",
+    "latin": "Philodendron maduro",
+    "price": 450,
+    "old": null,
+    "rarity": "Rara",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Única disponible 🌱",
+    "order": 2,
+    "description": "🌿 ¡Pieza codiciada de colección disponible! Philodendron Florida Beauty (Ejemplar Maduro). Destaca por sus fascinantes hojas lobuladas con una variegación marfil y amarillo dorado de altísimo contraste sobre tallos rojizos texturizados. Además, cuenta con crecimiento activo y excelente sistema radicular listo para entutorar. 🌱 Planta sana, madura y bien establecida.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
   },
-  { 
-    id: 3, 
-    cat: 'Alocasia', 
-    name: 'Alocasia Jacklyn', 
-    latin: 'Alocasia reginula hybrid', 
-    price: 650, 
-    old: null, 
-    rarity: 'Rara', 
-    panel: 'lilac', 
-    stock: '5 disponibles',
-    description: '🌿 ¡Rareza exótica de colección disponible! Alocasia Jacklyn (Alocasia tandem). Destaca por sus llamativas hojas profundamente lobuladas con textura rugosa tridimensional, nervaduras oscuras y pecíolos atigrados de gran contraste. Además, cuenta con raíces fuertes y brotes vigorosos listos para lucir. 🌱 Planta sana y aclimatada.',
-    images: [
-      { bg: 'var(--lilac-100)', accent: '#4F772D' },
-      { bg: 'var(--sage-100)', accent: '#3A5A40' },
-      { bg: 'var(--blush-100)', accent: '#35521F' }
-    ]
+  {
+    "id": 4,
+    "cat": "Philodendron",
+    "name": "Philodendron Pink princess",
+    "latin": "Philodendron maduro",
+    "price": 200,
+    "old": null,
+    "rarity": "Esencial",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Última unidad",
+    "order": 3,
+    "description": "🌿 ¡Ícono de la botánica moderna disponible! Philodendron Pink Princess (Ejemplar Maduro). Destaca por sus hojas lustrosas de color borgoña oscuro profundo con llamativos bloques y salpicaduras de rosa chicle brillante. Además, presenta tallo maduro con nuevo crecimiento activo listo para desplegar su siguiente hoja. 🌱 Planta sana y establecida.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
   },
-  { 
-    id: 4, 
-    cat: 'Caladium', 
-    name: 'Caladium Variegado Indonesio', 
-    latin: 'Caladium bicolor', 
-    price: 420, 
-    old: null, 
-    rarity: 'Esencial', 
-    panel: 'sage', 
-    stock: '12 disponibles',
-    description: '🌿 ¡Belleza de colección disponible! Caladium Indonesia (Versión Lance Leaf). Destaca por sus espectaculares hojas tricolor de patrón único y un elegante tallo oscuro/negro que hace un contraste increíble. Además, viene con hijuelos activos listos para separar y propagar. 🌱 Planta sana y establecida.',
-    images: [
-      { bg: 'var(--sage-100)', accent: '#3A5A40' },
-      { bg: 'var(--lilac-100)', accent: '#4F772D' },
-      { bg: 'var(--blush-100)', accent: '#35521F' }
-    ]
+  {
+    "id": 3,
+    "cat": "Caladium",
+    "name": "Caladium tricolor",
+    "latin": "Caladium Indonesia",
+    "price": 285,
+    "old": null,
+    "rarity": "Rara",
+    "panel": "lilac",
+    "stockQty": 1,
+    "stock": "Última unidad",
+    "order": 3,
+    "description": "🌿 ¡Elegancia tropical disponible! Caladium Indonesia Tricolor. Destaca por el delicado balance de tonos verdes, blancos y rosas salpicados en sus hojas, complementado por peciolos firmes de gran porte decorativo. Además, cuenta con tubérculo fuerte y brotes vigorosos listos para lucir en tu espacio. 🌱 Planta sana y establecida.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
   },
-  { 
-    id: 5, 
-    cat: 'Otros', 
-    name: 'Syngonium Chiapense', 
-    latin: 'Syngonium chiapense', 
-    price: 390, 
-    old: null, 
-    rarity: 'Esencial', 
-    panel: 'blush', 
-    stock: '8 disponibles',
-    description: '🌿 ¡Ejemplar robusto de colección disponible! Syngonium Chiapense. Destaca por sus gruesas hojas coriáceas de acabado verde mate aterciopelado y pecíolos firmes que aportan un toque selvático impecable. Además, presenta rápido desarrollo vegetativo y excelente resistencia al entorno. 🌱 Planta sana, establecida y de fácil cuidado.',
-    images: [
-      { bg: 'var(--blush-100)', accent: '#35521F' },
-      { bg: 'var(--sage-100)', accent: '#3A5A40' },
-      { bg: 'var(--lilac-100)', accent: '#4F772D' }
-    ]
+  {
+    "id": 1788235507271,
+    "cat": "Caladium",
+    "name": "Caladium Tricolor doble hoja",
+    "latin": "Caladium Thailandes",
+    "price": 300,
+    "old": null,
+    "rarity": "Ultra rara",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Única disponible 🌱",
+    "order": 4,
+    "description": "🌿 ¡Rareza asiática de colección disponible! Caladium Tricolor Doble Hoja (Origen Tailandés). Destaca por su follaje denso de hojas gemelas con intensa variegación tricolor y colores vivos que capturan la luz de forma única. Además, viene con tubérculo robusto y brotes activos de excelente porte. 🌱 Planta sana, única y establecida.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
   },
-  { 
-    id: 6, 
-    cat: 'Otros', 
-    name: 'Jewel Orchid Macodes', 
-    latin: 'Macodes petola', 
-    price: 520, 
-    old: null, 
-    rarity: 'Rara', 
-    panel: 'lilac', 
-    stock: '4 disponibles',
-    description: '🌿 ¡Tesoro botánico de colección disponible! Jewel Orchid (Macodes petola). Destaca por sus fascinantes hojas aterciopeladas de color verde bosque con un entramado de venas doradas que brillan como relámpagos bajo la luz. Además, viene cultivada con sustrato ideal y raíces sanas en crecimiento activo. 🌱 Planta sana, aclimatada y establecida.',
-    images: [
-      { bg: 'var(--lilac-100)', accent: '#4F772D' },
-      { bg: 'var(--blush-100)', accent: '#35521F' },
-      { bg: 'var(--sage-100)', accent: '#3A5A40' }
-    ]
+  {
+    "id": 5,
+    "cat": "Otros",
+    "name": "Syngonium Chiapense",
+    "latin": "Syngonium chiapense",
+    "price": 155,
+    "old": null,
+    "rarity": "Esencial",
+    "panel": "blush",
+    "stockQty": 1,
+    "stock": "Última unidad",
+    "order": 5,
+    "description": "🌿 ¡Fuerza y elegancia selvática disponible! Syngonium Chiapense. Destaca por sus gruesas hojas coriáceas de acabado verde mate aterciopelado y una estructura sumamente firme que aporta presencia a cualquier colección. Además, es un espécimen fuerte de rápido desarrollo y gran resistencia. 🌱 Planta sana, establecida y de fácil cuidado.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
   },
-  { 
-    id: 7, 
-    cat: 'Monstera', 
-    name: 'Monstera Deliciosa Albo', 
-    latin: 'Monstera deliciosa var. albo', 
-    price: 1290, 
-    old: null, 
-    rarity: 'Ultra rara', 
-    panel: 'sage', 
-    stock: '2 disponibles',
-    description: '🌿 ¡Máxima exclusividad de colección disponible! Monstera Deliciosa Albo Variegata. Destaca por sus espectaculares patrones de variegación blanco nieve puro en alto contraste con verde intenso y fenestraciones bien marcadas. Además, posee un nudo fuerte con excelente desarrollo de raíces aéreas activas. 🌱 Planta sana y establecida.',
-    images: [
-      { bg: 'var(--sage-100)', accent: '#3A5A40' },
-      { bg: 'var(--blush-100)', accent: '#35521F' },
-      { bg: 'var(--lilac-100)', accent: '#4F772D' }
-    ]
+  {
+    "id": 1788234715587,
+    "cat": "Caladium",
+    "name": "Caladium Bicolor",
+    "latin": "Caladium Indonesia",
+    "price": 225,
+    "old": null,
+    "rarity": "Rara",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Última unidad",
+    "order": 6,
+    "description": "🌿 ¡Pieza de colección disponible! Caladium Indonesia Bicolor. Destaca por su contraste marcado entre verde intenso y amarillo brillante, complementado con un porte elegante y follaje bien desarrollado. Una combinación muy llamativa que eleva cualquier colección. 🌱 Planta sana, establecida y de excelente tamaño.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
   },
-  { 
-    id: 8, 
-    cat: 'Alocasia', 
-    name: 'Alocasia Dragon Scale', 
-    latin: 'Alocasia baginda', 
-    price: 340, 
-    old: null, 
-    rarity: 'Esencial', 
-    panel: 'blush', 
-    stock: '9 disponibles',
-    description: '🌿 ¡Maravilla geométrica de colección disponible! Alocasia Dragon Scale (Alocasia baginda). Destaca por sus hojas duras y abultadas con textura similar a escamas de dragón, nervios verde oscuro profundo y envés con tonalidades rojizas. Además, viene con cormo firme y nuevo follaje en formación. 🌱 Planta sana, aclimatada y establecida.',
-    images: [
-      { bg: 'var(--blush-100)', accent: '#35521F' },
-      { bg: 'var(--lilac-100)', accent: '#4F772D' },
-      { bg: 'var(--sage-100)', accent: '#3A5A40' }
-    ]
+  {
+    "id": 6,
+    "cat": "Philodendron",
+    "name": "Philodendron Tortum",
+    "latin": "Philodendron mediano",
+    "price": 245,
+    "old": null,
+    "rarity": "Rara",
+    "panel": "lilac",
+    "stockQty": 2,
+    "stock": "2 disponibles",
+    "order": 7,
+    "description": "🌿 ¡Estructura exótica de colección disponible! Philodendron Tortum (Tamaño Mediano). Destaca por sus fascinantes hojas profundamente segmentadas en forma de palma o esqueleto que le dan un aspecto prehistórico y elegante. Además, cuenta con nudos activos y raíces aéreas listas para tutor. 🌱 Planta sana, frondosa y aclimatada.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 7,
+    "cat": "Otros",
+    "name": "Syngomio Pink Splash",
+    "latin": "Syngomio frondoso",
+    "price": 195,
+    "old": null,
+    "rarity": "Esencial",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Última unidad",
+    "order": 8,
+    "description": "🌿 ¡Color y frescura botánica disponible! Syngonium Pink Splash (Frondoso). Destaca por sus hojas acorazonadas de verde fresco con un abundante salpicado rosa intenso en patrones totalmente aleatorios y únicos. Además, presenta porte tupido con múltiples ramas y brotes nuevos. 🌱 Planta sana, establecida y de rápido crecimiento.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 1788235403304,
+    "cat": "Caladium",
+    "name": "Caladium Bicolor",
+    "latin": "Caladium tricolor",
+    "price": 285,
+    "old": null,
+    "rarity": "Rara",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Única disponible 🌱",
+    "order": 8,
+    "description": "🌿 ¡Espectacular espécimen disponible! Caladium Bicolor / Tricolor Indonesia. Destaca por sus hojas amplias de finas nervaduras contrastadas y un patrón de coloración vivo que resalta en cualquier rincón iluminado. Además, posee tubérculo vigoroso con nuevos puntos de follaje emergiendo. 🌱 Planta sana y establecida.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 8,
+    "cat": "Caladium",
+    "name": "Caladium cuatro colores",
+    "latin": "Caladium Indonesia",
+    "price": 250,
+    "old": null,
+    "rarity": "Rara",
+    "panel": "blush",
+    "stockQty": 1,
+    "stock": "Última unidad",
+    "order": 9,
+    "description": "🌿 ¡Exclusividad indonesia disponible! Caladium Cuatro Colores (Caladium Indonesia). Destaca por su compleja y rara combinación de 4 tonos distintos en cada hoja (verde, rosa, blanco y rojo) que crean un efecto visual artístico irrepetible. Además, viene con tubérculo sano y desarrollo foliar impecable. 🌱 Planta sana y establecida.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 1788236925825,
+    "cat": "Philodendron",
+    "name": "Philodendron Rugosum",
+    "latin": "Philodendron pequeño",
+    "price": 285,
+    "old": null,
+    "rarity": "Rara",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Única disponible 🌱",
+    "order": 10,
+    "description": "🌿 ¡Rareza táctil de colección disponible! Philodendron Rugosum (Pig Skin). Destaca por sus increíbles hojas gruesas y coriáceas con una textura rugosa única que simula piel de animal sobre un verde bosque lustroso. Además, es una planta de colección muy buscada con crecimiento estable y raíces fuertes. 🌱 Planta sana y establecida.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 1788237592320,
+    "cat": "Philodendron",
+    "name": "Philodendron Majestic",
+    "latin": "Philodendron mediano",
+    "price": 350,
+    "old": null,
+    "rarity": "Rara",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Única disponible 🌱",
+    "order": 11,
+    "description": "🌿 ¡Majestuosidad botánica disponible! Philodendron Majestic (Verrucosum × Sodiroi). Destaca por sus enormes hojas acorazonadas con baño plateado brillante sobre fondo verde oscuro y pecíolos pubescentes rojizos de textura aterciopelada. Además, viene con nuevo brote apical en pleno desarrollo. 🌱 Planta sana, establecida y de porte mediano.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 1788237671915,
+    "cat": "Philodendron",
+    "name": "Philodendron Florida Ghost",
+    "latin": "Philodendron pequeño",
+    "price": 275,
+    "old": null,
+    "rarity": "Rara",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Única disponible 🌱",
+    "order": 12,
+    "description": "🌿 ¡Fenómeno cromático disponible! Philodendron Florida Ghost. Destaca por la magia de sus hojas lobuladas que nacen en un blanco fantasmal casi puro y van transformándose a verde menta conforme maduran. Además, posee sistema radicular perfecto y nuevo brote activo. 🌱 Planta sana, aclimatada y establecida.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 1788236329067,
+    "cat": "Caladium",
+    "name": "Caladium Tricolor",
+    "latin": "Caladium Indonesia",
+    "price": 300,
+    "old": null,
+    "rarity": "Rara",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Única disponible 🌱",
+    "order": 12,
+    "description": "🌿 ¡Joya indonesia de colección disponible! Caladium Tricolor Premium. Destaca por sus hojas estilizadas de gran definición cromática y pecíolos oscuros que acentúan el brillo de su variegación. Además, cuenta con hijuelos en formación ideales para futura multiplicación. 🌱 Planta sana, aclimatada y establecida.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 2,
+    "cat": "Otros",
+    "name": "Anthurium Crystalinium",
+    "latin": "Anthurium mediano",
+    "price": 195,
+    "old": null,
+    "rarity": "Rara",
+    "panel": "blush",
+    "stockQty": 1,
+    "stock": "Última unidad",
+    "order": 13,
+    "description": "🌿 ¡Planta joya de terciopelo disponible! Anthurium Crystallinum (Tamaño Mediano). Destaca por sus imponentes hojas aterciopeladas en forma de corazón con nervaduras plateadas cristalinas que resplandecen con la luz. Además, cuenta con catafilos activos y raíces gruesas bien establecidas en sustrato premium. 🌱 Planta sana y aclimatada.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 1,
+    "cat": "Philodendron",
+    "name": "Philodendron McDowell",
+    "latin": "Philodendron mediano",
+    "price": 200,
+    "old": null,
+    "rarity": "Rara",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Última unidad",
+    "order": 14,
+    "description": "🌿 ¡Gigante aterciopelado disponible! Philodendron McDowell (Pastazanum × Gloriosum). Destaca por sus colosales hojas acorazonadas verde esmeralda con nervaduras blancas profundas y pecíolos aplanados que guían su crecimiento rastrero. Además, tiene rizoma grueso y activo listo para desarrollarse. 🌱 Planta sana y establecida.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 1788273711372,
+    "cat": "Otros",
+    "name": "Aglonema Pink Emerald",
+    "latin": "Aglonema mediana",
+    "price": 450,
+    "old": null,
+    "rarity": "Rara",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Única disponible 🌱",
+    "order": 15,
+    "description": "🌿 ¡Color y distinción disponibles! Aglaonema Pink Emerald (Tamaño Mediano). Destaca por sus hojas anchas y firmes decoradas con intensas tonalidades rosa esmeralda y verde que iluminan cualquier espacio interior. Además, es una variedad muy resistente y tolerante con excelente densidad de hojas. 🌱 Planta sana, establecida y de fácil mantenimiento.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 1788280764552,
+    "cat": "Philodendron",
+    "name": "Philodendron Violin Neon",
+    "latin": "Philodendron pequeño",
+    "price": 175,
+    "old": null,
+    "rarity": "Esencial",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Única disponible 🌱",
+    "order": 16,
+    "description": "🌿 ¡Vibratilidad y forma disponible! Philodendron Violín Neon (Philodendron bipennifolium). Destaca por sus peculiares hojas con silueta de violín en un deslumbrante color verde lima neón brillante que resalta de inmediato. Además, cuenta con crecimiento activo listo para trepar con tutor. 🌱 Planta sana, alegre y establecida.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 1788280823946,
+    "cat": "Monstera",
+    "name": "Monstera",
+    "latin": "Monstera Madura",
+    "price": 1950,
+    "old": 2400,
+    "rarity": "Ultra rara",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Única disponible 🌱",
+    "order": 17,
+    "description": "🌿 ¡La reina indiscutible de colección disponible! Monstera Deliciosa Madura. Destaca por sus gigantescas hojas de color verde brillante con doble hilera de fenestraciones y cortes perfectos que denotan una madurez y genética insuperables. Además, cuenta con tallo robusto, nudos fuertes y raíces aéreas vigorosas. 🌱 Planta sana, majestuosa y establecida.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 1788283040477,
+    "cat": "Philodendron",
+    "name": "Philodendron plowanni",
+    "latin": "Philodendron medianon",
+    "price": 195,
+    "old": null,
+    "rarity": "Esencial",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Única disponible 🌱",
+    "order": 18,
+    "description": "🌿 ¡Textura y ondas botánicas disponible! Philodendron Plowmanii (Tamaño Mediano). Destaca por sus majestuosas hojas acorazonadas de follaje ondulado, nervaduras bien marcadas y llamativos pecíolos rizados/alados característicos de la especie. Además, su rizoma rastrero viene activo con gran vigor. 🌱 Planta sana y establecida.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 1788283109272,
+    "cat": "Caladium",
+    "name": "Caladium Stapre tricolor",
+    "latin": "Caladium Thailandes",
+    "price": 350,
+    "old": null,
+    "rarity": "Rara",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Única disponible 🌱",
+    "order": 19,
+    "description": "🌿 ¡Exotismo tailandés disponible! Caladium Stapre Tricolor (Origen Tailandia). Destaca por su patrón moteado de alta densidad con salpicaduras rojas, blancas y verdes de aspecto pictórico sobre un follaje compacto. Además, cuenta con tubérculo madre fuerte y varios hijuelos en desarrollo. 🌱 Planta sana, exótica y establecida.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 1788385288575,
+    "cat": "Otros",
+    "name": "Anthurium Portillae",
+    "latin": "Anthurium maduro",
+    "price": 2600,
+    "old": null,
+    "rarity": "Ultra rara",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Única disponible 🌱",
+    "order": 20,
+    "description": "A",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 1788387158626,
+    "cat": "Otros",
+    "name": "Anthurium king of spades",
+    "latin": "Anthurium mediano",
+    "price": 2400,
+    "old": null,
+    "rarity": "Ultra rara",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Única disponible 🌱",
+    "order": 21,
+    "description": "A",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 1788205027818,
+    "cat": "Caladium",
+    "name": "Caladium Indonesia",
+    "latin": "Caladium tricolor",
+    "price": 275,
+    "old": null,
+    "rarity": "Rara",
+    "panel": "sage",
+    "stockQty": 5,
+    "stock": "Única disponible 🌱",
+    "order": 21,
+    "description": "Caladium Indonesia var. Lance Leaf (hoja lanceolada). Hermoso ejemplar tricolor, verde, amarillo y rojocon característico tallo negro. Buen tamaño y 3 hojas.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 1788235261215,
+    "cat": "Caladium",
+    "name": "Caladium Tricolor",
+    "latin": "Caladium Indonesia",
+    "price": 250,
+    "old": null,
+    "rarity": "Ultra rara",
+    "panel": "sage",
+    "stockQty": 5,
+    "stock": "Única disponible 🌱",
+    "order": 22,
+    "description": "Aaa",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 1788204281975,
+    "cat": "Caladium",
+    "name": "Caladium Indonesia",
+    "latin": "Caladium bicolor",
+    "price": 225,
+    "old": null,
+    "rarity": "Rara",
+    "panel": "sage",
+    "stockQty": 5,
+    "stock": "Única disponible 🌱",
+    "order": 23,
+    "description": "Caladium Indonesia var. Lance Leaf (hoja lanceolada). Hermoso ejemplar tricolor, verde claro, verde oscuro y amarillo con característico tallo negro. Buen tamaño y 3 hojas.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 1788280865937,
+    "cat": "Caladium",
+    "name": "Caladium Bicolor",
+    "latin": "Caladium Indonesia",
+    "price": 250,
+    "old": null,
+    "rarity": "Rara",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Única disponible 🌱",
+    "order": 24,
+    "description": "🌿 ¡Elegancia indonesia disponible! Caladium Bicolor Clásico. Destaca por el contraste limpio y armónico entre su centro blanco/rosado y bordes verde botella sobre tallos estilizados de gran flexibilidad decorativa. Además, presenta cormo sano y excelente renovación de hojas. 🌱 Planta sana y establecida.",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
+  },
+  {
+    "id": 1788384985203,
+    "cat": "Otros",
+    "name": "Anthurium king of spades",
+    "latin": "Anthurium super colección",
+    "price": 2200,
+    "old": null,
+    "rarity": "Ultra rara",
+    "panel": "sage",
+    "stockQty": 1,
+    "stock": "Única disponible 🌱",
+    "order": 28,
+    "description": "A",
+    "images": [
+      {
+        "bg": "var(--sage-100)",
+        "accent": "#3A5A40"
+      }
+    ],
+    "deleted": false
   }
 ];
 
@@ -1724,8 +2203,12 @@ function initAdminEvents() {
         deleted: false
       };
       updateProductOverride(numId, savedProductObj);
-      await syncProductToCloud(savedProductObj);
-      alert('¡Planta y todos sus datos guardados exitosamente en la nube!');
+      const syncRes = await syncProductToCloud(savedProductObj);
+      if (syncRes && syncRes.error) {
+        alert('⚠️ Guardado en navegador, pero aviso en Supabase: ' + (syncRes.error.message || 'Verifica tu conexión'));
+      } else {
+        alert('¡Planta y todos sus datos guardados exitosamente en la nube de Supabase!');
+      }
     } else {
       const newId = Date.now();
       const adminData = getAdminData();
@@ -1748,8 +2231,12 @@ function initAdminEvents() {
       adminData.customProducts = adminData.customProducts || [];
       adminData.customProducts.push(savedProductObj);
       saveAdminData(adminData);
-      await syncProductToCloud(savedProductObj);
-      alert('¡Nueva planta añadida exitosamente al catálogo y guardada en la nube!');
+      const syncRes = await syncProductToCloud(savedProductObj);
+      if (syncRes && syncRes.error) {
+        alert('⚠️ Guardado en navegador, pero aviso en Supabase: ' + (syncRes.error.message || 'Verifica tu conexión'));
+      } else {
+        alert('¡Nueva planta añadida exitosamente al catálogo y guardada en la nube!');
+      }
     }
 
     if (savedProductObj && order) {
@@ -1763,7 +2250,7 @@ function initAdminEvents() {
   });
 
   // Guardado de la Portada (Hero)
-  document.getElementById('adminHeroForm')?.addEventListener('submit', (e) => {
+  document.getElementById('adminHeroForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const eyebrow = document.getElementById('adminHeroEyebrow').value.trim();
     const title = document.getElementById('adminHeroTitle').value.trim();
@@ -1786,10 +2273,14 @@ function initAdminEvents() {
     };
 
     saveHeroData(heroPayload);
-    syncHeroToCloud(heroPayload);
-
+    const syncRes = await syncHeroToCloud(heroPayload);
     renderHero();
-    alert('¡Portada principal (Hero) actualizada correctamente!');
+
+    if (syncRes && syncRes.error) {
+      alert('⚠️ Portada guardada localmente, pero aviso en Supabase: ' + (syncRes.error.message || 'Verifica conexión'));
+    } else {
+      alert('¡Portada principal (Hero) guardada y sincronizada en la nube exitosamente!');
+    }
   });
 
   // Ajustes: WhatsApp
