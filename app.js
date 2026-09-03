@@ -2004,31 +2004,39 @@ function renderAdminTable() {
 function setProductPosition(id, newPosition) {
   const numId = Number(id);
   const prods = getProducts();
-  const index = prods.findIndex(pp => Number(pp.id) === numId);
-  if (index === -1) return;
+  const currentIndex = prods.findIndex(pp => Number(pp.id) === numId);
+  if (currentIndex === -1) return;
 
+  const currentPos = currentIndex + 1;
   const targetPos = Math.max(1, Math.min(prods.length, Number(newPosition)));
   const targetIndex = targetPos - 1;
 
-  if (index === targetIndex) return;
+  if (currentIndex === targetIndex) return;
 
-  // Mover producto a la nueva posición deseada
-  const [item] = prods.splice(index, 1);
-  prods.splice(targetIndex, 0, item);
+  const sourcePlant = prods[currentIndex];
+  const targetPlant = prods[targetIndex];
 
-  // Reasignar posiciones estrictas 1..N sin duplicados
-  const bulkUpdates = [];
-  prods.forEach((p, idx) => {
-    const strictOrder = idx + 1;
-    p.order = strictOrder;
-    if (cloudProducts) {
-      const cp = cloudProducts.find(x => Number(x.id) === Number(p.id));
-      if (cp) cp.order = strictOrder;
-    }
-    bulkUpdates.push({ id: Number(p.id), order_num: strictOrder, deleted: false });
-  });
+  // Intercambio directo exacto (Swap): el 1 pasa al 15 y el 15 pasa al 1 sin alterar las demás posiciones
+  sourcePlant.order = targetPos;
+  targetPlant.order = currentPos;
 
-  // Sincronizar en un solo envío en bloque a Supabase
+  if (cloudProducts) {
+    const cpSource = cloudProducts.find(x => Number(x.id) === Number(sourcePlant.id));
+    if (cpSource) cpSource.order = targetPos;
+    const cpTarget = cloudProducts.find(x => Number(x.id) === Number(targetPlant.id));
+    if (cpTarget) cpTarget.order = currentPos;
+  }
+
+  const pSource = PRODUCTS.find(x => Number(x.id) === Number(sourcePlant.id));
+  if (pSource) pSource.order = targetPos;
+  const pTarget = PRODUCTS.find(x => Number(x.id) === Number(targetPlant.id));
+  if (pTarget) pTarget.order = currentPos;
+
+  const bulkUpdates = [
+    { id: Number(sourcePlant.id), order_num: targetPos, deleted: false },
+    { id: Number(targetPlant.id), order_num: currentPos, deleted: false }
+  ];
+
   if (supabaseClient && isCloudConnected) {
     supabaseClient.from('gg_products').upsert(bulkUpdates, { onConflict: 'id' }).then(({ error }) => {
       if (error) console.warn('Aviso sincronizando orden con Supabase:', error);
