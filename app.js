@@ -1396,7 +1396,7 @@ const PRODUCTS = [
 
 const CATEGORIES = ['Todas', 'Monstera', 'Philodendron', 'Alocasia', 'Caladium', 'Otros'];
 let activeCat = 'Todas';
-const INITIAL_VISIBLE_COUNT = 999;
+const INITIAL_VISIBLE_COUNT = 16;
 let visibleCount = INITIAL_VISIBLE_COUNT;
 
 function leafSVG(accent) {
