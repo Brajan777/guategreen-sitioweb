@@ -1,6 +1,6 @@
 /* =============== CONFIGURACIÓN DE META PIXEL & CONVERSIONS API (META ADS) =============== */
 const DEFAULT_META_CONFIG = {
-  pixelId: '',
+  pixelId: '1393104892965350',
   capiToken: '',
   testEventCode: ''
 };
