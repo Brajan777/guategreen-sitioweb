@@ -1,3 +1,146 @@
+/* =============== CONFIGURACIÓN DE META PIXEL & CONVERSIONS API (META ADS) =============== */
+const DEFAULT_META_CONFIG = {
+  pixelId: '',
+  capiToken: '',
+  testEventCode: ''
+};
+const META_STORAGE_KEY = 'guategreen_meta_config_v1';
+
+function getMetaConfig() {
+  try {
+    const saved = localStorage.getItem(META_STORAGE_KEY);
+    if (saved) {
+      return { ...DEFAULT_META_CONFIG, ...JSON.parse(saved) };
+    }
+  } catch (e) {}
+  return DEFAULT_META_CONFIG;
+}
+
+function saveMetaConfig(config) {
+  try {
+    localStorage.setItem(META_STORAGE_KEY, JSON.stringify(config));
+  } catch (e) {}
+}
+
+function initMetaPixel() {
+  const config = getMetaConfig();
+  if (window.fbq && config.pixelId) {
+    try {
+      window.fbq('init', config.pixelId);
+      window.fbq('track', 'PageView');
+    } catch (e) {}
+  }
+}
+
+function trackMetaEvent(eventName, customData = {}, userData = {}) {
+  const config = getMetaConfig();
+  const eventId = 'gg_' + Date.now() + '_' + Math.floor(Math.random() * 1000000);
+
+  // 1. Meta Pixel del navegador
+  if (window.fbq && config.pixelId) {
+    try {
+      window.fbq('track', eventName, customData, { eventID: eventId });
+    } catch (e) {
+      console.warn('Meta Pixel warning:', e);
+    }
+  }
+
+  // 2. API de Conversiones (CAPI) directa
+  if (config.pixelId && config.capiToken) {
+    sendMetaCapiEvent(eventName, eventId, customData, userData);
+  }
+}
+
+async function sendMetaCapiEvent(eventName, eventId, customData = {}, userData = {}) {
+  const config = getMetaConfig();
+  if (!config.pixelId || !config.capiToken) return;
+
+  try {
+    const payload = {
+      data: [
+        {
+          event_name: eventName,
+          event_time: Math.floor(Date.now() / 1000),
+          event_id: eventId,
+          event_source_url: window.location.href,
+          action_source: 'website',
+          user_data: {
+            client_user_agent: navigator.userAgent,
+            ...userData
+          },
+          custom_data: customData
+        }
+      ]
+    };
+
+    if (config.testEventCode) {
+      payload.test_event_code = config.testEventCode;
+    }
+
+    fetch('https://graph.facebook.com/v19.0/' + config.pixelId + '/events?access_token=' + encodeURIComponent(config.capiToken), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(() => {});
+  } catch (err) {}
+}
+
+function exportMetaCatalogCSV() {
+  const prods = getProducts();
+  if (!prods || prods.length === 0) {
+    alert('No hay productos disponibles para exportar.');
+    return;
+  }
+
+  const headers = [
+    'id',
+    'title',
+    'description',
+    'availability',
+    'condition',
+    'price',
+    'link',
+    'image_link',
+    'brand',
+    'google_product_category',
+    'fb_product_category'
+  ];
+
+  const rows = prods.map(p => {
+    const im = p.images && p.images[0] ? (p.images[0].src || p.images[0]) : '';
+    const imgUrl = (typeof im === 'string' && im.startsWith('http')) ? im : 'https://guategreen.com/logo.jpg';
+    const cleanDesc = (p.description || '').replace(/[\r\n\t]+/g, ' ').replace(/"/g, '""');
+    const cleanTitle = (p.name + (p.latin ? ' - ' + p.latin : '')).trim().replace(/"/g, '""');
+    const avail = (p.stockQty > 0 || (p.stock && !p.stock.toLowerCase().includes('agotado'))) ? 'in stock' : 'out of stock';
+    const priceStr = Number(p.price).toFixed(2) + ' GTQ';
+
+    return [
+      '"' + p.id + '"',
+      '"' + cleanTitle + '"',
+      '"' + cleanDesc + '"',
+      '"' + avail + '"',
+      '"new"',
+      '"' + priceStr + '"',
+      '"https://guategreen.com/#catalogo"',
+      '"' + imgUrl + '"',
+      '"Guategreen"',
+      '"543"',
+      '"plants"'
+    ].join(',');
+  });
+
+  const csvContent = '\uFEFF' + headers.join(',') + '\n' + rows.join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'catalogo_meta_guategreen_' + new Date().toISOString().slice(0, 10) + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 /* =============== CONFIGURACIÓN Y SISTEMA DE ADMINISTRACIÓN =============== */
 const DEFAULT_WHATSAPP = '50252554758';
 const ADMIN_STORAGE_KEY = 'guategreen_admin_data_v1';
@@ -1529,8 +1672,18 @@ function renderGrid() {
 
 /* =============== MODAL DE DETALLE DE PRODUCTO =============== */
 function openProductModal(id) {
-  const p = getProducts().find(pp => pp.id === id);
+  const numId = Number(id);
+  const p = getProducts().find(pp => Number(pp.id) === numId);
   if (!p) return;
+
+  trackMetaEvent('ViewContent', {
+    content_name: p.name,
+    content_category: p.cat,
+    content_ids: [String(p.id)],
+    content_type: 'product',
+    value: Number(p.price) || 0,
+    currency: 'GTQ'
+  });
 
   const overlay = document.getElementById('modalOverlay');
   const modal = document.getElementById('productModal');
@@ -1665,6 +1818,18 @@ function cartTotal() {
 }
 
 function addToCart(id) {
+  const numId = Number(id);
+  const p = getProducts().find(pp => Number(pp.id) === numId);
+  if (p) {
+    trackMetaEvent('AddToCart', {
+      content_name: p.name,
+      content_category: p.cat,
+      content_ids: [String(p.id)],
+      content_type: 'product',
+      value: Number(p.price) || 0,
+      currency: 'GTQ'
+    });
+  }
   const existing = cart.find(i => i.id === id);
   if (existing) {
     existing.qty++;
@@ -2107,6 +2272,13 @@ async function deleteProduct(id) {
 }
 
 function renderAdminSettings() {
+  const metaCfg = getMetaConfig();
+  const metaPixEl = document.getElementById('adminMetaPixelId');
+  const metaCapEl = document.getElementById('adminMetaCapiToken');
+  const metaTestEl = document.getElementById('adminMetaTestCode');
+  if (metaPixEl) metaPixEl.value = metaCfg.pixelId || '';
+  if (metaCapEl) metaCapEl.value = metaCfg.capiToken || '';
+  if (metaTestEl) metaTestEl.value = metaCfg.testEventCode || '';
   const waInput = document.getElementById('adminWAInput');
   if (waInput) waInput.value = getWhatsAppNumber();
   const config = getSupabaseConfig();
@@ -2286,6 +2458,29 @@ function closeProdEditModal() {
 }
 
 function initAdminEvents() {
+  // Eventos de Meta Ads & Píxel
+  document.getElementById('adminMetaSaveBtn')?.addEventListener('click', () => {
+    const pixelId = document.getElementById('adminMetaPixelId')?.value.trim() || '';
+    const capiToken = document.getElementById('adminMetaCapiToken')?.value.trim() || '';
+    const testEventCode = document.getElementById('adminMetaTestCode')?.value.trim() || '';
+    saveMetaConfig({ pixelId, capiToken, testEventCode });
+    initMetaPixel();
+    alert('✅ Configuración de Meta Ads guardada exitosamente.');
+  });
+
+  document.getElementById('adminMetaExportBtn')?.addEventListener('click', () => {
+    exportMetaCatalogCSV();
+  });
+
+  document.getElementById('adminMetaTestBtn')?.addEventListener('click', () => {
+    trackMetaEvent('TestEvent', {
+      test_message: 'Prueba de integración Meta Pixel y CAPI exitosa en Guategreen',
+      value: 100,
+      currency: 'GTQ'
+    });
+    alert('🧪 Evento de prueba enviado a Meta. Puedes revisarlo en el Administrador de Eventos de Meta Ads.');
+  });
+
   setupPhotoInputListeners();
 
   const loginOverlay = document.getElementById('adminLoginOverlay');
@@ -2608,6 +2803,39 @@ document.addEventListener('DOMContentLoaded', () => {
   renderHero();
   renderChips();
   renderGrid();
+
+  
+  // Tracking Meta Ads: Checkout y Contacto
+  document.getElementById('cartCheckout')?.addEventListener('click', () => {
+    if (cart.length > 0) {
+      const contents = cart.map(item => {
+        const prod = getProducts().find(pp => Number(pp.id) === Number(item.id));
+        return {
+          id: String(item.id),
+          quantity: item.qty,
+          item_price: prod ? Number(prod.price) : 0
+        };
+      });
+      trackMetaEvent('InitiateCheckout', {
+        content_ids: cart.map(i => String(i.id)),
+        contents: contents,
+        num_items: cartCount(),
+        value: cartTotal(),
+        currency: 'GTQ'
+      });
+    }
+  });
+
+  document.querySelectorAll('.wa-fab, #heroWaBtn, .cta-banner a').forEach(btn => {
+    btn.addEventListener('click', () => {
+      trackMetaEvent('Contact', {
+        content_name: 'Asesoría WhatsApp Botánica',
+        currency: 'GTQ'
+      });
+    });
+  });
+
+  initMetaPixel();
 
   // 2. Conectar con Supabase en segundo plano sin congelar la pantalla
   initSupabase();

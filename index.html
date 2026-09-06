@@ -33,11 +33,24 @@
 <meta name="twitter:description" content="Vivero especializado en plantas exóticas en Guatemala. Compra Monsteras variegadas, Philodendrons y Alocasias de colección aclimatadas.">
 <meta name="twitter:image" content="https://guategreen.com/logo.jpg">
 
+<!-- Meta Pixel Code (Facebook & Instagram Ads) -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+</script>
+<!-- End Meta Pixel Code -->
+
 <!-- Tipografías y Estilos -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,450;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,450;1,9..144,600&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=58.0">
+<link rel="stylesheet" href="styles.css?v=59.0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <!-- Datos Estructurados Google Schema.org (SEO Local, E-commerce & FAQ Rich Snippets) -->
@@ -446,6 +459,33 @@ grant all on table public.gg_hero to anon, authenticated, service_role;</pre>
         <button type="button" id="adminWASaveBtn" class="btn btn-sm">Guardar número WhatsApp</button>
       </div>
       
+      
+      <div class="admin-settings-card" style="margin-top:1.5rem">
+        <h3 class="serif" style="margin-top:0">Meta Ads (Píxel de Facebook & Instagram + API de Conversiones)</h3>
+        <p style="font-size:.88rem;color:var(--ink-70)">
+          Configura el seguimiento inteligente para medir visitas, carritos, clics en WhatsApp y sincronizar tu catálogo de productos con anuncios dinámicos de Meta:
+        </p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1rem">
+          <div>
+            <label class="mono" style="font-size:.78rem;font-weight:700">Meta Píxel ID (Dataset ID)</label>
+            <input type="text" id="adminMetaPixelId" class="admin-input" placeholder="Ej. 123456789012345">
+          </div>
+          <div>
+            <label class="mono" style="font-size:.78rem;font-weight:700">Código de Prueba CAPI (Opcional)</label>
+            <input type="text" id="adminMetaTestCode" class="admin-input" placeholder="Ej. TEST12345">
+          </div>
+        </div>
+        <div style="margin-bottom:1rem">
+          <label class="mono" style="font-size:.78rem;font-weight:700">Token de API de Conversiones (CAPI - Opcional)</label>
+          <textarea id="adminMetaCapiToken" class="admin-input" rows="2" placeholder="Pega tu token de acceso generado en Meta Events Manager para envío en la nube..."></textarea>
+        </div>
+        <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+          <button type="button" id="adminMetaSaveBtn" class="btn btn-sm">Guardar Configuración Meta</button>
+          <button type="button" id="adminMetaExportBtn" class="btn btn-outline btn-sm">📊 Exportar Catálogo CSV (Meta Commerce)</button>
+          <button type="button" id="adminMetaTestBtn" class="btn btn-outline btn-sm">🧪 Enviar Evento de Prueba</button>
+        </div>
+      </div>
+
       <div class="admin-settings-card" style="margin-top:1.5rem">
         <h3 class="serif" style="margin-top:0">Seguridad y Clave de Acceso</h3>
         <p style="font-size:.88rem;color:var(--ink-70)">Actualiza la contraseña del panel de administración:</p>
@@ -813,6 +853,6 @@ grant all on table public.gg_hero to anon, authenticated, service_role;</pre>
   </svg>
 </a>
 
-<script src="app.js?v=58.0"></script>
+<script src="app.js?v=59.0"></script>
 </body>
 </html>
