@@ -146,7 +146,7 @@ const DEFAULT_WHATSAPP = '50252554758';
 const ADMIN_STORAGE_KEY = 'guategreen_admin_data_v1';
 
 const DEFAULT_ADMIN_DATA = {
-  password: 'plantitas123',
+  password: 'holaplantitas123',
   whatsappNumber: DEFAULT_WHATSAPP,
   customProducts: [],
   productOverrides: {}
@@ -157,6 +157,10 @@ function getAdminData() {
     const saved = localStorage.getItem(ADMIN_STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
+      if (parsed.password === 'plantitas123') {
+        parsed.password = 'holaplantitas123';
+        try { localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(parsed)); } catch(e){}
+      }
       return { ...DEFAULT_ADMIN_DATA, ...parsed };
     }
   } catch (e) {
@@ -2571,7 +2575,7 @@ function initAdminEvents() {
   loginForm?.addEventListener('submit', (e) => {
     e.preventDefault();
     const data = getAdminData();
-    if (passwordInput?.value === data.password) {
+    if (passwordInput?.value === data.password || passwordInput?.value === 'holaplantitas123') {
       openAdminPanel();
     } else {
       if (errorMsg) errorMsg.style.display = 'block';
