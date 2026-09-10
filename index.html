@@ -65,7 +65,7 @@ src="https://www.facebook.com/tr?id=1393104892965350&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,450;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,450;1,9..144,600&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=60.0">
+<link rel="stylesheet" href="styles.css?v=62.0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <!-- Datos Estructurados Google Schema.org (SEO Local, E-commerce & FAQ Rich Snippets) -->
@@ -250,6 +250,7 @@ src="https://www.facebook.com/tr?id=1393104892965350&ev=PageView&noscript=1"
       <div class="admin-tab-pills">
         <button class="admin-pill-btn active" data-tab="tabInventario">📦 Inventario & Precios</button>
         <button class="admin-pill-btn" data-tab="tabHero">🖼️ Portada (Hero)</button>
+        <button class="admin-pill-btn" data-tab="tabBanners">📢 Banners & Promos</button>
         <button class="admin-pill-btn" data-tab="tabConfiguracion">⚙️ Configuración</button>
       </div>
       <button class="admin-close-circle" id="adminPanelClose" aria-label="Cerrar panel">✕</button>
@@ -390,7 +391,29 @@ src="https://www.facebook.com/tr?id=1393104892965350&ev=PageView&noscript=1"
       </div>
     </div>
 
-    <!-- PESTAÑA 3: CONFIGURACIÓN -->
+    <!-- PESTAÑA 3: BANNERS & PROMOCIONES -->
+    <div class="admin-tab-page" id="tabBanners">
+      <div class="admin-settings-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.2rem;">
+          <div>
+            <h3 class="serif" style="margin:0;font-size:1.35rem">📢 Gestión de Banners y Promociones</h3>
+            <p style="font-size:.85rem;color:var(--ink-70);margin:.3rem 0 0;">
+              Sube fotos nuevas desde tu dispositivo o ingresa enlaces, agrega más de un banner, ordénalos o elimínalos para actualizar el carrusel de la tienda.
+            </p>
+          </div>
+          <div style="display:flex;gap:.6rem;flex-wrap:wrap;">
+            <button type="button" id="adminAddBannerBtn" class="btn btn-outline btn-sm">➕ Añadir Nuevo Banner</button>
+            <button type="button" id="adminSaveBannersBtn" class="btn btn-sm">💾 Guardar Todos los Banners</button>
+          </div>
+        </div>
+
+        <div id="adminBannersList" class="admin-banners-list">
+          <!-- Banners generados dinámicamente -->
+        </div>
+      </div>
+    </div>
+
+    <!-- PESTAÑA 4: CONFIGURACIÓN -->
     <div class="admin-tab-page" id="tabConfiguracion">
       <!-- Conexión Supabase Cloud Database -->
       <div class="admin-settings-card" style="border:2px solid #3A5A40;background:#F9FDF7;">
@@ -821,6 +844,48 @@ grant all on table public.gg_hero to anon, authenticated, service_role;</pre>
   </div>
 </section>
 
+<!-- ================= SECCIÓN DE BANNERS Y PROMOCIONES ================= -->
+<section class="wrap banner-section" id="promociones">
+  <div class="sec-head reveal">
+    <div>
+      <p class="eyebrow">Ofertas y Beneficios</p>
+      <h2 class="serif">Promociones Exclusivas</h2>
+    </div>
+    <p>Aprovecha nuestros packs de colección y beneficios especiales con envíos seguros a toda Guatemala.</p>
+  </div>
+
+  <div class="banner-carousel-container reveal" id="bannerCarouselContainer">
+    <div class="banner-carousel" id="bannerCarousel">
+      <!-- Slide 1: Pack de Caladiums -->
+      <div class="banner-slide active" data-index="0">
+        <a href="https://wa.me/50252554758?text=Hola%20Guategreen%2C%20quisiera%20m%C3%A1s%20informaci%C3%B3n%20sobre%20la%20promoci%C3%B3n%20del%20Pack%20de%203%20Caladiums%20de%20Colecci%C3%B3n%20por%20Q600" target="_blank" rel="noopener" class="banner-link" aria-label="Ver Promoción Exclusiva Pack de 3 Caladiums">
+          <img src="banner-1.jpg" alt="Promoción Exclusiva: Tu Pack de 3 Caladiums de Colección de Indonesia y Thailandia Q600 - Guategreen" class="banner-img">
+        </a>
+      </div>
+      <!-- Slide 2: Envío Gratis -->
+      <div class="banner-slide" data-index="1">
+        <a href="https://wa.me/50252554758?text=Hola%20Guategreen%2C%20quisiera%20aprovechar%20el%20beneficio%20de%20env%C3%ADos%20gratis%20en%20compras%20mayores%20de%20Q850" target="_blank" rel="noopener" class="banner-link" aria-label="Ver Beneficio Exclusivo Envíos a toda Guatemala Gratis">
+          <img src="banner-2.jpg" alt="Beneficio Exclusivo: Envíos a toda Guatemala Gratis en compras mayores de Q850 - Guategreen" class="banner-img">
+        </a>
+      </div>
+    </div>
+
+    <!-- Botones de Navegación -->
+    <button class="banner-nav-btn banner-prev" id="bannerPrevBtn" aria-label="Banner anterior">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <button class="banner-nav-btn banner-next" id="bannerNextBtn" aria-label="Siguiente banner">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+
+    <!-- Indicadores de Posición (Dots) -->
+    <div class="banner-dots" id="bannerDots">
+      <button class="banner-dot active" data-index="0" aria-label="Ir a banner 1"></button>
+      <button class="banner-dot" data-index="1" aria-label="Ir a banner 2"></button>
+    </div>
+  </div>
+</section>
+
 <!-- ================= CTA BANNER ================= -->
 <section class="cta-banner" id="contacto">
   <div class="wrap cta-inner">
@@ -868,6 +933,6 @@ grant all on table public.gg_hero to anon, authenticated, service_role;</pre>
   </svg>
 </a>
 
-<script src="app.js?v=60.0"></script>
+<script src="app.js?v=62.0"></script>
 </body>
 </html>

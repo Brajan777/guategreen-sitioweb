@@ -388,6 +388,22 @@ async function syncFromCloud() {
       renderHero();
       renderAdminHero();
     }
+
+    // 3. Obtener Banners de la nube
+    const { data: bannerRow, error: bErr } = await supabaseClient
+      .from('gg_hero')
+      .select('data')
+      .eq('id', 'banners')
+      .single();
+
+    if (!bErr && bannerRow && bannerRow.data && Array.isArray(bannerRow.data)) {
+      cloudBanners = bannerRow.data;
+      try {
+        saveBannersData(bannerRow.data);
+      } catch (qErr) {}
+      renderBannerCarousel();
+      initBannerCarousel();
+    }
   } catch (err) {
     console.error('Error sincronizando de Supabase:', err);
   }
@@ -447,6 +463,26 @@ async function syncHeroToCloud(heroData) {
   }
 }
 
+async function syncBannersToCloud(bannersData) {
+  if (!supabaseClient || !isCloudConnected) return { success: false, reason: 'not_connected' };
+
+  try {
+    const { error } = await supabaseClient.from('gg_hero').upsert({
+      id: 'banners',
+      data: bannersData,
+      updated_at: new Date().toISOString()
+    });
+    if (error) {
+      console.warn('Aviso al guardar Banners en Supabase:', error);
+      return { success: false, error };
+    }
+    return { success: true };
+  } catch (err) {
+    console.error('Error guardando banners en Supabase:', err);
+    return { success: false, error: err };
+  }
+}
+
 async function uploadAllCurrentToCloud() {
   if (!supabaseClient || !isCloudConnected) {
     alert('Primero guarda la URL y la Key de tu proyecto de Supabase y asegúrate de que esté conectado.');
@@ -455,6 +491,7 @@ async function uploadAllCurrentToCloud() {
 
   const prods = getProducts();
   const hero = getHeroData();
+  const banners = getBannersData();
 
   try {
     const rows = prods.map(p => ({
@@ -481,11 +518,16 @@ async function uploadAllCurrentToCloud() {
       data: hero,
       updated_at: new Date().toISOString()
     });
+    const { error: bErr } = await supabaseClient.from('gg_hero').upsert({
+      id: 'banners',
+      data: banners,
+      updated_at: new Date().toISOString()
+    });
 
-    if (pErr || hErr) {
-      alert('Aviso de Supabase: ' + (pErr?.message || hErr?.message || 'Verifica que ejecutaste el código SQL en el SQL Editor de Supabase'));
+    if (pErr || hErr || bErr) {
+      alert('Aviso de Supabase: ' + (pErr?.message || hErr?.message || bErr?.message || 'Verifica que ejecutaste el código SQL en el SQL Editor de Supabase'));
     } else {
-      alert('¡Catálogo y Portada subidos con éxito a la Nube! Ahora cualquier cambio se actualizará en vivo en todos los celulares y computadoras del mundo.');
+      alert('¡Catálogo, Portada y Banners subidos con éxito a la Nube! Ahora cualquier cambio se actualizará en vivo en todos los dispositivos.');
     }
   } catch (err) {
     console.error('Error subiendo datos a Supabase:', err);
@@ -540,6 +582,53 @@ function saveAdminData(data) {
   } catch (e) {
     console.error('Error al guardar admin data', e);
     alert('Aviso: El almacenamiento del navegador está lleno. Intenta usar imágenes con menor peso o rutas URL directas.');
+    return false;
+  }
+}
+
+/* =============== GESTIÓN DE BANNERS Y PROMOCIONES =============== */
+const BANNERS_STORAGE_KEY = 'guategreen_banners_data_v1';
+const DEFAULT_BANNERS_DATA = [
+  {
+    id: 1,
+    imageSrc: 'banner-1.jpg',
+    title: 'Promoción Exclusiva: Tu Pack de 3 Caladiums de Colección de Indonesia y Thailandia Q600',
+    link: 'https://wa.me/50252554758?text=Hola%20Guategreen%2C%20quisiera%20m%C3%A1s%20informaci%C3%B3n%20sobre%20la%20promoci%C3%B3n%20del%20Pack%20de%203%20Caladiums%20de%20Colecci%C3%B3n%20por%20Q600'
+  },
+  {
+    id: 2,
+    imageSrc: 'banner-2.jpg',
+    title: 'Beneficio Exclusivo: Envíos a toda Guatemala Gratis en compras mayores de Q850',
+    link: 'https://wa.me/50252554758?text=Hola%20Guategreen%2C%20quisiera%20aprovechar%20el%20beneficio%20de%20env%C3%ADos%20gratis%20en%20compras%20mayores%20de%20Q850'
+  }
+];
+let cloudBanners = null;
+
+function getBannersData() {
+  if (cloudBanners && Array.isArray(cloudBanners) && cloudBanners.length > 0) {
+    return cloudBanners;
+  }
+  try {
+    const saved = localStorage.getItem(BANNERS_STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    console.error('Error al leer banners data', e);
+  }
+  return DEFAULT_BANNERS_DATA;
+}
+
+function saveBannersData(data) {
+  try {
+    localStorage.setItem(BANNERS_STORAGE_KEY, JSON.stringify(data));
+    return true;
+  } catch (e) {
+    console.error('Error al guardar banners data', e);
+    alert('Aviso: El almacenamiento del navegador está lleno. Intenta comprimir las fotos o usar enlaces directos.');
     return false;
   }
 }
@@ -2323,6 +2412,185 @@ function renderAdminHero() {
   }
 }
 
+/* =============== GESTIÓN DE BANNERS EN PANEL ADMIN =============== */
+let adminBannersState = null;
+
+function renderAdminBanners() {
+  const listEl = document.getElementById('adminBannersList');
+  if (!listEl) return;
+
+  if (!adminBannersState) {
+    adminBannersState = JSON.parse(JSON.stringify(getBannersData()));
+  }
+
+  if (adminBannersState.length === 0) {
+    listEl.innerHTML = `
+      <div style="text-align:center;padding:2.5rem 1.5rem;background:#F8FAFC;border:1.5px dashed #CBD5E1;border-radius:12px;color:#64748B;">
+        <p style="margin:0 0 1rem;font-size:1rem;font-weight:600;">No tienes ningún banner registrado actualmente.</p>
+        <button type="button" class="btn btn-sm" id="emptyAddBannerBtn">➕ Añadir Primer Banner</button>
+      </div>
+    `;
+    document.getElementById('emptyAddBannerBtn')?.addEventListener('click', () => {
+      adminBannersState.push({
+        id: Date.now(),
+        imageSrc: '',
+        title: '',
+        link: ''
+      });
+      renderAdminBanners();
+    });
+    return;
+  }
+
+  const defaultWa = getWhatsAppNumber();
+  const total = adminBannersState.length;
+
+  listEl.innerHTML = adminBannersState.map((b, idx) => {
+    const pos = idx + 1;
+    const previewContent = b.imageSrc 
+      ? `<img src="${b.imageSrc}">`
+      : `<span style="font-size:2rem;">📷</span>`;
+
+    return `
+      <div class="admin-banner-item-card" data-idx="${idx}">
+        <div class="admin-banner-header">
+          <div class="admin-banner-badge">
+            <span>🌿 Banner #${pos}</span>
+          </div>
+          <div class="admin-banner-controls">
+            <button type="button" class="btn-banner-move" data-act="move-up" title="Subir posición" ${idx === 0 ? 'disabled style="opacity:0.3;cursor:not-allowed"' : ''}>▲</button>
+            <button type="button" class="btn-banner-move" data-act="move-down" title="Bajar posición" ${idx === total - 1 ? 'disabled style="opacity:0.3;cursor:not-allowed"' : ''}>▼</button>
+            <button type="button" class="btn-banner-delete" data-act="delete" title="Eliminar este banner">🗑️ Eliminar</button>
+          </div>
+        </div>
+
+        <div class="admin-banner-body">
+          <div>
+            <label class="mono" style="font-size:.76rem;display:block;margin-bottom:.3rem;color:#475569;">Vista previa</label>
+            <div class="admin-banner-preview-box" id="adminBannerPrevBox_${idx}">
+              ${previewContent}
+            </div>
+          </div>
+
+          <div class="admin-banner-fields">
+            <div>
+              <label class="mono" style="font-size:.8rem;font-weight:700;color:var(--sage-700);display:block;margin-bottom:.3rem;">
+                📸 Imagen del Banner (Cargar archivo o pegar enlace/URL)
+              </label>
+              <input type="file" accept="image/*" class="photo-file-input banner-file-input" data-idx="${idx}">
+              <input type="text" class="admin-input banner-url-input" data-idx="${idx}" placeholder="O escribe la ruta/URL (ej. banner-1.jpg o https://...)" value="${b.imageSrc && !b.imageSrc.startsWith('data:') ? b.imageSrc : ''}" style="margin-top:.4rem;font-size:.82rem;">
+            </div>
+
+            <div>
+              <label class="mono" style="font-size:.8rem;display:block;margin-bottom:.3rem;">
+                Título o descripción del Banner
+              </label>
+              <input type="text" class="admin-input banner-title-input" data-idx="${idx}" placeholder="Ej. Promoción Exclusiva Pack de 3 Caladiums Q600" value="${b.title || ''}" style="font-size:.84rem;">
+            </div>
+
+            <div>
+              <label class="mono" style="font-size:.8rem;display:block;margin-bottom:.3rem;">
+                Enlace al hacer clic (WhatsApp o página web)
+              </label>
+              <input type="text" class="admin-input banner-link-input" data-idx="${idx}" placeholder="https://wa.me/${defaultWa}?text=Hola..." value="${b.link || ''}" style="font-size:.84rem;">
+              <span style="font-size:.72rem;color:#64748B;display:block;margin-top:.25rem;">
+                Si se deja vacío, abrirá WhatsApp preguntando por el título del banner.
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Listeners para cada tarjeta de banner
+  listEl.querySelectorAll('.admin-banner-item-card').forEach(card => {
+    const idx = parseInt(card.dataset.idx, 10);
+
+    card.querySelector('[data-act="move-up"]')?.addEventListener('click', () => {
+      if (idx > 0) {
+        syncInputsToBannerState();
+        const temp = adminBannersState[idx];
+        adminBannersState[idx] = adminBannersState[idx - 1];
+        adminBannersState[idx - 1] = temp;
+        renderAdminBanners();
+      }
+    });
+
+    card.querySelector('[data-act="move-down"]')?.addEventListener('click', () => {
+      if (idx < adminBannersState.length - 1) {
+        syncInputsToBannerState();
+        const temp = adminBannersState[idx];
+        adminBannersState[idx] = adminBannersState[idx + 1];
+        adminBannersState[idx + 1] = temp;
+        renderAdminBanners();
+      }
+    });
+
+    card.querySelector('[data-act="delete"]')?.addEventListener('click', () => {
+      if (confirm(`¿Estás seguro de eliminar el Banner #${idx + 1}?`)) {
+        syncInputsToBannerState();
+        adminBannersState.splice(idx, 1);
+        renderAdminBanners();
+      }
+    });
+
+    const fileInput = card.querySelector('.banner-file-input');
+    const urlInput = card.querySelector('.banner-url-input');
+    const prevBox = document.getElementById(`adminBannerPrevBox_${idx}`);
+
+    fileInput?.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        if (prevBox) prevBox.innerHTML = `<span style="font-size:.75rem;color:#64748B;font-weight:600">Optimizando...</span>`;
+        const optimized = await compressImageFile(file, 1200, 0.80);
+        if (optimized) {
+          adminBannersState[idx].imageSrc = optimized;
+          if (urlInput) urlInput.value = '';
+          if (prevBox) prevBox.innerHTML = `<img src="${optimized}">`;
+        }
+      }
+    });
+
+    urlInput?.addEventListener('input', (e) => {
+      const val = e.target.value.trim();
+      adminBannersState[idx].imageSrc = val;
+      if (prevBox) {
+        if (val) {
+          prevBox.innerHTML = `<img src="${val}">`;
+        } else {
+          prevBox.innerHTML = `<span style="font-size:2rem;">📷</span>`;
+        }
+      }
+    });
+
+    card.querySelector('.banner-title-input')?.addEventListener('input', (e) => {
+      adminBannersState[idx].title = e.target.value;
+    });
+
+    card.querySelector('.banner-link-input')?.addEventListener('input', (e) => {
+      adminBannersState[idx].link = e.target.value.trim();
+    });
+  });
+}
+
+function syncInputsToBannerState() {
+  const listEl = document.getElementById('adminBannersList');
+  if (!listEl || !adminBannersState) return;
+
+  listEl.querySelectorAll('.admin-banner-item-card').forEach(card => {
+    const idx = parseInt(card.dataset.idx, 10);
+    if (adminBannersState[idx]) {
+      const titleEl = card.querySelector('.banner-title-input');
+      const linkEl = card.querySelector('.banner-link-input');
+      const urlEl = card.querySelector('.banner-url-input');
+      if (titleEl) adminBannersState[idx].title = titleEl.value;
+      if (linkEl) adminBannersState[idx].link = linkEl.value.trim();
+      if (urlEl && urlEl.value.trim()) adminBannersState[idx].imageSrc = urlEl.value.trim();
+    }
+  });
+}
+
 // Submodal Formulario y Carga de Fotos
 let currentPhotoSources = [null, null, null];
 
@@ -2518,6 +2786,8 @@ function initAdminEvents() {
     closeLogin();
     renderAdminTable();
     renderAdminHero();
+    adminBannersState = null;
+    renderAdminBanners();
     renderAdminSettings();
     panelOverlay?.classList.add('show');
     panelModal?.classList.add('open');
@@ -2735,6 +3005,38 @@ function initAdminEvents() {
     }
   });
 
+  // Guardado y Adición de Banners
+  document.getElementById('adminAddBannerBtn')?.addEventListener('click', () => {
+    syncInputsToBannerState();
+    if (!adminBannersState) {
+      adminBannersState = JSON.parse(JSON.stringify(getBannersData()));
+    }
+    adminBannersState.push({
+      id: Date.now(),
+      imageSrc: '',
+      title: '',
+      link: ''
+    });
+    renderAdminBanners();
+  });
+
+  document.getElementById('adminSaveBannersBtn')?.addEventListener('click', async () => {
+    syncInputsToBannerState();
+    if (!adminBannersState || adminBannersState.length === 0) {
+      if (!confirm('No hay banners en la lista. ¿Deseas guardar una lista vacía?')) {
+        return;
+      }
+    }
+    saveBannersData(adminBannersState);
+    renderBannerCarousel();
+    const syncRes = await syncBannersToCloud(adminBannersState);
+    if (syncRes && syncRes.error) {
+      alert('⚠️ Banners guardados localmente, pero aviso en Supabase: ' + (syncRes.error.message || 'Verifica conexión'));
+    } else {
+      alert('¡Banners y promociones guardados y sincronizados en la nube exitosamente!');
+    }
+  });
+
   // Ajustes: WhatsApp
   document.getElementById('adminWASaveBtn')?.addEventListener('click', () => {
     const val = document.getElementById('adminWAInput').value.trim();
@@ -2791,6 +3093,178 @@ function initAdminEvents() {
   });
 }
 
+/* =============== CARRUSEL DE BANNERS / PROMOCIONES =============== */
+let bannerCarouselTimer = null;
+let bannerCarouselTouchInitialized = false;
+
+function renderBannerCarousel() {
+  const carouselEl = document.getElementById('bannerCarousel');
+  const dotsEl = document.getElementById('bannerDots');
+  const sectionEl = document.getElementById('promociones');
+  const prevBtn = document.getElementById('bannerPrevBtn');
+  const nextBtn = document.getElementById('bannerNextBtn');
+
+  if (!carouselEl) return;
+
+  const banners = getBannersData();
+  const defaultWa = getWhatsAppNumber();
+
+  if (!banners || banners.length === 0) {
+    if (sectionEl) sectionEl.style.display = 'none';
+    return;
+  }
+
+  if (sectionEl) sectionEl.style.display = '';
+
+  carouselEl.innerHTML = banners.map((b, i) => {
+    const img = b.imageSrc || 'banner-1.jpg';
+    const title = b.title || 'Promoción Guategreen';
+    const link = b.link || `https://wa.me/${defaultWa}?text=${encodeURIComponent('Hola Guategreen, quisiera más información sobre: ' + title)}`;
+    return `
+      <div class="banner-slide ${i === 0 ? 'active' : ''}" data-index="${i}">
+        <a href="${link}" target="_blank" rel="noopener" class="banner-link" aria-label="${title}">
+          <img src="${img}" alt="${title} - Guategreen" class="banner-img">
+        </a>
+      </div>
+    `;
+  }).join('');
+
+  if (dotsEl) {
+    if (banners.length > 1) {
+      dotsEl.style.display = 'flex';
+      dotsEl.innerHTML = banners.map((_, i) => `
+        <button class="banner-dot ${i === 0 ? 'active' : ''}" data-index="${i}" aria-label="Ir a banner ${i + 1}"></button>
+      `).join('');
+    } else {
+      dotsEl.style.display = 'none';
+      dotsEl.innerHTML = '';
+    }
+  }
+
+  if (prevBtn) prevBtn.style.display = banners.length > 1 ? 'flex' : 'none';
+  if (nextBtn) nextBtn.style.display = banners.length > 1 ? 'flex' : 'none';
+
+  initBannerCarousel();
+}
+
+function initBannerCarousel() {
+  const container = document.getElementById('bannerCarouselContainer');
+  if (!container) return;
+
+  if (bannerCarouselTimer) {
+    clearInterval(bannerCarouselTimer);
+    bannerCarouselTimer = null;
+  }
+
+  const slides = container.querySelectorAll('.banner-slide');
+  const dots = container.querySelectorAll('.banner-dot');
+  const prevBtn = document.getElementById('bannerPrevBtn');
+  const nextBtn = document.getElementById('bannerNextBtn');
+
+  if (!slides.length) return;
+
+  let currentIndex = 0;
+  const slideInterval = 4500; // 4.5 segundos
+
+  function goToSlide(index) {
+    if (index < 0) {
+      currentIndex = slides.length - 1;
+    } else if (index >= slides.length) {
+      currentIndex = 0;
+    } else {
+      currentIndex = index;
+    }
+
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === currentIndex);
+    });
+
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === currentIndex);
+    });
+  }
+
+  function nextSlide() {
+    goToSlide(currentIndex + 1);
+  }
+
+  function prevSlide() {
+    goToSlide(currentIndex - 1);
+  }
+
+  function startAutoPlay() {
+    stopAutoPlay();
+    if (slides.length > 1) {
+      bannerCarouselTimer = setInterval(nextSlide, slideInterval);
+    }
+  }
+
+  function stopAutoPlay() {
+    if (bannerCarouselTimer) {
+      clearInterval(bannerCarouselTimer);
+      bannerCarouselTimer = null;
+    }
+  }
+
+  // Asignar controladores directos
+  if (nextBtn) {
+    nextBtn.onclick = (e) => {
+      e.preventDefault();
+      nextSlide();
+      startAutoPlay();
+    };
+  }
+
+  if (prevBtn) {
+    prevBtn.onclick = (e) => {
+      e.preventDefault();
+      prevSlide();
+      startAutoPlay();
+    };
+  }
+
+  dots.forEach((dot) => {
+    dot.onclick = (e) => {
+      e.preventDefault();
+      const idx = parseInt(dot.dataset.index, 10);
+      if (!isNaN(idx)) {
+        goToSlide(idx);
+        startAutoPlay();
+      }
+    };
+  });
+
+  container.onmouseenter = stopAutoPlay;
+  container.onmouseleave = startAutoPlay;
+
+  if (!bannerCarouselTouchInitialized) {
+    bannerCarouselTouchInitialized = true;
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    container.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      stopAutoPlay();
+    }, { passive: true });
+
+    container.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      const diff = touchStartX - touchEndX;
+      if (Math.abs(diff) > 40) {
+        if (diff > 0) {
+          nextSlide();
+        } else {
+          prevSlide();
+        }
+      }
+      startAutoPlay();
+    }, { passive: true });
+  }
+
+  goToSlide(0);
+  startAutoPlay();
+}
+
 /* =============== INICIALIZACIÓN GENERAL =============== */
 document.addEventListener('DOMContentLoaded', () => {
   initMarquee();
@@ -2799,6 +3273,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCartEvents();
   initModalEvents();
   initAdminEvents();
+  renderBannerCarousel();
   renderCart(false);
   initScrollSpy();
   initScrollReveal();
@@ -2830,10 +3305,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  document.querySelectorAll('.wa-fab, #heroWaBtn, .cta-banner a').forEach(btn => {
+  document.querySelectorAll('.wa-fab, #heroWaBtn, .cta-banner a, .banner-link').forEach(btn => {
     btn.addEventListener('click', () => {
       trackMetaEvent('Contact', {
-        content_name: 'Asesoría WhatsApp Botánica',
+        content_name: 'Asesoría WhatsApp Botánica / Promoción Banner',
         currency: 'GTQ'
       });
     });

@@ -1287,6 +1287,172 @@ section{
   padding-top:1rem;
 }
 
+/* ---------- BANNERS & PROMOCIONES CAROUSEL ---------- */
+.banner-section{
+  padding:clamp(2.5rem,5.5vw,5rem) 0;
+}
+
+.banner-carousel-container{
+  position:relative;
+  max-width:1040px;
+  margin:0 auto;
+  border:var(--line);
+  border-radius:var(--radius-card);
+  background:var(--paper);
+  box-shadow:var(--shadow-hard);
+  overflow:hidden;
+  user-select:none;
+}
+
+.banner-carousel{
+  position:relative;
+  width:100%;
+  aspect-ratio:16 / 9;
+  overflow:hidden;
+  background:#F5F8F6;
+}
+
+.banner-slide{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  opacity:0;
+  visibility:hidden;
+  transform:scale(.98);
+  transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1),visibility .6s;
+  z-index:1;
+}
+
+.banner-slide.active{
+  opacity:1;
+  visibility:visible;
+  transform:scale(1);
+  z-index:2;
+}
+
+.banner-link{
+  display:block;
+  width:100%;
+  height:100%;
+  cursor:pointer;
+}
+
+.banner-img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center;
+  display:block;
+  transition:transform .4s var(--ease);
+}
+
+.banner-carousel-container:hover .banner-img{
+  transform:scale(1.015);
+}
+
+/* Botones de navegación */
+.banner-nav-btn{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:2.8rem;
+  height:2.8rem;
+  border-radius:50%;
+  background:rgba(255,255,255,.94);
+  border:var(--line);
+  color:var(--ink);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:10;
+  box-shadow:var(--shadow-hard-sm);
+  transition:transform .2s var(--ease),background .2s var(--ease),color .2s var(--ease);
+  backdrop-filter:blur(4px);
+}
+
+.banner-prev{
+  left:1.2rem;
+}
+
+.banner-next{
+  right:1.2rem;
+}
+
+.banner-nav-btn:hover{
+  background:var(--brand-green);
+  color:#FFFFFF;
+  transform:translateY(-50%) scale(1.08);
+}
+
+.banner-nav-btn:active{
+  transform:translateY(-50%) scale(.95);
+}
+
+/* Indicadores de puntos */
+.banner-dots{
+  position:absolute;
+  bottom:1rem;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:center;
+  gap:.6rem;
+  z-index:10;
+}
+
+.banner-dot{
+  width:26px;
+  height:6px;
+  border-radius:4px;
+  background:rgba(23,34,28,.28);
+  border:none;
+  padding:0;
+  cursor:pointer;
+  transition:background .3s var(--ease),width .3s var(--ease);
+}
+
+.banner-dot.active{
+  background:var(--brand-green);
+  width:42px;
+}
+
+.banner-dot:hover:not(.active){
+  background:rgba(23,34,28,.55);
+}
+
+@media(max-width:768px){
+  .banner-carousel-container{
+    box-shadow:var(--shadow-hard-sm);
+  }
+  .banner-nav-btn{
+    width:2.2rem;
+    height:2.2rem;
+  }
+  .banner-prev{
+    left:.6rem;
+  }
+  .banner-next{
+    right:.6rem;
+  }
+  .banner-nav-btn svg{
+    width:16px;
+    height:16px;
+  }
+  .banner-dots{
+    bottom:.6rem;
+    gap:.4rem;
+  }
+  .banner-dot{
+    width:18px;
+    height:5px;
+  }
+  .banner-dot.active{
+    width:30px;
+  }
+}
+
 /* ---------- CTA BANNER ---------- */
 .cta-banner{
   background:var(--ink);
@@ -2511,3 +2677,135 @@ a:focus-visible,button:focus-visible{
     grid-template-columns:1fr;
   }
 }
+
+/* ---------- ADMIN BANNERS GESTIÓN ---------- */
+.admin-banners-list{
+  display:flex;
+  flex-direction:column;
+  gap:1.2rem;
+  margin-top:1rem;
+}
+
+.admin-banner-item-card{
+  background:#FFFFFF;
+  border:1.5px solid #CBD5E1;
+  border-radius:14px;
+  padding:1.2rem;
+  box-shadow:0 2px 6px rgba(0,0,0,0.03);
+  transition:border-color .2s var(--ease),box-shadow .2s var(--ease);
+}
+
+.admin-banner-item-card:hover{
+  border-color:var(--sage-500);
+  box-shadow:0 4px 12px rgba(0,0,0,0.06);
+}
+
+.admin-banner-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:1rem;
+  padding-bottom:.6rem;
+  border-bottom:1px solid #E2E8F0;
+  flex-wrap:wrap;
+  gap:.5rem;
+}
+
+.admin-banner-badge{
+  font-family:'Space Mono',monospace;
+  font-size:.82rem;
+  font-weight:700;
+  background:#EFF5E1;
+  color:#15803D;
+  padding:.3rem .75rem;
+  border-radius:8px;
+  border:1px solid #DCFCE7;
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+}
+
+.admin-banner-controls{
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+}
+
+.btn-banner-move{
+  background:#F1F5F9;
+  border:1px solid #CBD5E1;
+  border-radius:8px;
+  width:2.2rem;
+  height:2.2rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.85rem;
+  cursor:pointer;
+  color:#475569;
+  font-weight:700;
+  transition:all .2s;
+}
+
+.btn-banner-move:hover:not(:disabled){
+  background:#E2E8F0;
+  color:#0F172A;
+}
+
+.btn-banner-delete{
+  background:#FEE2E2;
+  border:1px solid #FECACA;
+  color:#991B1B;
+  border-radius:8px;
+  padding:.4rem .75rem;
+  font-size:.82rem;
+  font-weight:700;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:.3rem;
+  transition:all .2s;
+}
+
+.btn-banner-delete:hover{
+  background:#FCA5A5;
+}
+
+.admin-banner-body{
+  display:grid;
+  grid-template-columns:220px 1fr;
+  gap:1.4rem;
+  align-items:start;
+}
+
+.admin-banner-preview-box{
+  width:100%;
+  aspect-ratio:16 / 9;
+  border:1.5px dashed #CBD5E1;
+  border-radius:10px;
+  background:#F8FAFC;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  position:relative;
+}
+
+.admin-banner-preview-box img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.admin-banner-fields{
+  display:flex;
+  flex-direction:column;
+  gap:.9rem;
+}
+
+@media(max-width:720px){
+  .admin-banner-body{
+    grid-template-columns:1fr;
+  }
+}
+
