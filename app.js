@@ -1905,8 +1905,8 @@ function cartCount() {
 
 function cartTotal() { 
   return cart.reduce((s, i) => { 
-    const p = getProducts().find(pp => pp.id === i.id); 
-    return s + (p ? p.price : 0) * i.qty; 
+    const p = getProducts().find(pp => Number(pp.id) === Number(i.id)); 
+    return s + (p ? Number(p.price) || 0 : 0) * i.qty; 
   }, 0); 
 }
 
@@ -1923,27 +1923,29 @@ function addToCart(id) {
       currency: 'GTQ'
     });
   }
-  const existing = cart.find(i => i.id === id);
+  const existing = cart.find(i => Number(i.id) === numId);
   if (existing) {
     existing.qty++;
   } else {
-    cart.push({ id, qty: 1 });
+    cart.push({ id: numId, qty: 1 });
   }
   renderCart(true);
 }
 
 function changeQty(id, delta) {
-  const it = cart.find(i => i.id === id);
+  const numId = Number(id);
+  const it = cart.find(i => Number(i.id) === numId);
   if (!it) return;
   it.qty += delta;
   if (it.qty <= 0) {
-    cart = cart.filter(i => i.id !== id);
+    cart = cart.filter(i => Number(i.id) !== numId);
   }
   renderCart(false);
 }
 
 function removeFromCart(id) {
-  cart = cart.filter(i => i.id !== id);
+  const numId = Number(id);
+  cart = cart.filter(i => Number(i.id) !== numId);
   renderCart(false);
 }
 
@@ -1967,10 +1969,10 @@ function renderCart(bump) {
       itemsEl.innerHTML = '<p class="cart-empty">Tu carrito está vacío.<br>Elegí un espécimen del catálogo.</p>';
     } else {
       itemsEl.innerHTML = cart.map(i => {
-        const p = getProducts().find(pp => pp.id === i.id);
-        const im = p ? p.images[0] : { bg: 'var(--sage-100)' };
+        const p = getProducts().find(pp => Number(pp.id) === Number(i.id));
+        const im = p && p.images && p.images[0] ? p.images[0] : { bg: 'var(--sage-100)' };
         return `<div class="cart-item" data-id="${p ? p.id : i.id}">
-          <div class="swatch" style="background:${im.bg}"></div>
+          <div class="swatch" style="background:${im.bg || 'var(--sage-100)'}"></div>
           <div class="cart-item-info">
             <span class="name">${p ? p.name : 'Espécimen'}</span>
             <span class="mono" style="font-size:.72rem;color:var(--ink-45)">${money(p ? p.price : 0)} c/u</span>
@@ -1988,9 +1990,9 @@ function renderCart(bump) {
 
       itemsEl.querySelectorAll('.cart-item').forEach(row => {
         const id = Number(row.dataset.id);
-        row.querySelector('[data-act="plus"]').addEventListener('click', () => changeQty(id, 1));
-        row.querySelector('[data-act="minus"]').addEventListener('click', () => changeQty(id, -1));
-        row.querySelector('[data-act="remove"]').addEventListener('click', () => removeFromCart(id));
+        row.querySelector('[data-act="plus"]')?.addEventListener('click', () => changeQty(id, 1));
+        row.querySelector('[data-act="minus"]')?.addEventListener('click', () => changeQty(id, -1));
+        row.querySelector('[data-act="remove"]')?.addEventListener('click', () => removeFromCart(id));
       });
     }
   }
@@ -2005,7 +2007,7 @@ function renderCart(bump) {
   if (waBtn) {
     if (cart.length) {
       const lines = cart.map(i => {
-        const p = getProducts().find(pp => pp.id === i.id);
+        const p = getProducts().find(pp => Number(pp.id) === Number(i.id));
         return `${i.qty}x ${p ? p.name : 'Espécimen'} (${money(p ? p.price : 0)})`;
       }).join('\n');
       const msg = `Hola, quiero apartar estos especímenes:\n${lines}\n\nTotal: ${money(cartTotal())}`;
@@ -2036,7 +2038,7 @@ function initCartEvents() {
 
 /* =============== SCROLLSPY Y NAVEGACIÓN =============== */
 function initScrollSpy() {
-  const spySections = ['catalogo', 'coleccion', 'comunidad', 'faq', 'contacto'];
+  const spySections = ['catalogo', 'promociones', 'coleccion', 'comunidad', 'faq', 'contacto'];
   const navLinks = document.getElementById('navLinks');
   if (!navLinks) return;
 
@@ -3123,7 +3125,7 @@ function renderBannerCarousel() {
     return `
       <div class="banner-slide ${i === 0 ? 'active' : ''}" data-index="${i}">
         <a href="${link}" target="_blank" rel="noopener" class="banner-link" aria-label="${title}">
-          <img src="${img}" alt="${title} - Guategreen" class="banner-img">
+          <img src="${img}" alt="${title} - Guategreen Guatemala" class="banner-img" loading="lazy" decoding="async">
         </a>
       </div>
     `;
