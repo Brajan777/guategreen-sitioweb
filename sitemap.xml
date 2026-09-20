@@ -3,13 +3,28 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://guategreen.com/</loc>
-    <lastmod>2026-08-28</lastmod>
+    <lastmod>2026-09-20</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <image:image>
       <image:loc>https://guategreen.com/logo.jpg</image:loc>
       <image:title>Guategreen — Plantas Exóticas y de Colección en Guatemala</image:title>
-      <image:caption>Venta de plantas exóticas, Monsteras variegadas y Araceae en Guatemala</image:caption>
+      <image:caption>Vivero especializado en plantas exóticas, Monsteras variegadas y Araceae en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/banner-1.jpg</image:loc>
+      <image:title>Promoción Pack Caladiums de Colección Guatemala</image:title>
+      <image:caption>Pack exclusivo de 3 Caladiums Lance Leaf tricolor en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/banner-2.jpg</image:loc>
+      <image:title>Envíos Gratis a toda Guatemala en Plantas Exóticas</image:title>
+      <image:caption>Envíos seguros de plantas de colección a todos los departamentos de Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/favicon.jpg</image:loc>
+      <image:title>Ícono Oficial Guategreen</image:title>
     </image:image>
   </url>
 </urlset>
+
