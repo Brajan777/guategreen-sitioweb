@@ -1354,40 +1354,41 @@ section{
 /* Botones de navegación */
 .banner-nav-btn{
   position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  width:2.8rem;
-  height:2.8rem;
+  top:auto;
+  bottom:.75rem;
+  transform:none;
+  width:2.2rem;
+  height:2.2rem;
   border-radius:50%;
-  background:rgba(255,255,255,.94);
-  border:var(--line);
+  background:rgba(255,255,255,.88);
+  border:1.5px solid var(--ink);
   color:var(--ink);
   display:flex;
   align-items:center;
   justify-content:center;
   cursor:pointer;
   z-index:10;
-  box-shadow:var(--shadow-hard-sm);
+  box-shadow:2px 2px 0 var(--ink);
   transition:transform .2s var(--ease),background .2s var(--ease),color .2s var(--ease);
   backdrop-filter:blur(4px);
 }
 
 .banner-prev{
-  left:1.2rem;
+  left:1rem;
 }
 
 .banner-next{
-  right:1.2rem;
+  right:1rem;
 }
 
 .banner-nav-btn:hover{
   background:var(--brand-green);
   color:#FFFFFF;
-  transform:translateY(-50%) scale(1.08);
+  transform:scale(1.08);
 }
 
 .banner-nav-btn:active{
-  transform:translateY(-50%) scale(.95);
+  transform:scale(.95);
 }
 
 /* Indicadores de puntos */
@@ -1400,9 +1401,11 @@ section{
   justify-content:center;
   gap:.6rem;
   z-index:10;
+  pointer-events:none;
 }
 
 .banner-dot{
+  pointer-events:auto;
   width:26px;
   height:6px;
   border-radius:4px;
@@ -1427,21 +1430,24 @@ section{
     box-shadow:var(--shadow-hard-sm);
   }
   .banner-nav-btn{
-    width:2.2rem;
-    height:2.2rem;
+    width:1.65rem;
+    height:1.65rem;
+    bottom:.4rem;
+    background:rgba(255,255,255,.82);
+    box-shadow:1px 1px 0 var(--ink);
   }
   .banner-prev{
-    left:.6rem;
+    left:.5rem;
   }
   .banner-next{
-    right:.6rem;
+    right:.5rem;
   }
   .banner-nav-btn svg{
-    width:16px;
-    height:16px;
+    width:13px;
+    height:13px;
   }
   .banner-dots{
-    bottom:.6rem;
+    bottom:.55rem;
     gap:.4rem;
   }
   .banner-dot{
