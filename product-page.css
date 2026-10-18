@@ -1,0 +1,389 @@
+/* ==========================================================================
+   GUATEGREEN — ESTILOS ADICIONALES PARA PÁGINAS DE PRODUCTO Y COLECCIÓN
+   Extiende styles.css manteniendo la misma paleta botánica, tipografía y diseño
+   ========================================================================== */
+
+/* Breadcrumbs */
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-45, #7D786F);
+  margin: 1.5rem 0 1rem;
+}
+.breadcrumbs a {
+  color: var(--ink-70, #544F47);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.breadcrumbs a:hover {
+  color: var(--sage-700, #3A5A40);
+  text-decoration: underline;
+}
+.breadcrumbs .crumb-sep {
+  opacity: 0.4;
+}
+.breadcrumbs .crumb-current {
+  color: var(--sage-900, #1F3323);
+  font-weight: 700;
+}
+
+/* Sección de Detalle de Producto */
+.product-detail-wrap {
+  padding-top: 1rem;
+  padding-bottom: 3.5rem;
+}
+
+.product-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 2.5rem;
+  align-items: start;
+  background: #FFFFFF;
+  border: 1px solid var(--sage-200, #D2DCBF);
+  border-radius: 18px;
+  padding: 2.2rem;
+  box-shadow: 0 10px 30px rgba(36, 29, 22, 0.04);
+}
+
+@media (max-width: 900px) {
+  .product-detail-grid {
+    grid-template-columns: 1fr;
+    padding: 1.4rem;
+    gap: 1.8rem;
+  }
+}
+
+/* Galería de Producto */
+.pdp-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.pdp-main-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1/1;
+  background: var(--sage-50, #F4F7EE);
+  border: 1px solid var(--sage-200, #D2DCBF);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pdp-main-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.25s ease, transform 0.3s ease;
+}
+.pdp-thumbs {
+  display: flex;
+  gap: 0.6rem;
+}
+.pdp-thumb {
+  flex: 1;
+  aspect-ratio: 1/1;
+  border: 2px solid transparent;
+  background: var(--sage-50, #F4F7EE);
+  border-radius: 10px;
+  cursor: pointer;
+  overflow: hidden;
+  padding: 0;
+  opacity: 0.65;
+  transition: all 0.2s ease;
+}
+.pdp-thumb:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+.pdp-thumb.active {
+  opacity: 1;
+  border-color: var(--sage-700, #3A5A40);
+  box-shadow: 0 4px 12px rgba(58, 90, 64, 0.15);
+}
+.pdp-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Información de Producto */
+.pdp-info {
+  display: flex;
+  flex-direction: column;
+}
+.pdp-latin {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--sage-700, #3A5A40);
+  margin-bottom: 0.3rem;
+}
+.pdp-title {
+  font-family: 'Fraunces', serif;
+  font-size: 2.2rem;
+  line-height: 1.15;
+  color: var(--ink, #241D16);
+  margin: 0 0 0.8rem;
+  letter-spacing: -0.01em;
+}
+@media (max-width: 600px) {
+  .pdp-title {
+    font-size: 1.7rem;
+  }
+}
+
+.pdp-tags-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.2rem;
+}
+
+.pdp-price-box {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  margin-bottom: 1.4rem;
+  padding: 0.8rem 1rem;
+  background: var(--sage-50, #F4F7EE);
+  border-radius: 10px;
+  border-left: 3px solid var(--sage-700, #3A5A40);
+}
+.pdp-price {
+  font-family: 'Space Mono', monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--ink, #241D16);
+}
+.pdp-old-price {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.2rem;
+  color: var(--ink-45, #7D786F);
+  text-decoration: line-through;
+}
+.pdp-discount-tag {
+  background: #FEE2E2;
+  color: #991B1B;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.pdp-desc {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--ink-70, #544F47);
+  margin-bottom: 1.6rem;
+}
+
+/* Botones de Acción */
+.pdp-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-bottom: 1.8rem;
+}
+.pdp-wa-direct-btn {
+  background: #25D366;
+  color: #FFFFFF;
+  border: 1px solid #1EBE5D;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.4rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.pdp-wa-direct-btn:hover {
+  background: #1EBE5D;
+  box-shadow: 0 6px 18px rgba(37, 211, 102, 0.35);
+  transform: translateY(-1px);
+}
+.pdp-wa-direct-btn svg {
+  fill: #FFFFFF;
+}
+
+/* Tarjetas de Confianza / Beneficios */
+.pdp-trust-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.7rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--sage-200, #D2DCBF);
+}
+@media (max-width: 600px) {
+  .pdp-trust-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.pdp-trust-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--ink-70, #544F47);
+  line-height: 1.35;
+}
+.pdp-trust-item strong {
+  display: block;
+  color: var(--ink, #241D16);
+  font-size: 0.8rem;
+}
+.pdp-trust-item .trust-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+/* Caja de Cuidados */
+.pdp-care-box {
+  margin-top: 2rem;
+  background: var(--sage-50, #F4F7EE);
+  border: 1px solid var(--sage-200, #D2DCBF);
+  border-radius: 14px;
+  padding: 1.4rem;
+}
+.pdp-care-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.15rem;
+  margin: 0 0 0.8rem;
+  color: var(--sage-900, #1F3323);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.pdp-care-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+@media (max-width: 700px) {
+  .pdp-care-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.pdp-care-card {
+  background: #FFFFFF;
+  border: 1px solid var(--sage-200, #D2DCBF);
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+}
+.pdp-care-card .care-head {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--sage-700, #3A5A40);
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.pdp-care-card p {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--ink-70, #544F47);
+}
+
+/* Sección de Colección / Categoría Hero */
+.category-hero {
+  padding: 2.5rem 0 1.5rem;
+  text-align: center;
+}
+.category-hero .eyebrow {
+  justify-content: center;
+}
+.category-hero h1 {
+  font-family: 'Fraunces', serif;
+  font-size: 2.6rem;
+  line-height: 1.15;
+  color: var(--ink, #241D16);
+  margin: 0.4rem 0 0.8rem;
+}
+@media (max-width: 600px) {
+  .category-hero h1 {
+    font-size: 1.9rem;
+  }
+}
+.category-hero p {
+  max-width: 42rem;
+  margin: 0 auto 1.5rem;
+  color: var(--ink-70, #544F47);
+  font-size: 1rem;
+}
+
+.category-nav-pills {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.category-pill {
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  background: #FFFFFF;
+  border: 1px solid var(--sage-200, #D2DCBF);
+  color: var(--ink-70, #544F47);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.78rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.category-pill:hover {
+  border-color: var(--sage-700, #3A5A40);
+  color: var(--sage-900, #1F3323);
+  transform: translateY(-1px);
+}
+.category-pill.active {
+  background: var(--sage-900, #1F3323);
+  color: #FFFFFF;
+  border-color: var(--sage-900, #1F3323);
+}
+
+/* Enlaces directos en tarjetas del catálogo principal */
+.card-detail-link {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+}
+.card {
+  position: relative;
+}
+.card .card-media {
+  cursor: pointer;
+}
+.card-view-btn {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  padding: 0.35rem 0.7rem;
+  background: var(--sage-50, #F4F7EE);
+  border: 1px solid var(--sage-200, #D2DCBF);
+  border-radius: 6px;
+  color: var(--sage-900, #1F3323);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.card-view-btn:hover {
+  background: var(--sage-700, #3A5A40);
+  color: #FFFFFF;
+  border-color: var(--sage-700, #3A5A40);
+}
