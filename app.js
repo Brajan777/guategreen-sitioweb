@@ -145,8 +145,16 @@ function exportMetaCatalogCSV() {
 const DEFAULT_WHATSAPP = '50252554758';
 const ADMIN_STORAGE_KEY = 'guategreen_admin_data_v1';
 
+const DEFAULT_ADMIN_PASS_HASH = 'c6f31bfec09bc0eb78400a7275017eca291bf1a1a8cba9d265224b42cd4f104e';
+
+async function hashPasswordSHA256(str) {
+  const buf = new TextEncoder().encode(String(str || ''));
+  const hashBuffer = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 const DEFAULT_ADMIN_DATA = {
-  password: 'holaplantitas123',
+  passwordHash: DEFAULT_ADMIN_PASS_HASH,
   whatsappNumber: DEFAULT_WHATSAPP,
   customProducts: [],
   productOverrides: {}
@@ -157,8 +165,8 @@ function getAdminData() {
     const saved = localStorage.getItem(ADMIN_STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (parsed.password === 'plantitas123') {
-        parsed.password = 'holaplantitas123';
+      if (parsed.password) {
+        delete parsed.password;
         try { localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(parsed)); } catch(e){}
       }
       return { ...DEFAULT_ADMIN_DATA, ...parsed };
@@ -3350,7 +3358,20 @@ function initAdminEvents() {
     if (passwordInput) passwordInput.value = '';
   }
 
-  triggerBtn?.addEventListener('click', openLogin);
+  // Acceso secreto: 3 toques seguidos en el candadito del pie de página
+  let lockTapCount = 0;
+  let lockTapTimer = null;
+  triggerBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    lockTapCount++;
+    clearTimeout(lockTapTimer);
+    lockTapTimer = setTimeout(() => { lockTapCount = 0; }, 900);
+    if (lockTapCount >= 3) {
+      lockTapCount = 0;
+      openLogin();
+    }
+  });
+
   loginClose?.addEventListener('click', closeLogin);
   loginOverlay?.addEventListener('click', closeLogin);
 
@@ -3366,22 +3387,6 @@ function initAdminEvents() {
   window.addEventListener('hashchange', checkAdminHash);
   setTimeout(checkAdminHash, 300);
 
-  // Acceso secreto por Triple-Tap en el logo de Guategreen
-  let logoTapCount = 0;
-  let logoTapTimer = null;
-  document.querySelectorAll('.logo-brand').forEach(logoEl => {
-    logoEl.addEventListener('click', (e) => {
-      logoTapCount++;
-      clearTimeout(logoTapTimer);
-      logoTapTimer = setTimeout(() => { logoTapCount = 0; }, 800);
-      if (logoTapCount >= 3) {
-        e.preventDefault();
-        logoTapCount = 0;
-        openLogin();
-      }
-    });
-  });
-
   // Atajo de teclado Ctrl+Shift+A o Cmd+Shift+A
   document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
@@ -3390,14 +3395,59 @@ function initAdminEvents() {
     }
   });
 
-  // Envío del formulario de Login
-  loginForm?.addEventListener('submit', (e) => {
+  // Envío del formulario de Login con SHA-256 y protección anti-fuerza bruta (5 intentos)
+  const LOCKOUT_KEY = 'gg_admin_lock_until';
+  const FAIL_COUNT_KEY = 'gg_admin_fail_count';
+  const MAX_LOGIN_ATTEMPTS = 5;
+  const LOCKOUT_DURATION_MS = 15 * 60 * 1000;
+
+  loginForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const now = Date.now();
+    const lockUntil = Number(localStorage.getItem(LOCKOUT_KEY) || 0);
+
+    if (lockUntil > now) {
+      const minsLeft = Math.ceil((lockUntil - now) / 60000);
+      if (errorMsg) {
+        errorMsg.textContent = `Acceso bloqueado temporalmente por seguridad. Intenta en ${minsLeft} min.`;
+        errorMsg.style.display = 'block';
+      }
+      return;
+    }
+
+    const inputVal = passwordInput?.value || '';
+    const inputHash = await hashPasswordSHA256(inputVal);
     const data = getAdminData();
-    if (passwordInput?.value === data.password || passwordInput?.value === 'holaplantitas123') {
+    const validHash = data.passwordHash || DEFAULT_ADMIN_PASS_HASH;
+
+    if (inputHash === validHash || inputHash === DEFAULT_ADMIN_PASS_HASH) {
+      try {
+        localStorage.removeItem(FAIL_COUNT_KEY);
+        localStorage.removeItem(LOCKOUT_KEY);
+      } catch (err) {}
       openAdminPanel();
     } else {
-      if (errorMsg) errorMsg.style.display = 'block';
+      const fails = Number(localStorage.getItem(FAIL_COUNT_KEY) || 0) + 1;
+      try {
+        localStorage.setItem(FAIL_COUNT_KEY, String(fails));
+      } catch (err) {}
+
+      if (fails >= MAX_LOGIN_ATTEMPTS) {
+        try {
+          localStorage.setItem(LOCKOUT_KEY, String(now + LOCKOUT_DURATION_MS));
+          localStorage.removeItem(FAIL_COUNT_KEY);
+        } catch (err) {}
+        if (errorMsg) {
+          errorMsg.textContent = 'Demasiados intentos fallidos. Acceso bloqueado por 15 minutos.';
+          errorMsg.style.display = 'block';
+        }
+      } else {
+        const remaining = MAX_LOGIN_ATTEMPTS - fails;
+        if (errorMsg) {
+          errorMsg.textContent = `Contraseña incorrecta (${remaining} intento${remaining === 1 ? '' : 's'} restante${remaining === 1 ? '' : 's'}).`;
+          errorMsg.style.display = 'block';
+        }
+      }
     }
   });
 
@@ -3602,18 +3652,19 @@ function initAdminEvents() {
     window.open(`https://wa.me/${val}?text=${encodeURIComponent('Prueba de conexión con Guategreen')}`, '_blank');
   });
 
-  // Ajustes: Cambiar clave
-  document.getElementById('adminPassSaveBtn')?.addEventListener('click', () => {
+  // Ajustes: Cambiar clave (con encriptación SHA-256)
+  document.getElementById('adminPassSaveBtn')?.addEventListener('click', async () => {
     const val = document.getElementById('adminNewPassInput').value.trim();
     if (!val || val.length < 4) {
       alert('La nueva clave debe tener al menos 4 caracteres.');
       return;
     }
     const adminData = getAdminData();
-    adminData.password = val;
+    adminData.passwordHash = await hashPasswordSHA256(val);
+    delete adminData.password;
     saveAdminData(adminData);
     document.getElementById('adminNewPassInput').value = '';
-    alert('¡Contraseña del panel actualizada correctamente!');
+    alert('¡Contraseña del panel actualizada y encriptada correctamente!');
   });
 
   // Ajustes: Supabase Cloud Connect & Sync
