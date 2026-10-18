@@ -2809,3 +2809,167 @@ a:focus-visible,button:focus-visible{
   }
 }
 
+/* ---------- SUSTRATOS & INSUMOS + VENTA CRUZADA (CROSS-SELL) ---------- */
+.chip.chip-sustrato{
+  background:#EFF5E1;
+  border-color:#3A5A40;
+  color:#1E3522;
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+}
+
+.chip.chip-sustrato.active,
+.chip.chip-sustrato:hover{
+  background:#243E28;
+  border-color:#243E28;
+  color:var(--cream);
+}
+
+.sustrato-cat-banner{
+  grid-column:1 / -1;
+  background:linear-gradient(135deg, #EFF5E1 0%, #F7FAF0 100%);
+  border:var(--line);
+  border-radius:var(--radius-card);
+  padding:1.25rem 1.5rem;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin-bottom:.4rem;
+}
+
+.sustrato-cat-banner h3{
+  margin:0 0 .25rem;
+  font-size:1.15rem;
+  color:#1E3522;
+}
+
+.sustrato-cat-banner p{
+  margin:0;
+  font-size:.86rem;
+  color:var(--ink-70);
+  max-width:44rem;
+}
+
+.cart-upsell{
+  padding:0 1.3rem .9rem;
+}
+
+.cart-upsell:empty{
+  display:none;
+  padding:0;
+}
+
+.cart-upsell-box{
+  background:#F4F8EC;
+  border:1.5px dashed #3A5A40;
+  border-radius:12px;
+  padding:.85rem 1rem;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.75rem;
+  animation:itemIn .35s var(--ease);
+}
+
+.cart-upsell-info{
+  display:flex;
+  flex-direction:column;
+  gap:.18rem;
+  min-width:0;
+}
+
+.cart-upsell-tag{
+  font-family:'Space Mono',monospace;
+  font-size:.66rem;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:#2E6B4F;
+}
+
+.cart-upsell-title{
+  font-family:'Fraunces',serif;
+  font-weight:600;
+  font-size:.88rem;
+  color:var(--ink);
+  line-height:1.25;
+}
+
+.cart-upsell-price{
+  font-family:'Space Mono',monospace;
+  font-size:.75rem;
+  font-weight:700;
+  color:#243E28;
+}
+
+.cart-upsell-btn{
+  background:#243E28;
+  color:#FFFFFF;
+  border:none;
+  border-radius:999px;
+  padding:.48rem .85rem;
+  font-size:.76rem;
+  font-weight:700;
+  cursor:pointer;
+  white-space:nowrap;
+  flex-shrink:0;
+  transition:transform .18s var(--ease), background .18s var(--ease);
+}
+
+.cart-upsell-btn:hover{
+  background:#162919;
+  transform:translateY(-1px);
+}
+
+.modal-upsell-box{
+  margin:0 0 1.1rem;
+  padding:.85rem 1rem;
+  background:#F4F8EC;
+  border:1.5px solid #C5D8A4;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.8rem;
+  flex-wrap:wrap;
+}
+
+.modal-upsell-text{
+  flex:1;
+  min-width:12rem;
+}
+
+.modal-upsell-text strong{
+  display:block;
+  font-size:.84rem;
+  color:#1E3522;
+  margin-bottom:.15rem;
+}
+
+.modal-upsell-text span{
+  font-size:.76rem;
+  color:var(--ink-70);
+  display:block;
+  line-height:1.35;
+}
+
+.modal-upsell-btn{
+  background:#FFFFFF;
+  color:#1E3522;
+  border:1.5px solid #243E28;
+  border-radius:999px;
+  padding:.42rem .85rem;
+  font-size:.75rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:all .18s var(--ease);
+  white-space:nowrap;
+}
+
+.modal-upsell-btn:hover{
+  background:#243E28;
+  color:#FFFFFF;
+}

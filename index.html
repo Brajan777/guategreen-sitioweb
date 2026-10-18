@@ -71,7 +71,7 @@ src="https://www.facebook.com/tr?id=1393104892965350&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,450;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,450;1,9..144,600&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=62.0">
+<link rel="stylesheet" href="styles.css?v=64.0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <!-- Datos Estructurados Google Schema.org (SEO Local, E-commerce, Reviews, Catalog & FAQ Rich Snippets) -->
@@ -350,6 +350,7 @@ src="https://www.facebook.com/tr?id=1393104892965350&ev=PageView&noscript=1"
     <button class="cart-close" id="cartClose" aria-label="Cerrar carrito">✕</button>
   </div>
   <div class="cart-items" id="cartItems"></div>
+  <div class="cart-upsell" id="cartUpsell"></div>
   <div class="cart-foot">
     <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotal">Q0.00</span></div>
     <a href="https://wa.me/50252554758" id="cartCheckout" target="_blank" class="btn btn-block">Apartar por WhatsApp →</a>
@@ -458,6 +459,7 @@ src="https://www.facebook.com/tr?id=1393104892965350&ev=PageView&noscript=1"
           <option value="Alocasia">Alocasia</option>
           <option value="Caladium">Caladium</option>
           <option value="Otros">Otros</option>
+          <option value="Sustratos & Insumos">Sustratos & Insumos</option>
         </select>
         <button type="button" class="admin-btn-add-product" id="adminOpenAddModalBtn">
           <span>+</span> Añadir Nuevo Producto
@@ -714,6 +716,7 @@ grant all on table public.gg_hero to anon, authenticated, service_role;</pre>
           <option value="Alocasia">Alocasia</option>
           <option value="Caladium">Caladium</option>
           <option value="Otros">Otros</option>
+          <option value="Sustratos & Insumos">Sustratos & Insumos</option>
         </select>
       </div>
       <div>
@@ -1070,6 +1073,13 @@ grant all on table public.gg_hero to anon, authenticated, service_role;</pre>
       <p>Colección exótica de Araceae en Guatemala. Calidad antes que cantidad, desde 2022.</p>
     </div>
     <div class="foot-col">
+      <span class="mono">COLECCIONES</span>
+      <a href="coleccion/monsteras/">Monsteras</a>
+      <a href="coleccion/philodendrons/">Philodendrons</a>
+      <a href="coleccion/caladiums/">Caladiums</a>
+      <a href="coleccion/anturios-y-exoticas/">Anthuriums y Raras</a>
+    </div>
+    <div class="foot-col">
       <span class="mono">TIENDA</span>
       <a href="#catalogo">Catálogo</a>
       <a href="#promociones">Promociones</a>
@@ -1100,6 +1110,7 @@ grant all on table public.gg_hero to anon, authenticated, service_role;</pre>
   </svg>
 </a>
 
-<script src="app.js?v=62.0"></script>
+<script src="products-data.js?v=64.0"></script>
+<script src="app.js?v=64.0"></script>
 </body>
 </html>
