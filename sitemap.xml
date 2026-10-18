@@ -3,7 +3,7 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://guategreen.com/</loc>
-    <lastmod>2026-09-20</lastmod>
+    <lastmod>2026-09-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -14,17 +14,811 @@
     <image:image>
       <image:loc>https://guategreen.com/banner-1.jpg</image:loc>
       <image:title>Promoción Pack Caladiums de Colección Guatemala</image:title>
-      <image:caption>Pack exclusivo de 3 Caladiums Lance Leaf tricolor en Guatemala</image:caption>
     </image:image>
     <image:image>
       <image:loc>https://guategreen.com/banner-2.jpg</image:loc>
       <image:title>Envíos Gratis a toda Guatemala en Plantas Exóticas</image:title>
-      <image:caption>Envíos seguros de plantas de colección a todos los departamentos de Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/coleccion/monsteras/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://guategreen.com/coleccion/philodendrons/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://guategreen.com/coleccion/caladiums/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://guategreen.com/coleccion/anturios-y-exoticas/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/caladium-tricolor/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-tricolor-1.jpg</image:loc>
+      <image:title>Caladium tricolor en Guatemala</image:title>
+      <image:caption>Caladium tricolor (Caladium Indonesia) espécimen aclimatado en Guatemala</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://guategreen.com/favicon.jpg</image:loc>
-      <image:title>Ícono Oficial Guategreen</image:title>
+      <image:loc>https://guategreen.com/images/products/caladium-tricolor-2.jpg</image:loc>
+      <image:title>Caladium tricolor en Guatemala</image:title>
+      <image:caption>Caladium tricolor (Caladium Indonesia) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-tricolor-3.jpg</image:loc>
+      <image:title>Caladium tricolor en Guatemala</image:title>
+      <image:caption>Caladium tricolor (Caladium Indonesia) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/philodendron-florida-beauty/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-florida-beauty-1.jpg</image:loc>
+      <image:title>Philodendron florida Beauty en Guatemala</image:title>
+      <image:caption>Philodendron florida Beauty (Philodendron maduro) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-florida-beauty-2.jpg</image:loc>
+      <image:title>Philodendron florida Beauty en Guatemala</image:title>
+      <image:caption>Philodendron florida Beauty (Philodendron maduro) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-florida-beauty-3.jpg</image:loc>
+      <image:title>Philodendron florida Beauty en Guatemala</image:title>
+      <image:caption>Philodendron florida Beauty (Philodendron maduro) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/caladium-tricolor-q285/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-tricolor-q285-1.jpg</image:loc>
+      <image:title>Caladium tricolor en Guatemala</image:title>
+      <image:caption>Caladium tricolor (Caladium Indonesia) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-tricolor-q285-2.jpg</image:loc>
+      <image:title>Caladium tricolor en Guatemala</image:title>
+      <image:caption>Caladium tricolor (Caladium Indonesia) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-tricolor-q285-3.jpg</image:loc>
+      <image:title>Caladium tricolor en Guatemala</image:title>
+      <image:caption>Caladium tricolor (Caladium Indonesia) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/philodendron-pink-princess/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-pink-princess-1.jpg</image:loc>
+      <image:title>Philodendron Pink princess en Guatemala</image:title>
+      <image:caption>Philodendron Pink princess (Philodendron maduro) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-pink-princess-2.jpg</image:loc>
+      <image:title>Philodendron Pink princess en Guatemala</image:title>
+      <image:caption>Philodendron Pink princess (Philodendron maduro) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-pink-princess-3.jpg</image:loc>
+      <image:title>Philodendron Pink princess en Guatemala</image:title>
+      <image:caption>Philodendron Pink princess (Philodendron maduro) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/caladium-tricolor-doble-hoja/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-tricolor-doble-hoja-1.jpg</image:loc>
+      <image:title>Caladium Tricolor doble hoja en Guatemala</image:title>
+      <image:caption>Caladium Tricolor doble hoja (Caladium Thailandes) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-tricolor-doble-hoja-2.jpg</image:loc>
+      <image:title>Caladium Tricolor doble hoja en Guatemala</image:title>
+      <image:caption>Caladium Tricolor doble hoja (Caladium Thailandes) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-tricolor-doble-hoja-3.jpg</image:loc>
+      <image:title>Caladium Tricolor doble hoja en Guatemala</image:title>
+      <image:caption>Caladium Tricolor doble hoja (Caladium Thailandes) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/syngonium-chiapense/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/syngonium-chiapense-1.jpg</image:loc>
+      <image:title>Syngonium Chiapense en Guatemala</image:title>
+      <image:caption>Syngonium Chiapense (Syngonium chiapense) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/syngonium-chiapense-2.jpg</image:loc>
+      <image:title>Syngonium Chiapense en Guatemala</image:title>
+      <image:caption>Syngonium Chiapense (Syngonium chiapense) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/syngonium-chiapense-3.jpg</image:loc>
+      <image:title>Syngonium Chiapense en Guatemala</image:title>
+      <image:caption>Syngonium Chiapense (Syngonium chiapense) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/caladium-bicolor/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-bicolor-1.jpg</image:loc>
+      <image:title>Caladium Bicolor en Guatemala</image:title>
+      <image:caption>Caladium Bicolor (Caladium Indonesia) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-bicolor-2.jpg</image:loc>
+      <image:title>Caladium Bicolor en Guatemala</image:title>
+      <image:caption>Caladium Bicolor (Caladium Indonesia) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-bicolor-3.jpg</image:loc>
+      <image:title>Caladium Bicolor en Guatemala</image:title>
+      <image:caption>Caladium Bicolor (Caladium Indonesia) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/philodendron-tortum/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-tortum-1.jpg</image:loc>
+      <image:title>Philodendron Tortum en Guatemala</image:title>
+      <image:caption>Philodendron Tortum (Philodendron mediano) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-tortum-2.jpg</image:loc>
+      <image:title>Philodendron Tortum en Guatemala</image:title>
+      <image:caption>Philodendron Tortum (Philodendron mediano) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-tortum-3.jpg</image:loc>
+      <image:title>Philodendron Tortum en Guatemala</image:title>
+      <image:caption>Philodendron Tortum (Philodendron mediano) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/syngomio-pink-splash/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/syngomio-pink-splash-1.jpg</image:loc>
+      <image:title>Syngomio Pink Splash en Guatemala</image:title>
+      <image:caption>Syngomio Pink Splash (Syngomio frondoso) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/syngomio-pink-splash-2.jpg</image:loc>
+      <image:title>Syngomio Pink Splash en Guatemala</image:title>
+      <image:caption>Syngomio Pink Splash (Syngomio frondoso) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/syngomio-pink-splash-3.jpg</image:loc>
+      <image:title>Syngomio Pink Splash en Guatemala</image:title>
+      <image:caption>Syngomio Pink Splash (Syngomio frondoso) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/caladium-bicolor-q285/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-bicolor-q285-1.jpg</image:loc>
+      <image:title>Caladium Bicolor en Guatemala</image:title>
+      <image:caption>Caladium Bicolor (Caladium tricolor) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-bicolor-q285-2.jpg</image:loc>
+      <image:title>Caladium Bicolor en Guatemala</image:title>
+      <image:caption>Caladium Bicolor (Caladium tricolor) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-bicolor-q285-3.jpg</image:loc>
+      <image:title>Caladium Bicolor en Guatemala</image:title>
+      <image:caption>Caladium Bicolor (Caladium tricolor) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/caladium-cuatro-colores/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-cuatro-colores-1.jpg</image:loc>
+      <image:title>Caladium cuatro colores en Guatemala</image:title>
+      <image:caption>Caladium cuatro colores (Caladium Indonesia) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-cuatro-colores-2.jpg</image:loc>
+      <image:title>Caladium cuatro colores en Guatemala</image:title>
+      <image:caption>Caladium cuatro colores (Caladium Indonesia) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-cuatro-colores-3.jpg</image:loc>
+      <image:title>Caladium cuatro colores en Guatemala</image:title>
+      <image:caption>Caladium cuatro colores (Caladium Indonesia) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/philodendron-rugosum/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-rugosum-1.jpg</image:loc>
+      <image:title>Philodendron Rugosum en Guatemala</image:title>
+      <image:caption>Philodendron Rugosum (Philodendron pequeño) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-rugosum-2.jpg</image:loc>
+      <image:title>Philodendron Rugosum en Guatemala</image:title>
+      <image:caption>Philodendron Rugosum (Philodendron pequeño) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-rugosum-3.jpg</image:loc>
+      <image:title>Philodendron Rugosum en Guatemala</image:title>
+      <image:caption>Philodendron Rugosum (Philodendron pequeño) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/philodendron-majestic/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-majestic-1.jpg</image:loc>
+      <image:title>Philodendron Majestic en Guatemala</image:title>
+      <image:caption>Philodendron Majestic (Philodendron mediano) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-majestic-2.jpg</image:loc>
+      <image:title>Philodendron Majestic en Guatemala</image:title>
+      <image:caption>Philodendron Majestic (Philodendron mediano) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-majestic-3.jpg</image:loc>
+      <image:title>Philodendron Majestic en Guatemala</image:title>
+      <image:caption>Philodendron Majestic (Philodendron mediano) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/caladium-tricolor-q300/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-tricolor-q300-1.jpg</image:loc>
+      <image:title>Caladium Tricolor en Guatemala</image:title>
+      <image:caption>Caladium Tricolor (Caladium Indonesia) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-tricolor-q300-2.jpg</image:loc>
+      <image:title>Caladium Tricolor en Guatemala</image:title>
+      <image:caption>Caladium Tricolor (Caladium Indonesia) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-tricolor-q300-3.jpg</image:loc>
+      <image:title>Caladium Tricolor en Guatemala</image:title>
+      <image:caption>Caladium Tricolor (Caladium Indonesia) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/philodendron-florida-ghost/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-florida-ghost-1.jpg</image:loc>
+      <image:title>Philodendron Florida Ghost en Guatemala</image:title>
+      <image:caption>Philodendron Florida Ghost (Philodendron pequeño) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-florida-ghost-2.jpg</image:loc>
+      <image:title>Philodendron Florida Ghost en Guatemala</image:title>
+      <image:caption>Philodendron Florida Ghost (Philodendron pequeño) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-florida-ghost-3.jpg</image:loc>
+      <image:title>Philodendron Florida Ghost en Guatemala</image:title>
+      <image:caption>Philodendron Florida Ghost (Philodendron pequeño) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/anthurium-crystalinium/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/anthurium-crystalinium-1.jpg</image:loc>
+      <image:title>Anthurium Crystalinium en Guatemala</image:title>
+      <image:caption>Anthurium Crystalinium (Anthurium mediano) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/anthurium-crystalinium-2.jpg</image:loc>
+      <image:title>Anthurium Crystalinium en Guatemala</image:title>
+      <image:caption>Anthurium Crystalinium (Anthurium mediano) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/anthurium-crystalinium-3.jpg</image:loc>
+      <image:title>Anthurium Crystalinium en Guatemala</image:title>
+      <image:caption>Anthurium Crystalinium (Anthurium mediano) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/philodendron-mcdowell/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-mcdowell-1.jpg</image:loc>
+      <image:title>Philodendron McDowell en Guatemala</image:title>
+      <image:caption>Philodendron McDowell (Philodendron mediano) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-mcdowell-2.jpg</image:loc>
+      <image:title>Philodendron McDowell en Guatemala</image:title>
+      <image:caption>Philodendron McDowell (Philodendron mediano) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-mcdowell-3.jpg</image:loc>
+      <image:title>Philodendron McDowell en Guatemala</image:title>
+      <image:caption>Philodendron McDowell (Philodendron mediano) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/aglonema-pink-emerald/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/aglonema-pink-emerald-1.jpg</image:loc>
+      <image:title>Aglonema Pink Emerald en Guatemala</image:title>
+      <image:caption>Aglonema Pink Emerald (Aglonema mediana) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/aglonema-pink-emerald-2.jpg</image:loc>
+      <image:title>Aglonema Pink Emerald en Guatemala</image:title>
+      <image:caption>Aglonema Pink Emerald (Aglonema mediana) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/aglonema-pink-emerald-3.jpg</image:loc>
+      <image:title>Aglonema Pink Emerald en Guatemala</image:title>
+      <image:caption>Aglonema Pink Emerald (Aglonema mediana) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/philodendron-violin-neon/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-violin-neon-1.jpg</image:loc>
+      <image:title>Philodendron Violin Neon en Guatemala</image:title>
+      <image:caption>Philodendron Violin Neon (Philodendron pequeño) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-violin-neon-2.jpg</image:loc>
+      <image:title>Philodendron Violin Neon en Guatemala</image:title>
+      <image:caption>Philodendron Violin Neon (Philodendron pequeño) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-violin-neon-3.jpg</image:loc>
+      <image:title>Philodendron Violin Neon en Guatemala</image:title>
+      <image:caption>Philodendron Violin Neon (Philodendron pequeño) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/monstera-tricolor/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/monstera-tricolor-1.jpg</image:loc>
+      <image:title>Monstera Tricolor en Guatemala</image:title>
+      <image:caption>Monstera Tricolor (Monstera Madura) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/monstera-tricolor-2.jpg</image:loc>
+      <image:title>Monstera Tricolor en Guatemala</image:title>
+      <image:caption>Monstera Tricolor (Monstera Madura) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/monstera-tricolor-3.jpg</image:loc>
+      <image:title>Monstera Tricolor en Guatemala</image:title>
+      <image:caption>Monstera Tricolor (Monstera Madura) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/philodendron-plowanni/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-plowanni-1.jpg</image:loc>
+      <image:title>Philodendron plowanni en Guatemala</image:title>
+      <image:caption>Philodendron plowanni (Philodendron medianon) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-plowanni-2.jpg</image:loc>
+      <image:title>Philodendron plowanni en Guatemala</image:title>
+      <image:caption>Philodendron plowanni (Philodendron medianon) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-plowanni-3.jpg</image:loc>
+      <image:title>Philodendron plowanni en Guatemala</image:title>
+      <image:caption>Philodendron plowanni (Philodendron medianon) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/caladium-stapre-tricolor/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-stapre-tricolor-1.jpg</image:loc>
+      <image:title>Caladium Stapre tricolor en Guatemala</image:title>
+      <image:caption>Caladium Stapre tricolor (Caladium Thailandes) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-stapre-tricolor-2.jpg</image:loc>
+      <image:title>Caladium Stapre tricolor en Guatemala</image:title>
+      <image:caption>Caladium Stapre tricolor (Caladium Thailandes) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-stapre-tricolor-3.jpg</image:loc>
+      <image:title>Caladium Stapre tricolor en Guatemala</image:title>
+      <image:caption>Caladium Stapre tricolor (Caladium Thailandes) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/anthurium-portillae/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/anthurium-portillae-1.jpg</image:loc>
+      <image:title>Anthurium Portillae en Guatemala</image:title>
+      <image:caption>Anthurium Portillae (Anthurium portillae Croat) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/anthurium-portillae-2.jpg</image:loc>
+      <image:title>Anthurium Portillae en Guatemala</image:title>
+      <image:caption>Anthurium Portillae (Anthurium portillae Croat) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/anthurium-portillae-3.jpg</image:loc>
+      <image:title>Anthurium Portillae en Guatemala</image:title>
+      <image:caption>Anthurium Portillae (Anthurium portillae Croat) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/anthurium-king-of-spades/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/anthurium-king-of-spades-1.jpg</image:loc>
+      <image:title>Anthurium King of Spades en Guatemala</image:title>
+      <image:caption>Anthurium King of Spades (Anthurium cv. 'King of Spades') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/anthurium-king-of-spades-2.jpg</image:loc>
+      <image:title>Anthurium King of Spades en Guatemala</image:title>
+      <image:caption>Anthurium King of Spades (Anthurium cv. 'King of Spades') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/anthurium-king-of-spades-3.jpg</image:loc>
+      <image:title>Anthurium King of Spades en Guatemala</image:title>
+      <image:caption>Anthurium King of Spades (Anthurium cv. 'King of Spades') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/anthurium-carla-x-red-queen/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/anthurium-carla-x-red-queen-1.jpg</image:loc>
+      <image:title>Anthurium Carla x Red Queen en Guatemala</image:title>
+      <image:caption>Anthurium Carla x Red Queen (Anthurium carlablackiae × 'Red Queen') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/anthurium-carla-x-red-queen-2.jpg</image:loc>
+      <image:title>Anthurium Carla x Red Queen en Guatemala</image:title>
+      <image:caption>Anthurium Carla x Red Queen (Anthurium carlablackiae × 'Red Queen') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/anthurium-carla-x-red-queen-3.jpg</image:loc>
+      <image:title>Anthurium Carla x Red Queen en Guatemala</image:title>
+      <image:caption>Anthurium Carla x Red Queen (Anthurium carlablackiae × 'Red Queen') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/caladium-indonesia/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-indonesia-1.jpg</image:loc>
+      <image:title>Caladium Indonesia en Guatemala</image:title>
+      <image:caption>Caladium Indonesia (Caladium bicolor (Aiton) Vent.) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-indonesia-2.jpg</image:loc>
+      <image:title>Caladium Indonesia en Guatemala</image:title>
+      <image:caption>Caladium Indonesia (Caladium bicolor (Aiton) Vent.) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-indonesia-3.jpg</image:loc>
+      <image:title>Caladium Indonesia en Guatemala</image:title>
+      <image:caption>Caladium Indonesia (Caladium bicolor (Aiton) Vent.) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/homalomena-pink-robusta/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/homalomena-pink-robusta-1.jpg</image:loc>
+      <image:title>Homalomena Pink Robusta en Guatemala</image:title>
+      <image:caption>Homalomena Pink Robusta (Homalomena rubescens 'Pink Robusta') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/homalomena-pink-robusta-2.jpg</image:loc>
+      <image:title>Homalomena Pink Robusta en Guatemala</image:title>
+      <image:caption>Homalomena Pink Robusta (Homalomena rubescens 'Pink Robusta') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/homalomena-pink-robusta-3.jpg</image:loc>
+      <image:title>Homalomena Pink Robusta en Guatemala</image:title>
+      <image:caption>Homalomena Pink Robusta (Homalomena rubescens 'Pink Robusta') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/caladium-bicolor-q250/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-bicolor-q250-1.jpg</image:loc>
+      <image:title>Caladium Bicolor en Guatemala</image:title>
+      <image:caption>Caladium Bicolor (Caladium Indonesia) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-bicolor-q250-2.jpg</image:loc>
+      <image:title>Caladium Bicolor en Guatemala</image:title>
+      <image:caption>Caladium Bicolor (Caladium Indonesia) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/logo.jpg</image:loc>
+      <image:title>Caladium Bicolor en Guatemala</image:title>
+      <image:caption>Caladium Bicolor (Caladium Indonesia) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/philodendron-white-wizard/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-white-wizard-1.jpg</image:loc>
+      <image:title>Philodendron White Wizard en Guatemala</image:title>
+      <image:caption>Philodendron White Wizard (Philodendron erubescens 'White Wizard') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-white-wizard-2.jpg</image:loc>
+      <image:title>Philodendron White Wizard en Guatemala</image:title>
+      <image:caption>Philodendron White Wizard (Philodendron erubescens 'White Wizard') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-white-wizard-3.jpg</image:loc>
+      <image:title>Philodendron White Wizard en Guatemala</image:title>
+      <image:caption>Philodendron White Wizard (Philodendron erubescens 'White Wizard') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/monstera-adansonii-archipielago/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/monstera-adansonii-archipielago-1.jpg</image:loc>
+      <image:title>Monstera Adansonii Archipiélago en Guatemala</image:title>
+      <image:caption>Monstera Adansonii Archipiélago (Monstera adansonii 'Archipelago') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/monstera-adansonii-archipielago-2.jpg</image:loc>
+      <image:title>Monstera Adansonii Archipiélago en Guatemala</image:title>
+      <image:caption>Monstera Adansonii Archipiélago (Monstera adansonii 'Archipelago') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/monstera-adansonii-archipielago-3.jpg</image:loc>
+      <image:title>Monstera Adansonii Archipiélago en Guatemala</image:title>
+      <image:caption>Monstera Adansonii Archipiélago (Monstera adansonii 'Archipelago') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/scindapsus-nayarit/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/scindapsus-nayarit-1.jpg</image:loc>
+      <image:title>Scindapsus Nayarit en Guatemala</image:title>
+      <image:caption>Scindapsus Nayarit (Scindapsus pictus 'Mayari' (cv. Nayarit)) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/scindapsus-nayarit-2.jpg</image:loc>
+      <image:title>Scindapsus Nayarit en Guatemala</image:title>
+      <image:caption>Scindapsus Nayarit (Scindapsus pictus 'Mayari' (cv. Nayarit)) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/scindapsus-nayarit-3.jpg</image:loc>
+      <image:title>Scindapsus Nayarit en Guatemala</image:title>
+      <image:caption>Scindapsus Nayarit (Scindapsus pictus 'Mayari' (cv. Nayarit)) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/philodendron-violin-variegado/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-violin-variegado-1.jpg</image:loc>
+      <image:title>Philodendron Violin Variegado en Guatemala</image:title>
+      <image:caption>Philodendron Violin Variegado (Philodendron bipennifolium 'Aurea Variegata') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-violin-variegado-2.jpg</image:loc>
+      <image:title>Philodendron Violin Variegado en Guatemala</image:title>
+      <image:caption>Philodendron Violin Variegado (Philodendron bipennifolium 'Aurea Variegata') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/philodendron-violin-variegado-3.jpg</image:loc>
+      <image:title>Philodendron Violin Variegado en Guatemala</image:title>
+      <image:caption>Philodendron Violin Variegado (Philodendron bipennifolium 'Aurea Variegata') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/monstera-thai-constellation/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/monstera-thai-constellation-1.jpg</image:loc>
+      <image:title>Monstera Thai Constellation en Guatemala</image:title>
+      <image:caption>Monstera Thai Constellation (Monstera deliciosa 'Thai Constellation') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/monstera-thai-constellation-2.jpg</image:loc>
+      <image:title>Monstera Thai Constellation en Guatemala</image:title>
+      <image:caption>Monstera Thai Constellation (Monstera deliciosa 'Thai Constellation') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/monstera-thai-constellation-3.jpg</image:loc>
+      <image:title>Monstera Thai Constellation en Guatemala</image:title>
+      <image:caption>Monstera Thai Constellation (Monstera deliciosa 'Thai Constellation') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/monstera-thai-constellation-q350/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/monstera-thai-constellation-q350-1.jpg</image:loc>
+      <image:title>Monstera Thai Constellation en Guatemala</image:title>
+      <image:caption>Monstera Thai Constellation (Monstera deliciosa 'Thai Constellation') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/monstera-thai-constellation-q350-2.jpg</image:loc>
+      <image:title>Monstera Thai Constellation en Guatemala</image:title>
+      <image:caption>Monstera Thai Constellation (Monstera deliciosa 'Thai Constellation') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/monstera-thai-constellation-q350-3.jpg</image:loc>
+      <image:title>Monstera Thai Constellation en Guatemala</image:title>
+      <image:caption>Monstera Thai Constellation (Monstera deliciosa 'Thai Constellation') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/caladium-tricolor-doble-hoja-q300/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-tricolor-doble-hoja-q300-1.jpg</image:loc>
+      <image:title>Caladium Tricolor Doble Hoja en Guatemala</image:title>
+      <image:caption>Caladium Tricolor Doble Hoja (Caladium bicolor cv. 'Thai Tricolor') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-tricolor-doble-hoja-q300-2.jpg</image:loc>
+      <image:title>Caladium Tricolor Doble Hoja en Guatemala</image:title>
+      <image:caption>Caladium Tricolor Doble Hoja (Caladium bicolor cv. 'Thai Tricolor') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-tricolor-doble-hoja-q300-3.jpg</image:loc>
+      <image:title>Caladium Tricolor Doble Hoja en Guatemala</image:title>
+      <image:caption>Caladium Tricolor Doble Hoja (Caladium bicolor cv. 'Thai Tricolor') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/caladium-indonesia-q250/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-indonesia-q250-1.jpg</image:loc>
+      <image:title>Caladium Indonesia en Guatemala</image:title>
+      <image:caption>Caladium Indonesia (Caladium bicolor cv. 'Indonesia Tricolor') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-indonesia-q250-2.jpg</image:loc>
+      <image:title>Caladium Indonesia en Guatemala</image:title>
+      <image:caption>Caladium Indonesia (Caladium bicolor cv. 'Indonesia Tricolor') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/caladium-indonesia-q250-3.jpg</image:loc>
+      <image:title>Caladium Indonesia en Guatemala</image:title>
+      <image:caption>Caladium Indonesia (Caladium bicolor cv. 'Indonesia Tricolor') espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://guategreen.com/producto/anthurium-diabloense/</loc>
+    <lastmod>2026-09-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/anthurium-diabloense-1.jpg</image:loc>
+      <image:title>Anthurium Diabloense en Guatemala</image:title>
+      <image:caption>Anthurium Diabloense (Anthurium diabloense Vannini, Croat & Cast.Mont.) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/anthurium-diabloense-2.jpg</image:loc>
+      <image:title>Anthurium Diabloense en Guatemala</image:title>
+      <image:caption>Anthurium Diabloense (Anthurium diabloense Vannini, Croat & Cast.Mont.) espécimen aclimatado en Guatemala</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://guategreen.com/images/products/anthurium-diabloense-3.jpg</image:loc>
+      <image:title>Anthurium Diabloense en Guatemala</image:title>
+      <image:caption>Anthurium Diabloense (Anthurium diabloense Vannini, Croat & Cast.Mont.) espécimen aclimatado en Guatemala</image:caption>
     </image:image>
   </url>
 </urlset>
-
