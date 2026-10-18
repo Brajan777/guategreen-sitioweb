@@ -3668,12 +3668,11 @@ function renderBannerCarousel() {
   carouselEl.innerHTML = banners.map((b, i) => {
     const img = b.imageSrc || 'banner-1.jpg';
     const title = b.title || 'Promoción Guategreen';
-    const link = b.link || `https://wa.me/${defaultWa}?text=${encodeURIComponent('Hola Guategreen, quisiera más información sobre: ' + title)}`;
     return `
       <div class="banner-slide ${i === 0 ? 'active' : ''}" data-index="${i}">
-        <a href="${link}" target="_blank" rel="noopener" class="banner-link" aria-label="${title}">
+        <div class="banner-link">
           <img src="${img}" alt="${title} - Guategreen Guatemala" class="banner-img" loading="lazy" decoding="async">
-        </a>
+        </div>
       </div>
     `;
   }).join('');
@@ -3854,7 +3853,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  document.querySelectorAll('.wa-fab, #heroWaBtn, .cta-banner a, .banner-link').forEach(btn => {
+  document.querySelectorAll('.wa-fab, #heroWaBtn, .cta-banner a').forEach(btn => {
     btn.addEventListener('click', () => {
       trackMetaEvent('Contact', {
         content_name: 'Asesoría WhatsApp Botánica / Promoción Banner',
