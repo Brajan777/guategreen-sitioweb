@@ -837,7 +837,7 @@ function renderHero() {
 
 const DEFAULT_SUSTRATOS_PRODUCTS = [
   {
-    "id": 900001,
+    "id": 990001,
     "cat": "Sustratos & Insumos",
     "name": "Sustrato Especial para Aráceas (Aroid Mix)",
     "latin": "Fórmula Profesional Guategreen • Bolsa 5 Litros",
@@ -856,7 +856,7 @@ const DEFAULT_SUSTRATOS_PRODUCTS = [
     ]
   },
   {
-    "id": 900002,
+    "id": 990002,
     "cat": "Sustratos & Insumos",
     "name": "Pack Trasplante: Sustrato Aráceas + Maceta Transparente",
     "latin": "5L Aroid Mix + Maceta Rígida con Ranuras de Ventilación",
@@ -875,7 +875,7 @@ const DEFAULT_SUSTRATOS_PRODUCTS = [
     ]
   },
   {
-    "id": 900003,
+    "id": 990003,
     "cat": "Sustratos & Insumos",
     "name": "Musgo Sphagnum Premium (Propagación & Tutores)",
     "latin": "Sphagnum Moss • Fibra Larga Seleccionada",
