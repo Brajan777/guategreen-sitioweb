@@ -71,7 +71,7 @@ src="https://www.facebook.com/tr?id=1393104892965350&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,450;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,450;1,9..144,600&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=70.0">
+<link rel="stylesheet" href="styles.css?v=71.0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <!-- Datos Estructurados Google Schema.org (SEO Local, E-commerce, Reviews, Catalog & FAQ Rich Snippets) -->
@@ -400,6 +400,9 @@ src="https://www.facebook.com/tr?id=1393104892965350&ev=PageView&noscript=1"
       </div>
     </div>
     <div class="admin-header-actions">
+      <button type="button" id="adminMaintenanceQuickBtn" class="admin-pill-btn" style="background:#DCFCE7;color:#15803D;border:1px solid #86EFAC;font-weight:700;" title="Activar o desactivar pantalla de En Construcción para visitantes">
+        🟢 Tienda Pública
+      </button>
       <div class="admin-tab-pills">
         <button class="admin-pill-btn active" data-tab="tabInventario">📦 Inventario & Precios</button>
         <button class="admin-pill-btn" data-tab="tabHero">🖼️ Portada (Hero)</button>
@@ -569,6 +572,24 @@ src="https://www.facebook.com/tr?id=1393104892965350&ev=PageView&noscript=1"
 
     <!-- PESTAÑA 4: CONFIGURACIÓN -->
     <div class="admin-tab-page" id="tabConfiguracion">
+      <!-- Interruptor Modo En Construcción / Mantenimiento -->
+      <div class="admin-settings-card" style="border:2px solid #D97706;background:#FFFBEB;margin-bottom:1.5rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+          <div>
+            <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.3rem;">
+              <h3 class="serif" style="margin:0;color:#92400E;">🚧 Modo "En Construcción / Actualizando Catálogo"</h3>
+              <span class="admin-status-pill" id="maintenanceStatusBadge" style="background:#DCFCE7;color:#15803D;">🟢 Tienda Abierta al Público</span>
+            </div>
+            <p style="font-size:.85rem;color:#78350F;margin:0;max-width:44rem;">
+              Actívalo cuando estés subiendo nuevas plantas o editando precios. Los visitantes verán un aviso elegante de actualización con botón a tu WhatsApp, mientras <strong>tú sigues viendo y editando la tienda normalmente</strong>.
+            </p>
+          </div>
+          <button type="button" id="adminMaintenanceToggleBtn" class="btn btn-sm" style="background:#D97706;border-color:#B45309;color:#FFF;flex-shrink:0;">
+            🚧 Activar Modo Construcción
+          </button>
+        </div>
+      </div>
+
       <!-- Conexión Supabase Cloud Database -->
       <div class="admin-settings-card" style="border:2px solid #3A5A40;background:#F9FDF7;">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:.5rem;">
@@ -1110,7 +1131,37 @@ grant all on table public.gg_hero to anon, authenticated, service_role;</pre>
   </svg>
 </a>
 
-<script src="products-data.js?v=70.0"></script>
-<script src="app.js?v=70.0"></script>
+<script src="products-data.js?v=71.0"></script>
+<script src="app.js?v=71.0"></script>
+
+<!-- ================= PANTALLA MODO EN CONSTRUCCIÓN (VISITANTES) ================= -->
+<div id="maintenanceOverlay" style="display:none;position:fixed;inset:0;z-index:102;background:var(--cream, #FBF9F4);align-items:center;justify-content:center;padding:1.5rem;text-align:center;">
+  <div style="max-width:34rem;width:100%;background:#FFFFFF;border:2px solid var(--ink, #241D16);border-radius:24px;padding:2.6rem 2rem;box-shadow:8px 8px 0 var(--ink, #241D16);">
+    <img src="logo.jpg" alt="Guategreen" style="width:76px;height:76px;border-radius:50%;object-fit:cover;border:2px solid var(--ink, #241D16);margin:0 auto 1rem;">
+    <div style="display:inline-flex;align-items:center;gap:.45rem;background:#FEF3C7;color:#92400E;border:1px solid #F59E0B;border-radius:999px;padding:.3rem .9rem;font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;margin-bottom:1rem;">
+      <span class="dot-live" style="background:#D97706;margin:0;"></span> ACTUALIZANDO CATÁLOGO
+    </div>
+    <h1 class="serif" style="font-size:2rem;line-height:1.15;margin:0 0 .8rem;color:var(--ink, #241D16);">
+      Estamos ingresando nuevos <i>especímenes</i> a la colección 🌿
+    </h1>
+    <p style="font-size:.96rem;line-height:1.6;color:var(--ink-70, #544F47);margin:0 0 1.6rem;">
+      En este momento estamos preparando y actualizando nuestro inventario de plantas exóticas en sustrato <strong>Chunky Soil Premium</strong>. Volvemos en unos minutos.
+    </p>
+    <a href="https://wa.me/50252554758?text=Hola%20Guategreen%2C%20vi%20que%20est%C3%A1n%20actualizando%20el%20cat%C3%A1logo%20y%20quiero%20consultar%20por%20las%20nuevas%20plantas%20disponibles" target="_blank" class="btn btn-block" style="justify-content:center;margin-bottom:1rem;">
+      Consultar disponibilidad por WhatsApp →
+    </a>
+    <button type="button" id="maintenanceAdminLoginBtn" style="background:none;border:none;color:var(--ink-45, #7D786F);font-family:'Space Mono',monospace;font-size:.72rem;cursor:pointer;text-decoration:underline;padding:.4rem;">
+      🔒 Soy Administrador (Ingresar a editar)
+    </button>
+  </div>
+</div>
+
+<!-- ================= BARRA FLOTANTE AVISO ADMIN EN MODO CONSTRUCCIÓN ================= -->
+<div id="adminMaintenanceBar" style="display:none;position:fixed;bottom:1.2rem;left:1.2rem;z-index:98;background:#92400E;color:#FFFFFF;border:2px solid #241D16;border-radius:999px;padding:.55rem 1.1rem;box-shadow:4px 4px 0 #241D16;font-family:'Space Mono',monospace;font-size:.74rem;align-items:center;gap:.8rem;flex-wrap:wrap;">
+  <span>🚧 <strong>MODO CONSTRUCCIÓN ACTIVO</strong> (Solo tú ves la tienda)</span>
+  <button type="button" id="adminMaintenanceDisableBarBtn" style="background:#FFFFFF;color:#92400E;border:none;border-radius:999px;padding:.25rem .75rem;font-family:'Space Mono',monospace;font-size:.7rem;font-weight:700;cursor:pointer;">
+    Abrir tienda al público
+  </button>
+</div>
 </body>
 </html>

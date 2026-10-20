@@ -187,6 +187,105 @@ let supabaseClient = null;
 let isCloudConnected = false;
 let cloudProducts = null;
 let cloudHero = null;
+let cloudMaintenance = null;
+const MAINTENANCE_STORAGE_KEY = 'guategreen_maintenance_v1';
+const ADMIN_SESSION_KEY = 'gg_admin_logged_in';
+
+function isAdminLoggedIn() {
+  try {
+    return sessionStorage.getItem(ADMIN_SESSION_KEY) === '1';
+  } catch (e) {
+    return false;
+  }
+}
+
+function getMaintenanceMode() {
+  if (cloudMaintenance !== null) return !!cloudMaintenance;
+  try {
+    return localStorage.getItem(MAINTENANCE_STORAGE_KEY) === '1';
+  } catch (e) {
+    return false;
+  }
+}
+
+function renderMaintenanceUI() {
+  const isMaint = getMaintenanceMode();
+  const isAdmin = isAdminLoggedIn();
+
+  const overlay = document.getElementById('maintenanceOverlay');
+  const adminBar = document.getElementById('adminMaintenanceBar');
+  const quickBtn = document.getElementById('adminMaintenanceQuickBtn');
+  const toggleBtn = document.getElementById('adminMaintenanceToggleBtn');
+  const badge = document.getElementById('maintenanceStatusBadge');
+
+  if (overlay) {
+    overlay.style.display = (isMaint && !isAdmin) ? 'flex' : 'none';
+  }
+
+  if (adminBar) {
+    adminBar.style.display = (isMaint && isAdmin) ? 'inline-flex' : 'none';
+  }
+
+  if (quickBtn) {
+    if (isMaint) {
+      quickBtn.innerHTML = '🚧 En Construcción (Activo)';
+      quickBtn.style.background = '#FEF3C7';
+      quickBtn.style.color = '#92400E';
+      quickBtn.style.borderColor = '#F59E0B';
+    } else {
+      quickBtn.innerHTML = '🟢 Tienda Pública';
+      quickBtn.style.background = '#DCFCE7';
+      quickBtn.style.color = '#15803D';
+      quickBtn.style.borderColor = '#86EFAC';
+    }
+  }
+
+  if (toggleBtn) {
+    if (isMaint) {
+      toggleBtn.innerHTML = '🟢 Abrir Tienda al Público';
+      toggleBtn.style.background = '#15803D';
+      toggleBtn.style.borderColor = '#166534';
+    } else {
+      toggleBtn.innerHTML = '🚧 Activar Modo Construcción';
+      toggleBtn.style.background = '#D97706';
+      toggleBtn.style.borderColor = '#B45309';
+    }
+  }
+
+  if (badge) {
+    if (isMaint) {
+      badge.textContent = '🚧 Modo Construcción Activo';
+      badge.style.background = '#FEF3C7';
+      badge.style.color = '#92400E';
+    } else {
+      badge.textContent = '🟢 Tienda Abierta al Público';
+      badge.style.background = '#DCFCE7';
+      badge.style.color = '#15803D';
+    }
+  }
+}
+
+async function toggleMaintenanceMode(forceState) {
+  const nextState = typeof forceState === 'boolean' ? forceState : !getMaintenanceMode();
+  cloudMaintenance = nextState;
+  try {
+    localStorage.setItem(MAINTENANCE_STORAGE_KEY, nextState ? '1' : '0');
+  } catch (e) {}
+
+  renderMaintenanceUI();
+
+  if (supabaseClient && isCloudConnected) {
+    try {
+      await supabaseClient.from('gg_hero').upsert({
+        id: 'maintenance',
+        data: { enabled: nextState, updatedAt: new Date().toISOString() },
+        updated_at: new Date().toISOString()
+      });
+    } catch (err) {
+      console.error('Error guardando modo mantenimiento en Supabase:', err);
+    }
+  }
+}
 
 function getSupabaseConfig() {
   try {
@@ -411,6 +510,21 @@ async function syncFromCloud() {
       } catch (qErr) {}
       renderBannerCarousel();
       initBannerCarousel();
+    }
+
+    // 4. Obtener estado de Modo Construcción / Mantenimiento de la nube
+    const { data: maintRow, error: mErr } = await supabaseClient
+      .from('gg_hero')
+      .select('data')
+      .eq('id', 'maintenance')
+      .maybeSingle();
+
+    if (!mErr && maintRow && maintRow.data) {
+      cloudMaintenance = !!maintRow.data.enabled;
+      try {
+        localStorage.setItem(MAINTENANCE_STORAGE_KEY, cloudMaintenance ? '1' : '0');
+      } catch (qErr) {}
+      renderMaintenanceUI();
     }
   } catch (err) {
     console.error('Error sincronizando de Supabase:', err);
@@ -3348,7 +3462,11 @@ function initAdminEvents() {
   }
 
   function openAdminPanel() {
+    try {
+      sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
+    } catch (e) {}
     closeLogin();
+    renderMaintenanceUI();
     renderAdminTable();
     renderAdminHero();
     adminBannersState = null;
@@ -3385,6 +3503,12 @@ function initAdminEvents() {
 
   panelClose?.addEventListener('click', closeAdminPanel);
   panelOverlay?.addEventListener('click', closeAdminPanel);
+
+  // Botones de Modo Construcción / Mantenimiento
+  document.getElementById('adminMaintenanceQuickBtn')?.addEventListener('click', () => toggleMaintenanceMode());
+  document.getElementById('adminMaintenanceToggleBtn')?.addEventListener('click', () => toggleMaintenanceMode());
+  document.getElementById('adminMaintenanceDisableBarBtn')?.addEventListener('click', () => toggleMaintenanceMode(false));
+  document.getElementById('maintenanceAdminLoginBtn')?.addEventListener('click', () => openLogin());
 
   // Acceso directo por URL guategreen.com/#admin
   function checkAdminHash() {
@@ -3889,6 +4013,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderHero();
   renderChips();
   renderGrid();
+  renderMaintenanceUI();
 
   
   // Tracking Meta Ads: Checkout y Contacto
