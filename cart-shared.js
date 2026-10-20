@@ -202,4 +202,36 @@ document.addEventListener('DOMContentLoaded', () => {
       navLinks?.classList.remove('open');
     }
   });
+
+  // Actualizar punto de estado (verde o rojo si está agotado)
+  try {
+    const rawAdmin = localStorage.getItem('guategreen_admin_data_v1');
+    const overrides = rawAdmin ? (JSON.parse(rawAdmin).productOverrides || {}) : {};
+
+    document.querySelectorAll('.card[data-id]').forEach(card => {
+      const id = card.getAttribute('data-id');
+      const ov = overrides[id];
+      const stockRow = card.querySelector('.stock-row');
+      if (stockRow && ov && ov.stock) {
+        const dot = stockRow.querySelector('.dot-live');
+        stockRow.innerHTML = '';
+        if (dot) stockRow.appendChild(dot);
+        stockRow.appendChild(document.createTextNode(ov.stock));
+      }
+      if (stockRow) {
+        const dot = stockRow.querySelector('.dot-live');
+        const txt = stockRow.textContent || '';
+        const isOut = txt.toLowerCase().includes('agotad') || (ov && ov.stockQty !== undefined && Number(ov.stockQty) <= 0);
+        if (dot) dot.style.background = isOut ? '#DC2626' : 'var(--sage-500)';
+      }
+    });
+
+    const pdpTags = document.querySelector('.pdp-tags-row');
+    if (pdpTags) {
+      const dot = pdpTags.querySelector('.dot-live');
+      const txt = pdpTags.textContent || '';
+      const isOut = txt.toLowerCase().includes('agotad');
+      if (dot && isOut) dot.style.background = '#DC2626';
+    }
+  } catch (e) {}
 });

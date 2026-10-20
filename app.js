@@ -696,7 +696,14 @@ function renderHero() {
   if (descEl) descEl.textContent = data.desc;
   if (plantNameEl) plantNameEl.textContent = data.plantName;
   if (plantPriceEl) plantPriceEl.textContent = data.plantPrice;
-  if (plantStatusEl) plantStatusEl.textContent = data.plantStatus;
+  if (plantStatusEl) {
+    plantStatusEl.textContent = data.plantStatus;
+    const heroDot = plantStatusEl.parentElement?.querySelector('.dot-live');
+    if (heroDot) {
+      const isHeroOut = String(data.plantStatus || '').toLowerCase().includes('agotad');
+      heroDot.style.background = isHeroOut ? '#DC2626' : 'var(--sage-500)';
+    }
+  }
 
   if (visualPanel) {
     if (data.photoSrc) {
@@ -2143,7 +2150,7 @@ function renderGrid() {
       <div class="card-body">
         <span class="latin">${p.latin}</span>
         <h3 class="name"><a href="producto/${slug}/" style="color:inherit;text-decoration:none;">${p.name}</a></h3>
-        <div class="stock-row"><span class="dot-live" style="background:var(--sage-500)"></span>${p.stock}</div>
+        <div class="stock-row"><span class="dot-live" style="background:${parseStockQty(p) <= 0 ? '#DC2626' : 'var(--sage-500)'}"></span>${p.stock}</div>
         <div class="rarity-row"><span class="tag-rarity-inline" style="background:${rc.bg};color:${rc.c}">${p.rarity}</span></div>
         <div class="card-foot">
           <span class="price">${p.old ? `<span class="old">${money(p.old)}</span>` : ''}${money(p.price)}</span>
@@ -2268,7 +2275,7 @@ function openProductModal(id) {
         <span class="latin">${p.latin}</span>
         <h2 class="name">${p.name}</h2>
         <div class="price" style="font-size:1.4rem;margin:.4rem 0">${money(p.price)}</div>
-        <div class="stock-row"><span class="dot-live" style="background:var(--sage-500)"></span>${p.stock}</div>
+        <div class="stock-row"><span class="dot-live" style="background:${parseStockQty(p) <= 0 ? '#DC2626' : 'var(--sage-500)'}"></span>${p.stock}</div>
         <div class="rarity-row" style="margin:.3rem 0 .5rem"><span class="tag-rarity-inline" style="background:${rc.bg};color:${rc.c}">${p.rarity}</span></div>
         <p class="desc">${p.description}</p>
         ${modalUpsellHTML}
@@ -2628,11 +2635,12 @@ function initScrollReveal() {
 /* =============== ADMINISTRACIÓN DEL PANEL (REDISEÑADO) =============== */
 
 function parseStockQty(p) {
+  if (!p) return 0;
+  if (String(p.stock || '').toLowerCase().includes('agotad')) return 0;
   if (p.stockQty !== undefined && p.stockQty !== null) return Number(p.stockQty);
   const match = String(p.stock).match(/\d+/);
   if (match) return parseInt(match[0], 10);
   if (String(p.stock).toLowerCase().includes('última') || String(p.stock).toLowerCase().includes('ultima')) return 1;
-  if (String(p.stock).toLowerCase().includes('agotado')) return 0;
   return 5;
 }
 
